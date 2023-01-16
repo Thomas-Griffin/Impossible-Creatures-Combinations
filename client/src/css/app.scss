@@ -1,0 +1,20 @@
+// app global css in SCSS form
+@import url('https://fonts.googleapis.com/css2?family=Sigmar+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rokkitt&display=swap');
+
+.standard-font {
+  font-family: 'Rokkitt', serif;
+}
+
+.cursive-font {
+  font-family: 'Sigmar One', cursive;
+}
+
+.mono-font {
+  font-family: 'Courier Prime', monospace;
+}
+
+.q-btn.btn--no-hover .q-focus-helper {
+  display: none;
+}

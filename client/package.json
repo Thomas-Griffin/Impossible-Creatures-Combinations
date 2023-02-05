@@ -1,8 +1,8 @@
 {
-  "name": "combiner",
+  "name": "Combinations App",
   "version": "0.0.1",
   "description": "Tool for viewing/filtering all possible creature combinations for the game Impossible Creatures",
-  "productName": "Combiner",
+  "productName": "Combinations App",
   "author": "Thomas Griffin <40271229+Thomas-Griffin@users.noreply.github.com>",
   "private": true,
   "scripts": {

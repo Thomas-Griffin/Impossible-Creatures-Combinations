@@ -2,7 +2,7 @@
   <q-layout view="lHh Lpr lFf">
     <q-header elevated>
       <q-toolbar>
-        <q-toolbar-title class="cursive-font text-h4">
+        <q-toolbar-title class="cursive-font text-h3">
           <router-link class="text-white flex justify-center items-center" style="text-decoration: none" to="/">
             Impossible Creatures Combinations
           </router-link>

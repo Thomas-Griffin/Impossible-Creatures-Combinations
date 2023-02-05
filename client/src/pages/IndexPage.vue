@@ -1,5 +1,7 @@
 <template>
-  <CombinedCreatureCombinationTable/>
+  <suspense>
+    <CombinedCreatureCombinationTable/>
+  </suspense>
 </template>
 
 <script lang="ts" setup>

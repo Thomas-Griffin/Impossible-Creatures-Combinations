@@ -244,21 +244,21 @@ describe('CombinationsService', () => {
 
     describe('getCombinationsInRangeMultipleAttributes', () => {
         it('should return all combinations with power between 2 and 23 inclusive and health between 6 and 61 inclusive', async () => {
-            const combinations = await combinationsService.getCombinationsInRangeMultipleAttributes([{
+            const combinations = await combinationsService.getCombinationsWithFiltersAndSorting([{
                 attribute: 'Power', min: 2, max: 23
             }, {attribute: 'Health', min: 6, max: 61}]);
             expect(combinations).toHaveLength(1);
         });
 
         it('should return all combinations with power between 2 and 23 inclusive and health between 6 and 62 inclusive', async () => {
-            const combinations = await combinationsService.getCombinationsInRangeMultipleAttributes([{
+            const combinations = await combinationsService.getCombinationsWithFiltersAndSorting([{
                 attribute: 'Power', min: 2, max: 23
             }, {attribute: 'Health', min: 6, max: 62}]);
             expect(combinations).toHaveLength(2);
         });
 
         it('should return an empty array if the ranges are invalid', async () => {
-            const combinations = await combinationsService.getCombinationsInRangeMultipleAttributes([{
+            const combinations = await combinationsService.getCombinationsWithFiltersAndSorting([{
                 attribute: 'Power', min: 23, max: 2
             }, {attribute: 'Health', min: 6, max: 26}]);
             expect(combinations).toEqual([]);

@@ -75,8 +75,8 @@ const onUpperChange = input => {
 
 const getValues = () => {
   return {
-    lower: lower.value,
-    upper: upper.value
+    min: lower.value ? lower.value : null,
+    max: upper.value ? upper.value : null
   }
 }
 

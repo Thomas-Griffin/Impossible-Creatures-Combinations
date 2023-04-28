@@ -5,7 +5,7 @@ class CombinationsService extends MongoService {
     constructor() {
         super();
         if (process.env.NODE_ENV === 'test') {
-            this.collectionName = 'testMod';
+            this.collectionName = 'combinations_test';
         } else {
             this.collectionName = defaultModName;
         }
@@ -29,11 +29,18 @@ class CombinationsService extends MongoService {
         return await this.db.collection(this.collectionName).countDocuments();
     }
 
-    async getCombinations(pageNumber, nPerPage) {
+
+    async getTotalCombinationsWithFilters(body) {
         await this.connect();
-        return await this.db.collection(this.collectionName).find({})
+        const query = this.buildFiltersQuery(body);
+        return await this.db.collection(this.collectionName).countDocuments(query)
+    }
+
+    async getCombinations(pageNumber = 1, nPerPage = Number.MAX_SAFE_INTEGER) {
+        await this.connect();
+        return await this.db.collection(this.collectionName).find()
             .project({'_id': 0})
-            .skip(pageNumber > 0 ? (pageNumber - 1) * nPerPage : 0)
+            .skip((pageNumber - 1) * nPerPage)
             .limit(nPerPage)
             .toArray();
     }
@@ -144,32 +151,61 @@ class CombinationsService extends MongoService {
         return await this.db.collection(this.collectionName).find({"Wings": wings}).project({'_id': 0}).toArray();
     }
 
-    async getCombinationsInRange(attribute, min, max, pageNumber, nPerPage) {
+    async getCombinationsInRange(attribute = "", min = 0, max = Number.MAX_SAFE_INTEGER, pageNumber = 1, nPerPage = Number.MAX_SAFE_INTEGER) {
         await this.connect();
         return await this.db.collection(this.collectionName).find({[attribute]: {$gte: min, $lte: max}})
             .project({'_id': 0})
-            .skip(pageNumber > 0 ? (pageNumber - 1) * nPerPage : 0)
+            .skip((pageNumber - 1) * nPerPage)
             .limit(nPerPage)
             .toArray();
     }
 
-    async getCombinationsInRangeMultipleAttributes(attributes, pageNumber, nPerPage) {
+    async getCombinationsWithFiltersAndSorting(body = {
+        filters: [],
+        sorting: {column: "Animal 1", order: "descending"}
+    }, pageNumber = 1, nPerPage = Number.MAX_SAFE_INTEGER) {
         await this.connect();
-        let query = {};
-        attributes.forEach(obj => {
-            query[obj.attribute] = {$gte: obj.min, $lte: obj.max};
-        });
+        const query = this.buildFiltersQuery(body);
+        console.log('query', query);
         return await this.db.collection(this.collectionName).find(query)
             .project({'_id': 0})
-            .skip(pageNumber > 0 ? (pageNumber - 1) * nPerPage : 0)
+            .sort({[body.sorting.column]: body.sorting.order === "descending" ? -1 : 1})
+            .skip((pageNumber - 1) * nPerPage)
             .limit(nPerPage)
             .toArray();
     }
 
-    async getAttributeMinMax(attribute) {
+    buildFiltersQuery(body) {
+        const defaultSorting = {column: "Animal 1", order: "descending"}
+        if (body === null) {
+            body = {
+                filters: [],
+                sorting: defaultSorting
+            }
+        }
+        if (body?.filters === null || body?.filters === undefined) {
+            body.filters = [];
+        }
+        if (body?.sorting === null || body?.sorting === undefined) {
+            body.sorting = defaultSorting;
+        }
+        let query = {};
+        body.filters.forEach(obj => {
+            if (obj !== null && obj.filter !== null) {
+                if (obj.filter.min !== null && obj.filter.max !== null && obj.filter.min !== undefined && obj.filter.max !== undefined)
+                    query[obj.label] = {$gte: obj.filter.min, $lte: obj.filter.max};
+                else {
+                    query[obj.label] = {$regex: new RegExp(obj.filter, 'i')};
+                }
+            }
+        });
+        return query;
+    }
+
+    async getAttributeMinMax(attribute = "") {
         await this.connect();
         return await this.db.collection(this.collectionName).aggregate([
-            {$group: {_id: null, min: {$min: "$" + attribute}, max: {$max: "$" + attribute}}}
+            {$group: {_id: null, min: {$min: `$${attribute}`}, max: {$max: `$${attribute}`}}}
         ]).project({'_id': 0}).toArray();
     }
 }

@@ -14,7 +14,7 @@ export function useCombinations() {
 
 
   const setMod = async (mod) => {
-    if (mod?.name && mod?.version) {
+    if (mod?.name !== null && mod?.version !== null && mod?.name !== undefined && mod?.version !== undefined) {
       await axios.post(baseURL + '/combinations/set-mod', mod)
         .then(res => {
           if (res.data?.status === 200) {
@@ -28,9 +28,12 @@ export function useCombinations() {
     }
   };
 
-  const getTotalCombinations = async () => {
+  const getTotalCombinations = async (body) => {
     let totalCombinations = 0
-    await axios.get(`${baseURL}/combinations/total`)
+    if (body === null || body === undefined) {
+      body = {}
+    }
+    await axios.post(`${baseURL}/combinations/total`, body)
       .then((res) => {
         totalCombinations = res.data
       })
@@ -39,8 +42,15 @@ export function useCombinations() {
   }
 
   const getCombinations = async (pageNumber, nPerPage) => {
-    let combinations = []
+    let combinations
     let response = await axios.get(`${baseURL}/combinations?pageNumber=${pageNumber}&nPerPage=${nPerPage}`)
+    combinations = response.data
+    return combinations
+  }
+
+  const getCombinationsWithFilters = async (pageNumber, nPerPage, body) => {
+    let combinations
+    let response = await axios.post(`${baseURL}/combinations/filters?pageNumber=${pageNumber}&nPerPage=${nPerPage}`, body)
     combinations = response.data
     return combinations
   }
@@ -56,6 +66,7 @@ export function useCombinations() {
     setModError,
     combinationsError,
     getCombinations,
+    getCombinationsWithFilters,
     getTotalCombinations,
     getMinMax
   }

@@ -1,27 +1,27 @@
 <template>
-  <div class="full-height full-width">
-    <q-table
-      ref="tableRef"
-      :columns="selectedColumns"
-      :loading="loading"
-      :pagination="pagination"
-      :row-key="row => rowKey(row)"
-      :rows="filteredRows"
-      :rows-per-page-options="[0, 10, 20, 50, 100]"
-      :separator="separator"
-      class="sticky-header-table"
-      column-sort-order="da"
-      dense
-      flat
-      style="height: 1000px; font-family: monospace; font-weight: bold"
-      table-header-class="cursive-font"
-      @request="onRequest"
-    >
-      <template v-slot:header="props">
-        <q-tr :props="props">
-          <q-th v-for="col in props.cols" :key="col.name" :props="props">
+  <q-table
+    ref="tableRef"
+    :columns="selectedColumns"
+    :loading="loading"
+    :pagination="{rowsPerPage: 100}"
+    :row-key="row => rowKey(row)"
+    :rows="filteredRows"
+    :rows-per-page-options="[10, 20, 50, 100]"
+    :separator="separator"
+    class="sticky-header-table"
+    column-sort-order="da"
+    dense
+    flat
+    style="height: 1000px; font-family: monospace; font-weight: bold"
+    table-header-class="cursive-font"
+    @request="onRequest"
+  >
+    <template v-slot:header="props">
+      <q-tr :props="props">
+        <q-th v-for="col in props.cols" :key="col.name" :props="props">
             <span v-if="col.show" class="cursive-font">
-            <q-btn-dropdown :label="col.label" align="center" dense flat rounded>
+            <q-btn-dropdown :label="col.label" align="center" dense dropdown-icon="search" flat no-icon-animation
+                            rounded>
               <q-item>
                 <q-input v-if="filters.find(f => f?.label === col.label && f?.type === 'string')"
                          dense flat label="Filter" rounded
@@ -34,9 +34,9 @@
               </q-item>
               <div class="row fit justify-center" style="margin-bottom: 2%">
                 <q-space/>
-                <q-btn dense flat label="Apply" @click="applyFilter(col.label)"/>
+                <q-btn dense flat label="Apply" @click="applyFilters"/>
                 <q-space/>
-                <q-btn dense flat label="Reset" @click="clearFilter(col.label)"/>
+                <q-btn dense flat label="Reset" @click="() => clearFilter(col.label)"/>
                 <q-space/>
               </div>
             </q-btn-dropdown>
@@ -48,7 +48,7 @@
                 icon="arrow_upward"
                 round
                 size="sm"
-                @click="onAscendingSort(col, props)"
+                @click="onAscendingSort(col)"
               />
               <q-btn
                 :text-color="getDescendingSortColor(col)"
@@ -58,72 +58,72 @@
                 icon="arrow_downward"
                 round
                 size="sm"
-                @click="onDescendingSort(col, props)"
+                @click="onDescendingSort(col)"
               />
             </span>
-          </q-th>
-        </q-tr>
-      </template>
-      <template v-slot:top>
-        <q-select :model-value="selectedMod" :options="modsDisplayNames"
-                  class="cursive-font" dense flat
-                  label="Mod" label-color="grey" rounded
-                  @update:model-value="value => {selectedMod.value = value; onModChange(value)}"/>
-        <q-btn-dropdown
-          class="cursive-font"
-          flat
-          label="Columns"
-        >
-          <q-item clickable @click="toggleShowAllColumns">
-            <q-item-section avatar>
-              <q-checkbox :model-value="showAllColumns" @click="toggleShowAllColumns"/>
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>Show All</q-item-label>
-            </q-item-section>
-          </q-item>
-          <q-item v-for="col in columns" :key="col.name" clickable @click="toggleColumn(col.name)">
-            <q-item-section avatar>
-              <q-checkbox :model-value="col.show" @click="toggleColumn(col.name)"/>
-            </q-item-section>
-            <q-item-section>{{ col.label }}</q-item-section>
-          </q-item>
-        </q-btn-dropdown>
-        <q-space/>
-        <div v-if="filtersAreActive" class="cursive-font">
-          Active Filters:
-          <q-chip v-for="filter in activeFilters" :key="filter.label"
-                  :label="filter?.filter?.lower ? `${filter.label}: Min: ${filter?.filter?.lower}, Max: ${filter?.filter?.upper}`: `${filter?.label}: ${filter?.filter}`"
-                  color="grey" icon="close" text-color="white"
-                  @click="clearFilter(filter.label)"/>
-        </div>
-        <q-btn v-if="filtersAreActive"
-               class="cursive-font"
-               color="red"
-               dense
-               flat
-               icon="clear"
-               label="Clear Filters"
-               @click="clearAllFilters"/>
-        <q-space/>
-        <q-space/>
-        <q-toggle
-          :model-value="showGrid"
-          class="cursive-font"
-          color="grey"
-          dense
-          label="Grid"
-          @update:model-value="value => showGrid = value"
-        />
-      </template>
-    </q-table>
-  </div>
+        </q-th>
+      </q-tr>
+    </template>
+    <template v-slot:top>
+      <q-select :model-value="selectedMod" :options="modsDisplayNames"
+                class="cursive-font" dense flat
+                label="Mod" label-color="grey" rounded
+                @update:model-value="value => {onModChange(value)}"/>
+      <q-btn-dropdown
+        class="cursive-font"
+        flat
+        label="Columns"
+      >
+        <q-item clickable @click="toggleShowAllColumns">
+          <q-item-section avatar>
+            <q-checkbox :model-value="showAllColumns" @click="toggleShowAllColumns"/>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Show All</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item v-for="col in columns" :key="col.name" clickable @click="toggleColumn(col.name)">
+          <q-item-section avatar>
+            <q-checkbox :model-value="col.show" @click="toggleColumn(col.name)"/>
+          </q-item-section>
+          <q-item-section>{{ col.label }}</q-item-section>
+        </q-item>
+      </q-btn-dropdown>
+      <q-space/>
+      <div v-if="filtersAreActive" class="cursive-font">
+        Active Filters:
+        <q-chip v-for="filter in activeFilters" :key="filter.label"
+                :label="filter?.filter?.min && filter?.filter?.max ? `${filter.label}: Min: ${filter?.filter?.min}, Max: ${filter?.filter?.max}`: `${filter?.label}: ${filter?.filter}`"
+                clickable color="grey" icon="close"
+                text-color="white"
+                @click="() => clearFilter(filter.label)"/>
+      </div>
+      <q-btn v-if="filtersAreActive"
+             class="cursive-font"
+             color="red"
+             dense
+             flat
+             icon="clear"
+             label="Clear Filters"
+             @click="clearAllFilters"/>
+      <q-space/>
+      <q-space/>
+      <q-toggle
+        :model-value="showGrid"
+        class="cursive-font"
+        color="grey"
+        dense
+        label="Grid"
+        @update:model-value="value => showGrid = value"
+      />
+    </template>
+  </q-table>
 </template>
 
 <style lang="sass">
 
 .sticky-header-table
-  height: 310px
+  height: calc(100vh - 50px) !important
 
   thead tr:first-child th
     background-color: #8a8a8a
@@ -144,35 +144,34 @@
 </style>
 
 <script setup>
-import {computed, onBeforeMount, reactive, ref} from 'vue';
+import {computed, onBeforeMount, ref} from 'vue';
 import {useMods} from '../composables/useMods';
 import {useCombinations} from '../composables/useCombinations';
 import NumericFilter from 'components/NumericFilter.vue';
 
+
 const {getMods, getModFromDisplayString, getModDisplayName} = useMods();
 
-const {setMod, setModError, combinationsError, getCombinations, getTotalCombinations, getMinMax} = useCombinations();
+const {
+  setMod,
+  setModError,
+  combinationsError,
+  getCombinationsWithFilters,
+  getTotalCombinations,
+  getMinMax
+} = useCombinations();
 
-let rows = []
 const tableRef = ref();
 const filteredRows = ref([])
 const selectedColumns = ref([])
 const showAllColumns = ref(true)
 const loading = ref(true)
-const numericFilters = reactive({})
+const numericFilters = ref({})
 const showGrid = ref(false)
 const selectedMod = ref(null)
 const columns = ref([])
 const filters = ref([])
-let mods = ref([])
-
-const pagination = ref({
-  sortBy: 'desc',
-  descending: false,
-  page: 1,
-  rowsPerPage: 50,
-  rowsNumber: 0,
-})
+const mods = ref([])
 
 
 onBeforeMount(async () => {
@@ -180,44 +179,46 @@ onBeforeMount(async () => {
   let initialModString = getModDisplayName(mods.value[0])
   selectedMod.value = initialModString
   await onModChange(initialModString)
-  if (!combinationsError.value && !setModError.value) {
-    console.log('no errors')
-  }
 })
+
 const onModChange = async (modString) => {
+  selectedMod.value = modString
   let mod = getModFromDisplayString(modString)
   await setMod(mod)
   if (combinationsError.value === null && setModError.value === null) {
     columns.value = getColumns(mod)
-    console.log('columns.value', columns.value)
     selectedColumns.value = columns.value
     await tableRef.value.requestServerInteraction()
-  } else {
-    console.log('error setting mod')
   }
 }
 
 async function onRequest(props) {
-  const {page, rowsPerPage, sortBy, descending} = props.pagination
   loading.value = true
 
-  let totalCombinations = await getTotalCombinations()
-  pagination.value.rowsNumber = totalCombinations
+  for (let numericFiltersKey in numericFilters.value) {
+    let numericFilter = numericFilters.value[numericFiltersKey]
+    if (numericFilter?.getValues().min !== null && numericFilter?.getValues().max !== null && numericFilter?.getValues().min !== undefined && numericFilter?.getValues().max !== undefined) {
+      filters.value.find(filter => filter.label === numericFiltersKey).filter = numericFilter?.getValues() ?? null
+    }
+  }
 
-  const fetchCount = rowsPerPage === 0 ? totalCombinations : rowsPerPage
-  filteredRows.value = await getCombinations(page, fetchCount)
+  let sorting = {column: columns.value[0].name, order: 'ascending'}
+  let sortedColumn = columns.value.find(col => col.isSorted.ascending || col.isSorted.descending)
+  if (sortedColumn) {
+    sorting = {column: sortedColumn.name, order: sortedColumn.isSorted.ascending ? 'ascending' : 'descending'}
+  }
+  let postBody = {
+    sorting: sorting,
+    filters: filters.value !== null ? filters.value : [],
+  }
 
+  filteredRows.value = await getCombinationsWithFilters(props.pagination.page, props.pagination.rowsPerPage, postBody)
+  let totalCombinations = await getTotalCombinations(postBody)
+  props.pagination.rowsNumber = totalCombinations
   filters.value = await getFilters()
 
-  console.log('filters.value', filters.value)
-
-  console.log('filteredRows.value', filteredRows.value)
-  pagination.value.page = page
-  pagination.value.rowsPerPage = rowsPerPage
-  pagination.value.sortBy = sortBy
-  pagination.value.descending = descending
-
   loading.value = false
+  return props
 }
 
 const resetSort = () => {
@@ -227,18 +228,18 @@ const resetSort = () => {
   })
 }
 
-const onDescendingSort = (col, props) => {
+const onDescendingSort = async (col) => {
   resetSort()
   col.isSorted.descending = true
   col.isSorted.ascending = false
-  props.sort(col.name, 'da')
+  await tableRef.value.requestServerInteraction()
 }
 
-const onAscendingSort = (col, props) => {
+const onAscendingSort = async (col) => {
   resetSort()
   col.isSorted.descending = false
   col.isSorted.ascending = true
-  props.sort(col.name, 'as')
+  await tableRef.value.requestServerInteraction()
 }
 
 const toggleColumn = (colName) => {
@@ -260,35 +261,26 @@ const getDescendingSortColor = (col) => {
   return col.isSorted.descending ? 'green' : 'white';
 }
 
-const clearFilter = (columnLabel) => {
-  filters[columnLabel].filter = null
+const clearFilter = async (columnLabel) => {
+  filters.value.filter(filter => filter.label === columnLabel)[0].filter = null
+  await applyFilters()
 }
 
-const applyFilter = (columnLabel) => {
-  if (filters.value.find(f => f.label === columnLabel)?.type === 'number') {
-    let filter = numericFilters[columnLabel]?.getValues()
-    filters.value.find(f => f.label === columnLabel).filter = filter
-    filteredRows.value = filteredRows.value.filter(row => row[columnLabel] >= filter.lower && row[columnLabel] <= filter.upper)
-    filters.value.find(f => f?.label === columnLabel).filter = filter
-  } else {
-    let filter = filters.value.find(f => f.label === columnLabel).filter
-    filters.value.filter(f => f.label === columnLabel)[0].filter = filter
-    filteredRows.value = filteredRows.value.filter(row => row[columnLabel].toLowerCase().includes(filter.toLowerCase()))
-    filters.value.find(f => f?.label === columnLabel).filter = filter
-  }
+const applyFilters = async () => {
+  await tableRef.value.requestServerInteraction()
 }
 
-const clearAllFilters = () => {
-  filters.value.forEach(f => f.filter = null)
-  filteredRows.value = rows
+const clearAllFilters = async () => {
+  filters.value.forEach(filter => filter.filter = null)
+  await applyFilters()
 }
 
 const setStringFilter = (value, columnLabel) => {
-  filters.value.find(f => f.label === columnLabel).filter = value
+  filters.value.find(filter => filter.label === columnLabel).filter = value
 }
 
 const addNumericFilter = (numericFilter, column) => {
-  numericFilters[column] = numericFilter
+  numericFilters.value[column] = numericFilter
 }
 
 const filtersAreActive = computed(() => {
@@ -328,21 +320,21 @@ const getColumns = (mod) => {
 }
 
 const getFilters = async () => {
-  if (filters.value.length > 0) {
+  if (filters.value.length > 0 || numericFilters.value.length > 0) {
     return filters.value
+  } else {
+    let result = columns.value.map(async column => {
+      let minmax = await getMinMax(column.label);
+      return {
+        label: column.label,
+        type: typeof filteredRows.value[0][column.label] === 'string' ? 'string' : 'number',
+        min: minmax.min ? minmax.min : 0,
+        max: minmax.max ? minmax.max : Number.MAX_SAFE_INTEGER,
+        filter: null
+      }
+    })
+    return await Promise.all(result)
   }
-  let result = [];
-  for (const column of columns.value) {
-    let minmax = await getMinMax(column.field);
-    result.push({
-      label: column.label,
-      type: typeof filteredRows.value[0][column.field] === 'string' ? 'string' : 'number',
-      min: minmax.min,
-      max: minmax.max,
-      filter: null
-    });
-  }
-  return result;
 }
 
 </script>

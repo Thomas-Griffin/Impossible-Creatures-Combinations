@@ -84,9 +84,11 @@ describe('Combinations routes', () => {
 
     describe('GET /combinations', () => {
         it('should return all combinations', async () => {
-            const response = await request(app).get('/combinations')
+            const response = await request(app)
+                .get('/combinations?nPerPage=3&pageNumber=1')
             expect(response.status).toEqual(200);
-            expect(response.body).toHaveLength(3)
+            expect(Array.isArray(response.body)).toBe(true);
+            expect(response.body.length).toEqual(3);
         });
     });
 });

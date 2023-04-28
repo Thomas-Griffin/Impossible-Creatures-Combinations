@@ -166,7 +166,6 @@ class CombinationsService extends MongoService {
     }, pageNumber = 1, nPerPage = Number.MAX_SAFE_INTEGER) {
         await this.connect();
         const query = this.buildFiltersQuery(body);
-        console.log('query', query);
         return await this.db.collection(this.collectionName).find(query)
             .project({'_id': 0})
             .sort({[body.sorting.column]: body.sorting.order === "descending" ? -1 : 1})

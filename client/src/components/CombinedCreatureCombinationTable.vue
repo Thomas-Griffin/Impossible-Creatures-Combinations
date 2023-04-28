@@ -1,12 +1,12 @@
 <template>
   <q-table
     ref="tableRef"
+    v-model:pagination="pagination"
     :columns="selectedColumns"
     :loading="loading"
-    :pagination="{rowsPerPage: 100}"
     :row-key="row => rowKey(row)"
     :rows="filteredRows"
-    :rows-per-page-options="[10, 20, 50, 100]"
+    :rows-per-page-options="[100, 50, 20, 10]"
     :separator="separator"
     class="sticky-header-table"
     column-sort-order="da"
@@ -172,6 +172,7 @@ const selectedMod = ref(null)
 const columns = ref([])
 const filters = ref([])
 const mods = ref([])
+const pagination = ref({page: 1, rowsPerPage: 100})
 
 
 onBeforeMount(async () => {
@@ -215,10 +216,14 @@ async function onRequest(props) {
   filteredRows.value = await getCombinationsWithFilters(props.pagination.page, props.pagination.rowsPerPage, postBody)
   let totalCombinations = await getTotalCombinations(postBody)
   props.pagination.rowsNumber = totalCombinations
+  pagination.value.rowsNumber = totalCombinations
   filters.value = await getFilters()
 
+  const {page, rowsPerPage} = props.pagination
+  pagination.value.page = page
+  pagination.value.rowsPerPage = rowsPerPage
+
   loading.value = false
-  return props
 }
 
 const resetSort = () => {

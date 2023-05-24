@@ -4,23 +4,13 @@ const ModService = require('../services/modService');
 const modService = new ModService();
 
 router.get('/', function (request, response) {
-    response.setHeader('Cache-Control', 'no-cache');
     modService.getMods().then(mods => {
             response.json(mods);
         }
     );
 });
 
-router.get('/:id', function (request, response) {
-    response.setHeader('Cache-Control', 'no-cache');
-    modService.getMod(request.params.id).then(mod => {
-            response.json(mod);
-        }
-    );
-});
-
 router.get('/name/:name', function (request, response) {
-    response.setHeader('Cache-Control', 'no-cache');
     modService.getModsByName(request.params.name).then(mod => {
             response.json(mod);
         }

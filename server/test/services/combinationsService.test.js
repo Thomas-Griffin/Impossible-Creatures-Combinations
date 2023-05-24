@@ -1,7 +1,7 @@
 const Service = require('../../services/combinationsService');
 const config = {useTestCollection: true}
 const combinationsService = new Service(config)
-const testModCollectionName = 'testMod'
+const {testMod, testModCollectionName} = require('../constants/globalTestConstants')
 
 describe('CombinationsService', () => {
     beforeEach(async () => {
@@ -82,186 +82,11 @@ describe('CombinationsService', () => {
 
     describe('getCombinations', () => {
         it('should return all combinations', async () => {
-            const combinations = await combinationsService.getCombinations();
+            let body = {
+                mod: testMod,
+            }
+            const combinations = await combinationsService.getCombinations(body);
             expect(combinations).toHaveLength(3);
-        });
-    });
-
-    describe('getCombinationsByAnimal1', () => {
-        it('should return all combinations with animal1', async () => {
-            const combinations = await combinationsService.getCombinationsByAnimal1('testAnimal1');
-            expect(combinations).toHaveLength(1);
-        });
-    });
-
-    describe('getCombinationsByAnimal2', () => {
-        it('should return all combinations with animal2', async () => {
-            const combinations = await combinationsService.getCombinationsByAnimal2('testAnimal2');
-            expect(combinations).toHaveLength(1);
-        });
-    });
-
-    describe('getCombinationsByResearchLevel', () => {
-        it('should return all combinations with researchLevel', async () => {
-            const combinations = await combinationsService.getCombinationsByResearchLevel(1);
-            expect(combinations).toHaveLength(1);
-        });
-    });
-
-    describe('getCombinationsByPower', () => {
-        it('should return all combinations with power equal to 2', async () => {
-            const combinations = await combinationsService.getCombinationsByPower(2);
-            expect(combinations).toHaveLength(1);
-        });
-    });
-
-    describe('getCombinationsByAirSpeed', () => {
-        it('should return all combinations with air speed equal to 3', async () => {
-            const combinations = await combinationsService.getCombinationsByAirSpeed(3);
-            expect(combinations).toHaveLength(1);
-        });
-    });
-
-    describe('getCombinationsByLandSpeed', () => {
-        it('should return all combinations with land speed equal to 4', async () => {
-            const combinations = await combinationsService.getCombinationsByLandSpeed(4);
-            expect(combinations).toHaveLength(1);
-        });
-    });
-
-    describe('getCombinationsByWaterSpeed', () => {
-        it('should return all combinations with water speed equal to 5', async () => {
-            const combinations = await combinationsService.getCombinationsByWaterSpeed(5);
-            expect(combinations).toHaveLength(1);
-        });
-    });
-
-    describe('getCombinationsByHealth', () => {
-        it('should return all combinations with health equal to 6', async () => {
-            const combinations = await combinationsService.getCombinationsByHealth(6);
-            expect(combinations).toHaveLength(1);
-        });
-    });
-
-    describe('getCombinationsBySize', () => {
-        it('should return all combinations with size equal to 7', async () => {
-            const combinations = await combinationsService.getCombinationsBySize(7);
-            expect(combinations).toHaveLength(1);
-        });
-    });
-
-    describe('getCombinationsByPopulationCost', () => {
-        it('should return all combinations with population cost equal to 8', async () => {
-            const combinations = await combinationsService.getCombinationsByPopulationCost(8);
-            expect(combinations).toHaveLength(1);
-        });
-    });
-
-    describe('getCombinationsByEHP', () => {
-        it('should return all combinations with EHP equal to 9', async () => {
-            const combinations = await combinationsService.getCombinationsByEHP(9);
-            expect(combinations).toHaveLength(1);
-        });
-    });
-
-    describe('getCombinationsByMeleeDamage', () => {
-        it('should return all combinations with melee damage equal to 10', async () => {
-            const combinations = await combinationsService.getCombinationsByMeleeDamage(10);
-            expect(combinations).toHaveLength(1);
-        });
-    });
-
-    describe('getCombinationsBySightRadius', () => {
-        it('should return all combinations with sight radius equal to 11', async () => {
-            const combinations = await combinationsService.getCombinationsBySightRadius(11);
-            expect(combinations).toHaveLength(1);
-        });
-    });
-
-    describe('getCombinationsByFrontLegs', () => {
-        it('should return all combinations with front legs', async () => {
-            const combinations = await combinationsService.getCombinationsByFrontLegs('testAnimal1');
-            expect(combinations).toHaveLength(1);
-        });
-    });
-
-    describe('getCombinationsByRearLegs', () => {
-        it('should return all combinations with rear legs', async () => {
-            const combinations = await combinationsService.getCombinationsByRearLegs('testAnimal1');
-            expect(combinations).toHaveLength(1);
-        });
-    });
-
-    describe('getCombinationsByHead', () => {
-        it('should return all combinations with head', async () => {
-            const combinations = await combinationsService.getCombinationsByHead('testAnimal2');
-            expect(combinations).toHaveLength(1);
-        });
-    });
-
-    describe('getCombinationsByTail', () => {
-        it('should return all combinations with tail', async () => {
-            const combinations = await combinationsService.getCombinationsByTail('testAnimal2');
-            expect(combinations).toHaveLength(1);
-        });
-    });
-
-    describe('getCombinationsByTorso', () => {
-        it('should return all combinations with torso', async () => {
-            const combinations = await combinationsService.getCombinationsByTorso('testAnimal3');
-            expect(combinations).toHaveLength(1);
-        });
-    });
-
-    describe('getCombinationsByPincers', () => {
-        it('should return all combinations with pincers', async () => {
-            const combinations = await combinationsService.getCombinationsByPincers('testAnimal1');
-            expect(combinations).toHaveLength(1);
-        });
-    });
-
-    describe('getCombinationsByWings', () => {
-        it('should return all combinations with wings', async () => {
-            const combinations = await combinationsService.getCombinationsByWings('testAnimal1');
-            expect(combinations).toHaveLength(1);
-        });
-    });
-
-    describe('getCombinationsInRange', () => {
-        it('should return all combinations with power between 2 and 23 inclusive', async () => {
-            const combinations = await combinationsService.getCombinationsInRange('Power', 2, 23);
-            expect(combinations).toHaveLength(3);
-        });
-        it("should return an empty array if the property doesn't exist", async () => {
-            const combinations = await combinationsService.getCombinationsInRange('test', 2, 23);
-            expect(combinations).toEqual([]);
-        });
-        it('should return an empty array if the range is invalid', async () => {
-            const combinations = await combinationsService.getCombinationsInRange('Power', 23, 2);
-            expect(combinations).toEqual([]);
-        });
-    });
-
-    describe('getCombinationsInRangeMultipleAttributes', () => {
-        it('should return all combinations with power between 2 and 23 inclusive and health between 6 and 61 inclusive', async () => {
-            const combinations = await combinationsService.getCombinationsWithFiltersAndSorting([{
-                attribute: 'Power', min: 2, max: 23
-            }, {attribute: 'Health', min: 6, max: 61}]);
-            expect(combinations).toHaveLength(1);
-        });
-
-        it('should return all combinations with power between 2 and 23 inclusive and health between 6 and 62 inclusive', async () => {
-            const combinations = await combinationsService.getCombinationsWithFiltersAndSorting([{
-                attribute: 'Power', min: 2, max: 23
-            }, {attribute: 'Health', min: 6, max: 62}]);
-            expect(combinations).toHaveLength(2);
-        });
-
-        it('should return an empty array if the ranges are invalid', async () => {
-            const combinations = await combinationsService.getCombinationsWithFiltersAndSorting([{
-                attribute: 'Power', min: 23, max: 2
-            }, {attribute: 'Health', min: 6, max: 26}]);
-            expect(combinations).toEqual([]);
         });
     });
 });

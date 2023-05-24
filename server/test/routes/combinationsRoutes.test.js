@@ -2,12 +2,12 @@ const CombinationsService = require('../../services/combinationsService');
 const testCombinationsService = new CombinationsService()
 const app = require('../../app');
 const request = require('supertest');
-
+const {testMod, testModCollectionName} = require('../constants/globalTestConstants');
 
 describe('Combinations routes', () => {
     beforeEach(async () => {
         await testCombinationsService.connect();
-        await testCombinationsService.db.collection('combinations_test').insertMany([{
+        await testCombinationsService.db.collection(testModCollectionName).insertMany([{
             "Animal 1": "testAnimal1",
             "Animal 2": "testAnimal2",
             "Research Level": 1,
@@ -74,7 +74,7 @@ describe('Combinations routes', () => {
     });
 
     afterEach(async () => {
-        await testCombinationsService.db.collection('combinations_test').drop();
+        await testCombinationsService.db.collection(testModCollectionName).drop();
     });
 
     afterAll(async () => {
@@ -82,13 +82,13 @@ describe('Combinations routes', () => {
     });
 
 
-    describe('GET /combinations', () => {
+    describe('Post /combinations', () => {
         it('should return all combinations', async () => {
-            const response = await request(app)
-                .get('/combinations?nPerPage=3&pageNumber=1')
-            expect(response.status).toEqual(200);
-            expect(Array.isArray(response.body)).toBe(true);
-            expect(response.body.length).toEqual(3);
+            await request(app).post('/combinations?nPerPage=3&pageNumber=1', {mod: testMod}).then(response => {
+                expect(response.status).toEqual(200);
+                expect(Array.isArray(response.body)).toBe(true);
+                expect(response.body.length).toEqual(3);
+            });
         });
     });
 });

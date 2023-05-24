@@ -149,17 +149,8 @@ import {useMods} from '../composables/useMods';
 import {useCombinations} from '../composables/useCombinations';
 import NumericFilter from 'components/NumericFilter.vue';
 
-
 const {getMods, getModFromDisplayString, getModDisplayName} = useMods();
-
-const {
-  setMod,
-  setModError,
-  combinationsError,
-  getCombinationsWithFilters,
-  getTotalCombinations,
-  getMinMax
-} = useCombinations();
+const {getCombinations, combinationsError, getTotalCombinations, getMinMax} = useCombinations();
 
 const tableRef = ref();
 const filteredRows = ref([])
@@ -174,7 +165,6 @@ const filters = ref([])
 const mods = ref([])
 const pagination = ref({page: 1, rowsPerPage: 100})
 
-
 onBeforeMount(async () => {
   mods.value = await getMods()
   let initialModString = getModDisplayName(mods.value[0])
@@ -185,8 +175,7 @@ onBeforeMount(async () => {
 const onModChange = async (modString) => {
   selectedMod.value = modString
   let mod = getModFromDisplayString(modString)
-  await setMod(mod)
-  if (combinationsError.value === null && setModError.value === null) {
+  if (combinationsError.value === null) {
     columns.value = getColumns(mod)
     selectedColumns.value = columns.value
     await tableRef.value.requestServerInteraction()
@@ -209,11 +198,12 @@ async function onRequest(props) {
     sorting = {column: sortedColumn.name, order: sortedColumn.isSorted.ascending ? 'ascending' : 'descending'}
   }
   let postBody = {
+    mod: getModFromDisplayString(selectedMod.value),
     sorting: sorting,
     filters: filters.value !== null ? filters.value : [],
   }
 
-  filteredRows.value = await getCombinationsWithFilters(props.pagination.page, props.pagination.rowsPerPage, postBody)
+  filteredRows.value = await getCombinations(props.pagination.page, props.pagination.rowsPerPage, postBody)
   let totalCombinations = await getTotalCombinations(postBody)
   props.pagination.rowsNumber = totalCombinations
   pagination.value.rowsNumber = totalCombinations
@@ -310,10 +300,11 @@ const rowKey = (row) => {
 
 const getColumns = (mod) => {
   return mod.columns.map(key => ({
-    name: key,
+    name: key.label,
     format: val => val === -1 || val === undefined ? 'N/A' : `${val}`,
-    label: key,
-    field: key,
+    label: key.label,
+    field: key.label,
+    type: key.type,
     sortable: false,
     isSorted: {
       ascending: false,
@@ -332,7 +323,7 @@ const getFilters = async () => {
       let minmax = await getMinMax(column.label);
       return {
         label: column.label,
-        type: typeof filteredRows.value[0][column.label] === 'string' ? 'string' : 'number',
+        type: column.type === 'string' ? 'string' : 'number',
         min: minmax.min ? minmax.min : 0,
         max: minmax.max ? minmax.max : Number.MAX_SAFE_INTEGER,
         filter: null

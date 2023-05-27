@@ -3,6 +3,8 @@
     ref="tableRef"
     v-model:pagination="pagination"
     :columns="selectedColumns"
+    :grid="gridMode"
+    :hide-header="gridMode"
     :loading="loading"
     :row-key="row => rowKey(row)"
     :rows="filteredRows"
@@ -11,8 +13,6 @@
     class="sticky-header-table"
     dense
     flat
-    grid
-    hide-header
     style="height: 1000px; font-family: monospace; font-weight: bold;"
     @request="onRequest"
   >
@@ -100,6 +100,7 @@
              label="Clear Filters"
              @click="clearAllFilters"/>
       <q-space/>
+      <q-btn :icon="gridMode ? 'grid_on': 'list'" class="cursive-font" dense flat @click="gridMode = !gridMode"/>
     </template>
     <template v-slot:item="props">
       <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4">
@@ -170,6 +171,8 @@ const columns = ref([])
 const filters = ref([])
 const mods = ref([])
 const pagination = ref({page: 1, rowsPerPage: isMobile.value ? 1 : 100})
+const gridMode = ref(true)
+
 
 onBeforeMount(async () => {
   mods.value = await getMods()

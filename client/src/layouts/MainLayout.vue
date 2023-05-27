@@ -2,10 +2,13 @@
   <q-layout view="hHh LpR fFf">
     <q-header elevated>
       <q-toolbar>
-        <q-toolbar-title class="cursive-font text-h3">
-          <router-link class="text-white flex justify-center items-center" style="text-decoration: none" to="/">
-            Impossible Creatures Combinations
-          </router-link>
+        <q-toolbar-title class="cursive-font">
+          <div class="text-wrapper">
+            <router-link class="text-white flex mdi-format-text-wrapping-wrap justify-center items-center"
+                         style="text-decoration: none" to="/">
+              Impossible Creatures Combinations
+            </router-link>
+          </div>
         </q-toolbar-title>
 
         <q-btn round unelevated>
@@ -39,7 +42,11 @@
     </q-page-container>
   </q-layout>
 </template>
-
+<style>
+.text-wrapper {
+  white-space: normal;
+}
+</style>
 <script lang="ts" setup>
 import {ref} from 'vue';
 import {useQuasar} from 'quasar';

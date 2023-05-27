@@ -6,20 +6,57 @@
     :loading="loading"
     :row-key="row => rowKey(row)"
     :rows="filteredRows"
-    :rows-per-page-options="[100, 50, 20, 10]"
+    :rows-per-page-options="[100, 50, 20, 10, 5, 1]"
     :separator="separator"
     class="sticky-header-table"
-    column-sort-order="da"
     dense
     flat
-    style="height: 1000px; font-family: monospace; font-weight: bold"
-    table-header-class="cursive-font"
+    grid
+    hide-header
+    style="height: 1000px; font-family: monospace; font-weight: bold;"
     @request="onRequest"
   >
-    <template v-slot:header="props">
-      <q-tr :props="props">
-        <q-th v-for="col in props.cols" :key="col.name" :props="props">
-            <span v-if="col.show" class="cursive-font">
+    <template v-slot:top>
+      <q-select :model-value="selectedMod" :options="modsDisplayNames"
+                class="cursive-font" dense flat
+                label="Mod" label-color="grey" rounded
+                @update:model-value="value => {onModChange(value)}"/>
+      <q-btn-dropdown
+        class="cursive-font"
+        flat
+        label="Columns"
+      >
+        <q-item clickable @click="toggleShowAllColumns">
+          <q-item-section avatar>
+            <q-checkbox :model-value="showAllColumns" @click="toggleShowAllColumns"/>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label class="cursive-font">Show All</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item v-for="col in columns" :key="col.name">
+          <q-checkbox :model-value="col.show" @click="toggleColumn(col.name)"/>
+          <span class="cursive-font">
+            <q-btn
+              :text-color="getAscendingSortColor(col)"
+              color="black"
+              dense
+              flat
+              icon="arrow_upward"
+              round
+              size="sm"
+              @click="onAscendingSort(col)"
+            />
+              <q-btn
+                :text-color="getDescendingSortColor(col)"
+                color="black"
+                dense
+                flat
+                icon="arrow_downward"
+                round
+                size="sm"
+                @click="onDescendingSort(col)"
+              />
             <q-btn-dropdown :label="col.label" align="center" dense dropdown-icon="search" flat no-icon-animation
                             rounded>
               <q-item>
@@ -40,54 +77,10 @@
                 <q-space/>
               </div>
             </q-btn-dropdown>
-              <q-btn
-                :text-color="getAscendingSortColor(col)"
-                color="black"
-                dense
-                flat
-                icon="arrow_upward"
-                round
-                size="sm"
-                @click="onAscendingSort(col)"
-              />
-              <q-btn
-                :text-color="getDescendingSortColor(col)"
-                color="black"
-                dense
-                flat
-                icon="arrow_downward"
-                round
-                size="sm"
-                @click="onDescendingSort(col)"
-              />
+
             </span>
-        </q-th>
-      </q-tr>
-    </template>
-    <template v-slot:top>
-      <q-select :model-value="selectedMod" :options="modsDisplayNames"
-                class="cursive-font" dense flat
-                label="Mod" label-color="grey" rounded
-                @update:model-value="value => {onModChange(value)}"/>
-      <q-btn-dropdown
-        class="cursive-font"
-        flat
-        label="Columns"
-      >
-        <q-item clickable @click="toggleShowAllColumns">
-          <q-item-section avatar>
-            <q-checkbox :model-value="showAllColumns" @click="toggleShowAllColumns"/>
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Show All</q-item-label>
-          </q-item-section>
         </q-item>
-        <q-item v-for="col in columns" :key="col.name" clickable @click="toggleColumn(col.name)">
-          <q-item-section avatar>
-            <q-checkbox :model-value="col.show" @click="toggleColumn(col.name)"/>
-          </q-item-section>
-          <q-item-section>{{ col.label }}</q-item-section>
-        </q-item>
+
       </q-btn-dropdown>
       <q-space/>
       <div v-if="filtersAreActive" class="cursive-font">
@@ -107,15 +100,24 @@
              label="Clear Filters"
              @click="clearAllFilters"/>
       <q-space/>
-      <q-space/>
-      <q-toggle
-        :model-value="showGrid"
-        class="cursive-font"
-        color="grey"
-        dense
-        label="Grid"
-        @update:model-value="value => showGrid = value"
-      />
+    </template>
+    <template v-slot:item="props">
+      <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4">
+        <q-card bordered flat>
+          <q-card-section class="text-center cursive-font text-h6">
+            {{ props.rowIndex + 1 }}
+          </q-card-section>
+          <q-separator/>
+          <q-card-section>
+            <div v-for="col in columns" :key="col.name">
+              <div v-if="col.show" class="cursive-font text-h6">{{ col.name }}
+                <span class="mono-font">{{
+                    props.row[col.name] === -1 ? ' (N/A)' : props.row[col.name]
+                  }}</span></div>
+            </div>
+          </q-card-section>
+        </q-card>
+      </div>
     </template>
   </q-table>
 </template>
@@ -149,6 +151,10 @@ import {useMods} from '../composables/useMods';
 import {useCombinations} from '../composables/useCombinations';
 import NumericFilter from 'components/NumericFilter.vue';
 
+const isMobile = computed(() => {
+  return window.innerWidth < 700
+})
+
 const {getMods, getModFromDisplayString, getModDisplayName} = useMods();
 const {getCombinations, combinationsError, getTotalCombinations, getMinMax} = useCombinations();
 
@@ -163,7 +169,7 @@ const selectedMod = ref(null)
 const columns = ref([])
 const filters = ref([])
 const mods = ref([])
-const pagination = ref({page: 1, rowsPerPage: 100})
+const pagination = ref({page: 1, rowsPerPage: isMobile.value ? 1 : 100})
 
 onBeforeMount(async () => {
   mods.value = await getMods()

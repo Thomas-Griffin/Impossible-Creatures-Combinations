@@ -43,7 +43,8 @@ class CombinationsService extends MongoService {
         const bodySchema = Joi.object({
             mod: Joi.object({
                 name: Joi.string().valid(...mods.map(mod => mod.name)).required(),
-                version: Joi.string().valid(...mods.map(mod => mod.version)).required()
+                version: Joi.string().valid(...mods.map(mod => mod.version)).required(),
+                columns: Joi.array().items(Joi.object()).optional(),
             }),
             filters: Joi.array().items(Joi.object()).optional(),
             sorting: Joi.object({

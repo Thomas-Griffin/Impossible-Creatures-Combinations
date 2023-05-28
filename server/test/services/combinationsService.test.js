@@ -2,6 +2,7 @@ const Service = require('../../services/combinationsService');
 const config = {useTestCollection: true}
 const combinationsService = new Service(config)
 const {testMod, testModCollectionName} = require('../constants/globalTestConstants')
+const Joi = require("joi");
 
 describe('CombinationsService', () => {
     beforeEach(async () => {
@@ -85,8 +86,135 @@ describe('CombinationsService', () => {
             let body = {
                 mod: testMod,
             }
-            const combinations = await combinationsService.getCombinations(body);
+            const combinations = await combinationsService.getCombinations(body, 1, 10);
             expect(combinations).toHaveLength(3);
+            console.log(combinations)
+        });
+        it("should return an error if the mod doesn't exist", async () => {
+            let body = {
+                mod: {name: 'fakeMod', version: '1.0.0'},
+            }
+            const combinations = await combinationsService.getCombinations(body, 1, 10);
+            expect(combinations).toBeInstanceOf(Joi.ValidationError);
+            console.log(combinations)
+        });
+        it('should return an error if the mod version is not supplied', async function () {
+            let body = {
+                mod: {name: 'testMod'},
+            }
+            const combinations = await combinationsService.getCombinations(body, 1, 10);
+            expect(combinations).toBeInstanceOf(Joi.ValidationError);
+            console.log(combinations)
+        });
+        it('should return an error if the mod name is not supplied', async function () {
+            let body = {
+                mod: {version: '1.0.0'},
+            }
+            const combinations = await combinationsService.getCombinations(body, 1, 10);
+            expect(combinations).toBeInstanceOf(Joi.ValidationError);
+            console.log(combinations)
+        });
+        it('should return an error if the mod version is not a string', async function () {
+            let body = {
+                mod: {name: 'testMod', version: 1},
+            }
+            const combinations = await combinationsService.getCombinations(body, 1, 10);
+            expect(combinations).toBeInstanceOf(Joi.ValidationError);
+            console.log(combinations)
+        });
+
+        it('should return an error if the mod name is not a string', async function () {
+            let body = {
+                mod: {name: 1, version: '1.0.0'},
+            }
+            const combinations = await combinationsService.getCombinations(body, 1, 10);
+            expect(combinations).toBeInstanceOf(Joi.ValidationError);
+            console.log(combinations);
+        });
+
+        it('should return an error if pageNumber is not supplied', async function () {
+            let body = {
+                mod: testMod,
+            }
+            const combinations = await combinationsService.getCombinations(body, undefined, 10);
+            expect(combinations).toBeInstanceOf(Joi.ValidationError);
+            console.log(combinations);
+        });
+        it('should return an error if nPerPage is not supplied', async function () {
+            let body = {
+                mod: testMod,
+            }
+            const combinations = await combinationsService.getCombinations(body, 1, undefined);
+            expect(combinations).toBeInstanceOf(Joi.ValidationError);
+            console.log(combinations);
+        });
+        it('should return an error if pageNumber is not a number', async function () {
+            let body = {
+                mod: testMod,
+            }
+            const combinations = await combinationsService.getCombinations(body, '1', 10);
+            expect(combinations).toBeInstanceOf(Joi.ValidationError);
+            console.log(combinations);
+        });
+        it('should return an error if nPerPage is not a number', async function () {
+            let body = {
+                mod: testMod,
+            }
+            const combinations = await combinationsService.getCombinations(body, 1, '10');
+            expect(combinations).toBeInstanceOf(Joi.ValidationError);
+            console.log(combinations);
+        });
+        it('should return an error if pageNumber is less than 1', async function () {
+            let body = {
+                mod: testMod,
+            }
+            const combinations = await combinationsService.getCombinations(body, 0, 10);
+            expect(combinations).toBeInstanceOf(Joi.ValidationError);
+            console.log(combinations);
+        });
+        it('should return an error if nPerPage is less than 1', async function () {
+            let body = {
+                mod: testMod,
+            }
+            const combinations = await combinationsService.getCombinations(body, 1, 0);
+            expect(combinations).toBeInstanceOf(Joi.ValidationError);
+            console.log(combinations);
+        });
+        it('should return an error if filters is not an array', async function () {
+            let body = {
+                mod: testMod,
+                filters: 'test',
+            }
+            const combinations = await combinationsService.getCombinations(body, 1, 10);
+            expect(combinations).toBeInstanceOf(Joi.ValidationError);
+            console.log(combinations);
+        });
+        it('should return an error if filters is not an array of objects', async function () {
+            let body = {
+                mod: testMod,
+                filters: ['test'],
+            }
+            const combinations = await combinationsService.getCombinations(body, 1, 10);
+            expect(combinations).toBeInstanceOf(Joi.ValidationError);
+            console.log(combinations);
+        });
+        it('should return an error if sorting does not have column', async function () {
+            let body = {
+                mod: testMod,
+                sorting: {order: 'ascending'},
+            }
+            const combinations = await combinationsService.getCombinations(body, 1, 10);
+            expect(combinations).toBeInstanceOf(Joi.ValidationError);
+            console.log(combinations);
+        });
+        it('should return an error if sorting does not have order', async function () {
+            let body = {
+                mod: testMod,
+                sorting: {column: 'Health'},
+            }
+            const combinations = await combinationsService.getCombinations(body, 1, 10);
+            expect(combinations).toBeInstanceOf(Joi.ValidationError);
+            console.log(combinations);
         });
     });
 });

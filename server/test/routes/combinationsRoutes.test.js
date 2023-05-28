@@ -84,7 +84,7 @@ describe('Combinations routes', () => {
 
     describe('Post /combinations', () => {
         it('should return all combinations', async () => {
-            await request(app).post('/combinations?nPerPage=3&pageNumber=1', {mod: testMod}).then(response => {
+            await request(app).post('/combinations?nPerPage=3&pageNumber=1').send({mod: testMod}).then(response => {
                 expect(response.status).toEqual(200);
                 expect(Array.isArray(response.body)).toBe(true);
                 expect(response.body.length).toEqual(3);

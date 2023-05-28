@@ -1,6 +1,12 @@
+const Joi = require('joi');
 const MongoService = require('./mongoService')
 const combinationErrors = require('../errors/combinationsErrors')
 const genericErrors = require('../errors/genericErrors')
+const fs = require("fs");
+let mods = JSON.parse(fs.readFileSync('services/schema.json', 'utf8'));
+const testMods = JSON.parse(fs.readFileSync('services/testSchema.json', 'utf8'));
+mods = mods.concat(testMods);
+
 
 class CombinationsService extends MongoService {
     constructor() {
@@ -14,7 +20,7 @@ class CombinationsService extends MongoService {
     async getTotalCombinations(body) {
         const mod = body?.mod;
         if (mod === null || mod === undefined) {
-            return combinationErrors.ModError;
+            return combinationErrors.ModMissingError;
         }
         if (mod?.name === null || mod?.name === undefined) {
             return combinationErrors.ModNameError;
@@ -33,19 +39,41 @@ class CombinationsService extends MongoService {
         }
     }
 
-    async getCombinations(body = {
-        mod: {name: "Impossible Creatures", version: "1.1"},
-        filters: [], sorting: {column: "Animal 1", order: "descending"}
-    }, pageNumber = 1, nPerPage = Number.MAX_SAFE_INTEGER) {
-        if (body?.mod === null || body?.mod === undefined) {
-            return combinationErrors.ModError;
+    async getCombinations(body, pageNumber, nPerPage) {
+        const bodySchema = Joi.object({
+            mod: Joi.object({
+                name: Joi.string().valid(...mods.map(mod => mod.name)).required(),
+                version: Joi.string().valid(...mods.map(mod => mod.version)).required()
+            }),
+            filters: Joi.array().items(Joi.object()).optional(),
+            sorting: Joi.object({
+                column: Joi.string().required().messages({
+                    'any.required': 'The "column" field is required in the sorting object',
+                    'string.base': 'The "column" field must be a string',
+                }),
+                order: Joi.string().valid('ascending', 'descending').required().messages({
+                    'any.required': 'The "order" field is required in the sorting object',
+                    'any.only': 'The "order" field must be either "ascending" or "descending"',
+                }),
+            }).optional().messages({
+                'object.base': 'The "sorting" field must be an object',
+            }),
+        })
+        const {error} = bodySchema.validate(body, {abortEarly: false});
+        if (error) {
+            return error;
         }
-        if (body?.mod?.name === null || body?.mod?.name === undefined || body?.mod?.name === '') {
-            return combinationErrors.ModNameError;
+        const pageNumberSchema = Joi.number().strict().integer().min(1).required().label('pageNumber');
+        const {error: pageNumberError} = pageNumberSchema.validate(pageNumber);
+        if (pageNumberError) {
+            return pageNumberError;
         }
-        if (body?.mod?.version === null || body?.mod?.version === undefined || body?.mod?.version === '') {
-            return combinationErrors.ModVersionError;
-        } else if (body?.mod?.name && body?.mod?.version) {
+        const nPerPageSchema = Joi.number().strict().integer().min(1).required().label('nPerPage');
+        const {error: nPerPageError} = nPerPageSchema.validate(nPerPage);
+        if (nPerPageError) {
+            return nPerPageError;
+        }
+        if (body?.mod?.name && body?.mod?.version) {
             try {
                 await this.connect();
                 const query = this.buildFiltersQuery(body);

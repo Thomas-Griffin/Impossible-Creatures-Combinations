@@ -1,6 +1,6 @@
-const ModError = {
-    error: 'Invalid mod',
-    message: 'The mod you are trying to use is invalid.',
+const ModMissingError = {
+    error: 'Mod Missing',
+    message: 'A mod has not been supplied.',
     status: 500
 }
 
@@ -28,10 +28,23 @@ const AttributeNotSuppliedError = {
     status: 500
 }
 
+const PageNumberMissingError = {
+    error: 'Missing Page Number',
+    message: 'A valid Page Number was not supplied',
+    status: 500
+};
+const NPerPageMissingError = {
+    error: 'Missing Number Per Page',
+    message: 'A valid Number Per Page was not supplied',
+    status: 500
+};
+
 module.exports = {
-    ModError,
+    ModMissingError,
     ModNameError,
     ModVersionError,
     AttributeError,
-    AttributeNotSuppliedError
+    AttributeNotSuppliedError,
+    PageNumberMissingError,
+    NPerPageMissingError
 }

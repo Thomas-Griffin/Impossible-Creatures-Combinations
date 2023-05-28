@@ -89,7 +89,7 @@ class DatabaseService extends MongoService {
 
     fetchCombinations(mod) {
         console.log('fetching all combinations for mod: ' + mod.name + ' ' + mod.version)
-        //TODO Get all combinations from public endpoint and replace these lines
+        //TODO Get all combinations from combiner and replace these lines
         if (mod.name === 'Tellurian' && mod.version === '2.10') {
             return JSON.parse(fs.readFileSync(`all_combos_Tel2.10_Full.json`, 'utf8'))
         }

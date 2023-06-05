@@ -35,8 +35,14 @@ export function useCombinations() {
     return response.data
   }
 
-  const getMinMax = async (attribute) => {
-    let response = await axios.get(`${baseURL}/combinations/min-max?attribute=${attribute}`)
+  const getMinMax = async (mod, attribute) => {
+    let response = await axios.post(`${baseURL}/combinations/min-max`, {mod, attribute})
+    return response.data
+  }
+
+
+  const getAbilities = async (mod) => {
+    let response = await axios.post(`${baseURL}/combinations/abilities`, {mod})
     return response.data
   }
 
@@ -45,7 +51,8 @@ export function useCombinations() {
     combinationsError,
     getCombinations,
     getTotalCombinations,
-    getMinMax
+    getMinMax,
+    getAbilities
   }
 }
 

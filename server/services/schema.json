@@ -1,30 +1,30 @@
 [
   {
-    "name": "Impossible Creatures",
+    "name"   : "Impossible Creatures",
     "version": "1.1",
     "columns": [
       {
-        "label": "Animal 1",
-        "type": "string",
-        "format": true,
-        "path": [
+        "label"      : "Animal 1",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
           "stock_1"
         ],
         "description": "The first animal in the creature's composition."
       },
       {
-        "label": "Animal 2",
-        "type": "string",
-        "format": true,
-        "path": [
+        "label"      : "Animal 2",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
           "stock_2"
         ],
         "description": "The second animal in the creature's composition."
       },
       {
-        "label": "Research Level",
-        "type": "integer",
-        "path": [
+        "label"      : "Research Level",
+        "type"       : "integer",
+        "path"       : [
           "attributes",
           "creature_rank",
           1
@@ -32,438 +32,1413 @@
         "description": "The research level required to build the creature."
       },
       {
-        "label": "Coal",
-        "type": "float",
+        "label"         : "Coal",
+        "type"          : "float",
         "decimal_places": 1,
-        "path": [
+        "path"          : [
           "attributes",
           "cost",
           1
         ],
-        "description": "The amount of coal required to build the creature."
+        "description"   : "The amount of coal required to build the creature."
       },
       {
-        "label": "Electricity",
-        "type": "float",
+        "label"         : "Electricity",
+        "type"          : "float",
         "decimal_places": 1,
-        "path": [
+        "path"          : [
           "attributes",
-          "costRenew",
+          "costrenew",
           1
         ],
-        "description": "The amount of electricity required to build the creature."
+        "description"   : "The amount of electricity required to build the creature."
       },
       {
-        "label": "Health",
-        "type": "float",
+        "label"         : "Health",
+        "type"          : "float",
         "decimal_places": 1,
-        "path": [
+        "path"          : [
           "attributes",
           "health_val",
           1
         ],
-        "description": "The creature's health."
+        "description"   : "The creature's health."
       },
       {
-        "label": "Size",
-        "type": "float",
-        "decimal_places": 1,
-        "path": [
-          "attributes",
-          "size",
-          1
-        ]
-      },
-      {
-        "label": "Population Size",
-        "type": "float",
-        "decimal_places": 1,
-        "path": [
-          "attributes",
-          "popsize",
-          1
-        ],
-        "description": "The creature's population size."
-      },
-      {
-        "label": "Melee Damage",
-        "type": "float",
-        "decimal_places": 1,
-        "path": [
-          "attributes",
-          "damage_val",
-          1
-        ],
-        "description": "The creature's total melee damage."
-      },
-      {
-        "label": "Air Speed",
-        "type": "float",
-        "decimal_places": 1,
-        "path": [
-          "attributes",
-          "airspeed_val",
-          1
-        ],
-        "description": "The creature's air speed."
-      },
-      {
-        "label": "Land Speed",
-        "type": "float",
-        "decimal_places": 1,
-        "path": [
-          "attributes",
-          "landspeed_val",
-          1
-        ],
-        "description": "The creature's land speed."
-      },
-      {
-        "label": "Water Speed",
-        "type": "float",
-        "decimal_places": 1,
-        "path": [
-          "attributes",
-          "waterspeed_val",
-          1
-        ],
-        "description": "The creature's water speed."
-      },
-      {
-        "label": "Sight Radius",
-        "type": "float",
-        "decimal_places": 1,
-        "path": [
-          "attributes",
-          "sight_radius1",
-          1
-        ],
-        "description": "The creature's sight radius."
-      },
-      {
-        "label": "Front Legs",
-        "type": "string",
-        "format": true,
-        "path": [
-          "composition",
-          2
-        ],
-        "description": "The animal from which the creature's front legs are composed."
-      },
-      {
-        "label": "Rear Legs",
-        "type": "string",
-        "format": true,
-        "path": [
-          "composition",
-          3
-        ],
-        "description": "The animal from which the creature's rear legs are composed."
-      },
-      {
-        "label": "Head",
-        "type": "string",
-        "format": true,
-        "path": [
-          "composition",
-          4
-        ],
-        "description": "The animal from which the creature's head is composed."
-      },
-      {
-        "label": "Tail",
-        "type": "string",
-        "format": true,
-        "path": [
-          "composition",
-          5
-        ],
-        "description": "The animal from which the creature's tail is composed."
-      },
-      {
-        "label": "Torso",
-        "type": "string",
-        "format": true,
-        "path": [
-          "composition",
-          6
-        ],
-        "description": "The animal from which the creature's torso is composed."
-      },
-      {
-        "label": "Pincers",
-        "type": "string",
-        "format": true,
-        "path": [
-          "composition",
-          7
-        ],
-        "description": "The animal from which the creature's pincers are composed."
-      },
-      {
-        "label": "Wings",
-        "type": "string",
-        "format": true,
-        "path": [
-          "composition",
-          8
-        ],
-        "description": "The animal from which the creature's wings are composed."
-      }
-    ]
-  },
-  {
-    "name": "Insect Invasion",
-    "version": "1.4",
-    "columns": []
-  },
-  {
-    "name": "Smod",
-    "version": "9.25",
-    "columns": []
-  },
-  {
-    "name": "Tellurian",
-    "version": "2.0",
-    "columns": []
-  },
-  {
-    "name": "Tellurian",
-    "version": "2.9.1.4",
-    "columns": []
-  },
-  {
-    "name": "Tellurian",
-    "version": "2.10",
-    "columns": [
-      {
-        "label": "Animal 1",
-        "type": "string",
-        "format": true,
-        "path": [
-          "stock_1"
-        ],
-        "description": "The first animal in the creature's composition."
-      },
-      {
-        "label": "Animal 2",
-        "type": "string",
-        "format": true,
-        "path": [
-          "stock_2"
-        ],
-        "description": "The second animal in the creature's composition."
-      },
-      {
-        "label": "Research Level",
-        "type": "integer",
-        "path": [
-          "attributes",
-          "creature_rank",
-          1
-        ],
-        "description": "The research level required to build the creature."
-      },
-      {
-        "label": "Coal",
-        "type": "float",
-        "decimal_places": 1,
-        "path": [
-          "attributes",
-          "cost",
-          1
-        ],
-        "description": "The amount of coal required to build the creature."
-      },
-      {
-        "label": "Electricity",
-        "type": "float",
-        "decimal_places": 1,
-        "path": [
-          "attributes",
-          "costRenew",
-          1
-        ],
-        "description": "The amount of electricity required to build the creature."
-      },
-      {
-        "label": "Power",
-        "type": "float",
-        "decimal_places": 1,
-        "path": [
-          "attributes",
-          "Power",
-          1
-        ],
-        "description": "The power rating of the creature."
-      },
-      {
-        "label": "EHP",
-        "type": "float",
-        "decimal_places": 1,
-        "path": [
-          "attributes",
-          "ehp",
-          1
-        ],
+        "label"      : "EHP",
+        "type"       : "generated",
         "description": "The creature's effective hit points."
       },
       {
-        "label": "Health",
-        "type": "float",
+        "label"         : "Size",
+        "type"          : "float",
         "decimal_places": 1,
-        "path": [
-          "attributes",
-          "health_val",
-          1
-        ],
-        "description": "The creature's health."
-      },
-      {
-        "label": "Size",
-        "type": "float",
-        "decimal_places": 1,
-        "path": [
+        "path"          : [
           "attributes",
           "size",
           1
         ]
       },
       {
-        "label": "Population Size",
-        "type": "float",
+        "label"         : "Population Size",
+        "type"          : "float",
         "decimal_places": 1,
-        "path": [
+        "path"          : [
           "attributes",
           "popsize",
           1
         ],
-        "description": "The creature's population size."
+        "description"   : "The creature's population size."
       },
       {
-        "label": "Melee Damage",
-        "type": "float",
+        "label"         : "Melee Damage",
+        "type"          : "float",
         "decimal_places": 1,
-        "path": [
+        "path"          : [
           "attributes",
           "damage_val",
           1
         ],
-        "description": "The creature's total melee damage."
+        "description"   : "The creature's total melee damage."
       },
       {
-        "label": "Air Speed",
-        "type": "float",
+        "label"         : "Defence",
+        "type"          : "percentage",
         "decimal_places": 1,
-        "path": [
+        "path"          : [
+          "attributes",
+          "armour",
+          1
+        ],
+        "description"   : "The creature's total defence value"
+      },
+      {
+        "label"         : "Air Speed",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
           "attributes",
           "airspeed_val",
           1
         ],
-        "description": "The creature's air speed."
+        "description"   : "The creature's air speed."
       },
       {
-        "label": "Land Speed",
-        "type": "float",
+        "label"         : "Land Speed",
+        "type"          : "float",
         "decimal_places": 1,
-        "path": [
+        "path"          : [
           "attributes",
           "landspeed_val",
           1
         ],
-        "description": "The creature's land speed."
+        "description"   : "The creature's land speed."
       },
       {
-        "label": "Water Speed",
-        "type": "float",
+        "label"         : "Water Speed",
+        "type"          : "float",
         "decimal_places": 1,
-        "path": [
+        "path"          : [
           "attributes",
           "waterspeed_val",
           1
         ],
-        "description": "The creature's water speed."
+        "description"   : "The creature's water speed."
       },
       {
-        "label": "Sight Radius",
-        "type": "float",
+        "label"         : "Sight Radius",
+        "type"          : "float",
         "decimal_places": 1,
-        "path": [
+        "path"          : [
           "attributes",
           "sight_radius1",
           1
         ],
-        "description": "The creature's sight radius."
+        "description"   : "The creature's sight radius."
       },
       {
-        "label": "Front Legs",
-        "type": "string",
-        "format": true,
-        "path": [
+        "label"      : "Front Legs",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
           "composition",
           0
         ],
         "description": "The animal from which the creature's front legs are composed."
       },
       {
-        "label": "Rear Legs",
-        "type": "string",
-        "format": true,
-        "path": [
+        "label"      : "Rear Legs",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
           "composition",
           1
         ],
         "description": "The animal from which the creature's rear legs are composed."
       },
       {
-        "label": "Head",
-        "type": "string",
-        "format": true,
-        "path": [
+        "label"      : "Head",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
           "composition",
           2
         ],
         "description": "The animal from which the creature's head is composed."
       },
       {
-        "label": "Tail",
-        "type": "string",
-        "format": true,
-        "path": [
+        "label"      : "Tail",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
           "composition",
           3
         ],
         "description": "The animal from which the creature's tail is composed."
       },
       {
-        "label": "Torso",
-        "type": "string",
-        "format": true,
-        "path": [
+        "label"      : "Torso",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
           "composition",
           4
         ],
         "description": "The animal from which the creature's torso is composed."
       },
       {
-        "label": "Pincers",
-        "type": "string",
-        "format": true,
-        "path": [
+        "label"      : "Pincers",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
           "composition",
           5
         ],
         "description": "The animal from which the creature's pincers are composed."
       },
       {
-        "label": "Wings",
-        "type": "string",
-        "format": true,
-        "path": [
+        "label"      : "Wings",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
           "composition",
           6
         ],
         "description": "The animal from which the creature's wings are composed."
+      },
+      {
+        "label": "Abilities",
+        "type" : "array"
+      }
+    ]
+  },
+  {
+    "name"   : "Insect Invasion",
+    "version": "1.4",
+    "columns": [
+      {
+        "label"      : "Animal 1",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
+          "stock_1"
+        ],
+        "description": "The first animal in the creature's composition."
+      },
+      {
+        "label"      : "Animal 2",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
+          "stock_2"
+        ],
+        "description": "The second animal in the creature's composition."
+      },
+      {
+        "label"      : "Research Level",
+        "type"       : "integer",
+        "path"       : [
+          "attributes",
+          "creature_rank",
+          1
+        ],
+        "description": "The research level required to build the creature."
+      },
+      {
+        "label"         : "Coal",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "cost",
+          1
+        ],
+        "description"   : "The amount of coal required to build the creature."
+      },
+      {
+        "label"         : "Electricity",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "costrenew",
+          1
+        ],
+        "description"   : "The amount of electricity required to build the creature."
+      },
+      {
+        "label"         : "Health",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "health_val",
+          1
+        ],
+        "description"   : "The creature's health."
+      },
+      {
+        "label"      : "EHP",
+        "type"       : "generated",
+        "description": "The creature's effective hit points."
+      },
+      {
+        "label"         : "Size",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "size",
+          1
+        ]
+      },
+      {
+        "label"         : "Population Size",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "popsize",
+          1
+        ],
+        "description"   : "The creature's population size."
+      },
+      {
+        "label"         : "Melee Damage",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "damage_val",
+          1
+        ],
+        "description"   : "The creature's total melee damage."
+      },
+      {
+        "label"         : "Defence",
+        "type"          : "percentage",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "armour",
+          1
+        ],
+        "description"   : "The creature's total defence value"
+      },
+      {
+        "label"         : "Air Speed",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "airspeed_val",
+          1
+        ],
+        "description"   : "The creature's air speed."
+      },
+      {
+        "label"         : "Land Speed",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "landspeed_val",
+          1
+        ],
+        "description"   : "The creature's land speed."
+      },
+      {
+        "label"         : "Water Speed",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "waterspeed_val",
+          1
+        ],
+        "description"   : "The creature's water speed."
+      },
+      {
+        "label"         : "Sight Radius",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "sight_radius1",
+          1
+        ],
+        "description"   : "The creature's sight radius."
+      },
+      {
+        "label"      : "Front Legs",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
+          "composition",
+          0
+        ],
+        "description": "The animal from which the creature's front legs are composed."
+      },
+      {
+        "label"      : "Rear Legs",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
+          "composition",
+          1
+        ],
+        "description": "The animal from which the creature's rear legs are composed."
+      },
+      {
+        "label"      : "Head",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
+          "composition",
+          2
+        ],
+        "description": "The animal from which the creature's head is composed."
+      },
+      {
+        "label"      : "Tail",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
+          "composition",
+          3
+        ],
+        "description": "The animal from which the creature's tail is composed."
+      },
+      {
+        "label"      : "Torso",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
+          "composition",
+          4
+        ],
+        "description": "The animal from which the creature's torso is composed."
+      },
+      {
+        "label"      : "Pincers",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
+          "composition",
+          5
+        ],
+        "description": "The animal from which the creature's pincers are composed."
+      },
+      {
+        "label"      : "Wings",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
+          "composition",
+          6
+        ],
+        "description": "The animal from which the creature's wings are composed."
+      },
+      {
+        "label": "Abilities",
+        "type" : "array"
+      }
+    ]
+  },
+  {
+    "name"   : "Smod",
+    "version": "9.25",
+    "columns": [
+      {
+        "label"      : "Animal 1",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
+          "stock_1"
+        ],
+        "description": "The first animal in the creature's composition."
+      },
+      {
+        "label"      : "Animal 2",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
+          "stock_2"
+        ],
+        "description": "The second animal in the creature's composition."
+      },
+      {
+        "label"      : "Research Level",
+        "type"       : "integer",
+        "path"       : [
+          "attributes",
+          "creature_rank",
+          1
+        ],
+        "description": "The research level required to build the creature."
+      },
+      {
+        "label"         : "Coal",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "cost",
+          1
+        ],
+        "description"   : "The amount of coal required to build the creature."
+      },
+      {
+        "label"         : "Electricity",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "costrenew",
+          1
+        ],
+        "description"   : "The amount of electricity required to build the creature."
+      },
+      {
+        "label"         : "Health",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "health_val",
+          1
+        ],
+        "description"   : "The creature's health."
+      },
+      {
+        "label"      : "EHP",
+        "type"       : "generated",
+        "description": "The creature's effective hit points."
+      },
+      {
+        "label"         : "Size",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "size",
+          1
+        ]
+      },
+      {
+        "label"         : "Population Size",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "popsize",
+          1
+        ],
+        "description"   : "The creature's population size."
+      },
+      {
+        "label"         : "Melee Damage",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "damage_val",
+          1
+        ],
+        "description"   : "The creature's total melee damage."
+      },
+      {
+        "label"         : "Defence",
+        "type"          : "percentage",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "armour",
+          1
+        ],
+        "description"   : "The creature's total defence value"
+      },
+      {
+        "label"         : "Air Speed",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "airspeed_val",
+          1
+        ],
+        "description"   : "The creature's air speed."
+      },
+      {
+        "label"         : "Land Speed",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "landspeed_val",
+          1
+        ],
+        "description"   : "The creature's land speed."
+      },
+      {
+        "label"         : "Water Speed",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "waterspeed_val",
+          1
+        ],
+        "description"   : "The creature's water speed."
+      },
+      {
+        "label"         : "Sight Radius",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "sight_radius1",
+          1
+        ],
+        "description"   : "The creature's sight radius."
+      },
+      {
+        "label"      : "Front Legs",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
+          "composition",
+          0
+        ],
+        "description": "The animal from which the creature's front legs are composed."
+      },
+      {
+        "label"      : "Rear Legs",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
+          "composition",
+          1
+        ],
+        "description": "The animal from which the creature's rear legs are composed."
+      },
+      {
+        "label"      : "Head",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
+          "composition",
+          2
+        ],
+        "description": "The animal from which the creature's head is composed."
+      },
+      {
+        "label"      : "Tail",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
+          "composition",
+          3
+        ],
+        "description": "The animal from which the creature's tail is composed."
+      },
+      {
+        "label"      : "Torso",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
+          "composition",
+          4
+        ],
+        "description": "The animal from which the creature's torso is composed."
+      },
+      {
+        "label"      : "Pincers",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
+          "composition",
+          5
+        ],
+        "description": "The animal from which the creature's pincers are composed."
+      },
+      {
+        "label"      : "Wings",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
+          "composition",
+          6
+        ],
+        "description": "The animal from which the creature's wings are composed."
+      },
+      {
+        "label": "Abilities",
+        "type" : "array"
+      }
+    ]
+  },
+  {
+    "name"   : "Tellurian",
+    "version": "2.0",
+    "columns": [
+      {
+        "label"      : "Animal 1",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
+          "stock_1"
+        ],
+        "description": "The first animal in the creature's composition."
+      },
+      {
+        "label"      : "Animal 2",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
+          "stock_2"
+        ],
+        "description": "The second animal in the creature's composition."
+      },
+      {
+        "label"      : "Research Level",
+        "type"       : "integer",
+        "path"       : [
+          "attributes",
+          "creature_rank",
+          1
+        ],
+        "description": "The research level required to build the creature."
+      },
+      {
+        "label"         : "Coal",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "cost",
+          1
+        ],
+        "description"   : "The amount of coal required to build the creature."
+      },
+      {
+        "label"         : "Electricity",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "costrenew",
+          1
+        ],
+        "description"   : "The amount of electricity required to build the creature."
+      },
+      {
+        "label"         : "Power",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "Power",
+          1
+        ],
+        "description"   : "The power rating of the creature."
+      },
+      {
+        "label"      : "EHP",
+        "type"       : "generated",
+        "description": "The creature's effective hit points."
+      },
+      {
+        "label"         : "Health",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "health_val",
+          1
+        ],
+        "description"   : "The creature's health."
+      },
+      {
+        "label"         : "Size",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "size",
+          1
+        ]
+      },
+      {
+        "label"         : "Population Size",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "popsize",
+          1
+        ],
+        "description"   : "The creature's population size."
+      },
+      {
+        "label"         : "Melee Damage",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "damage_val",
+          1
+        ],
+        "description"   : "The creature's total melee damage."
+      },
+      {
+        "label"         : "Defence",
+        "type"          : "percentage",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "armour",
+          1
+        ],
+        "description"   : "The creature's total defence value"
+      },
+      {
+        "label"         : "Air Speed",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "airspeed_val",
+          1
+        ],
+        "description"   : "The creature's air speed."
+      },
+      {
+        "label"         : "Land Speed",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "landspeed_val",
+          1
+        ],
+        "description"   : "The creature's land speed."
+      },
+      {
+        "label"         : "Water Speed",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "waterspeed_val",
+          1
+        ],
+        "description"   : "The creature's water speed."
+      },
+      {
+        "label"         : "Sight Radius",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "sight_radius1",
+          1
+        ],
+        "description"   : "The creature's sight radius."
+      },
+      {
+        "label"      : "Front Legs",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
+          "composition",
+          0
+        ],
+        "description": "The animal from which the creature's front legs are composed."
+      },
+      {
+        "label"      : "Rear Legs",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
+          "composition",
+          1
+        ],
+        "description": "The animal from which the creature's rear legs are composed."
+      },
+      {
+        "label"      : "Head",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
+          "composition",
+          2
+        ],
+        "description": "The animal from which the creature's head is composed."
+      },
+      {
+        "label"      : "Tail",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
+          "composition",
+          3
+        ],
+        "description": "The animal from which the creature's tail is composed."
+      },
+      {
+        "label"      : "Torso",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
+          "composition",
+          4
+        ],
+        "description": "The animal from which the creature's torso is composed."
+      },
+      {
+        "label"      : "Pincers",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
+          "composition",
+          5
+        ],
+        "description": "The animal from which the creature's pincers are composed."
+      },
+      {
+        "label"      : "Wings",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
+          "composition",
+          6
+        ],
+        "description": "The animal from which the creature's wings are composed."
+      },
+      {
+        "label": "Abilities",
+        "type" : "array"
+      }
+    ]
+  },
+  {
+    "name"   : "Tellurian",
+    "version": "2.9.1.4",
+    "columns": [
+      {
+        "label"      : "Animal 1",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
+          "stock_1"
+        ],
+        "description": "The first animal in the creature's composition."
+      },
+      {
+        "label"      : "Animal 2",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
+          "stock_2"
+        ],
+        "description": "The second animal in the creature's composition."
+      },
+      {
+        "label"      : "Research Level",
+        "type"       : "integer",
+        "path"       : [
+          "attributes",
+          "creature_rank",
+          1
+        ],
+        "description": "The research level required to build the creature."
+      },
+      {
+        "label"         : "Coal",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "cost",
+          1
+        ],
+        "description"   : "The amount of coal required to build the creature."
+      },
+      {
+        "label"         : "Electricity",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "costRenew",
+          1
+        ],
+        "description"   : "The amount of electricity required to build the creature."
+      },
+      {
+        "label"         : "Power",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "Power",
+          1
+        ],
+        "description"   : "The power rating of the creature."
+      },
+      {
+        "label"         : "EHP",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "ehp",
+          1
+        ],
+        "description"   : "The creature's effective hit points."
+      },
+      {
+        "label"         : "Health",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "health_val",
+          1
+        ],
+        "description"   : "The creature's health."
+      },
+      {
+        "label"         : "Size",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "size",
+          1
+        ]
+      },
+      {
+        "label"         : "Population Size",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "popsize",
+          1
+        ],
+        "description"   : "The creature's population size."
+      },
+      {
+        "label"         : "Melee Damage",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "damage_val",
+          1
+        ],
+        "description"   : "The creature's total melee damage."
+      },
+      {
+        "label"         : "Defence",
+        "type"          : "percentage",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "armour",
+          1
+        ],
+        "description"   : "The creature's total defence value"
+      },
+      {
+        "label"         : "Air Speed",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "airspeed_val",
+          1
+        ],
+        "description"   : "The creature's air speed."
+      },
+      {
+        "label"         : "Land Speed",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "landspeed_val",
+          1
+        ],
+        "description"   : "The creature's land speed."
+      },
+      {
+        "label"         : "Water Speed",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "waterspeed_val",
+          1
+        ],
+        "description"   : "The creature's water speed."
+      },
+      {
+        "label"         : "Sight Radius",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "sight_radius1",
+          1
+        ],
+        "description"   : "The creature's sight radius."
+      },
+      {
+        "label"      : "Front Legs",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
+          "composition",
+          0
+        ],
+        "description": "The animal from which the creature's front legs are composed."
+      },
+      {
+        "label"      : "Rear Legs",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
+          "composition",
+          1
+        ],
+        "description": "The animal from which the creature's rear legs are composed."
+      },
+      {
+        "label"      : "Head",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
+          "composition",
+          2
+        ],
+        "description": "The animal from which the creature's head is composed."
+      },
+      {
+        "label"      : "Tail",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
+          "composition",
+          3
+        ],
+        "description": "The animal from which the creature's tail is composed."
+      },
+      {
+        "label"      : "Torso",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
+          "composition",
+          4
+        ],
+        "description": "The animal from which the creature's torso is composed."
+      },
+      {
+        "label"      : "Pincers",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
+          "composition",
+          5
+        ],
+        "description": "The animal from which the creature's pincers are composed."
+      },
+      {
+        "label"      : "Wings",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
+          "composition",
+          6
+        ],
+        "description": "The animal from which the creature's wings are composed."
+      },
+      {
+        "label": "Abilities",
+        "type" : "array"
+      }
+    ]
+  },
+  {
+    "name"   : "Tellurian",
+    "version": "2.10",
+    "columns": [
+      {
+        "label"      : "Animal 1",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
+          "stock_1"
+        ],
+        "description": "The first animal in the creature's composition."
+      },
+      {
+        "label"      : "Animal 2",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
+          "stock_2"
+        ],
+        "description": "The second animal in the creature's composition."
+      },
+      {
+        "label"      : "Research Level",
+        "type"       : "integer",
+        "path"       : [
+          "attributes",
+          "creature_rank",
+          1
+        ],
+        "description": "The research level required to build the creature."
+      },
+      {
+        "label"         : "Coal",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "cost",
+          1
+        ],
+        "description"   : "The amount of coal required to build the creature."
+      },
+      {
+        "label"         : "Electricity",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "costRenew",
+          1
+        ],
+        "description"   : "The amount of electricity required to build the creature."
+      },
+      {
+        "label"         : "Power",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "Power",
+          1
+        ],
+        "description"   : "The power rating of the creature."
+      },
+      {
+        "label"         : "EHP",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "ehp",
+          1
+        ],
+        "description"   : "The creature's effective hit points."
+      },
+      {
+        "label"         : "Health",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "health_val",
+          1
+        ],
+        "description"   : "The creature's health."
+      },
+      {
+        "label"         : "Size",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "size",
+          1
+        ]
+      },
+      {
+        "label"         : "Population Size",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "popsize",
+          1
+        ],
+        "description"   : "The creature's population size."
+      },
+      {
+        "label"         : "Melee Damage",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "damage_val",
+          1
+        ],
+        "description"   : "The creature's total melee damage."
+      },
+      {
+        "label"         : "Defence",
+        "type"          : "percentage",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "armour",
+          1
+        ],
+        "description"   : "The creature's total defence value"
+      },
+      {
+        "label"         : "Air Speed",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "airspeed_val",
+          1
+        ],
+        "description"   : "The creature's air speed."
+      },
+      {
+        "label"         : "Land Speed",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "landspeed_val",
+          1
+        ],
+        "description"   : "The creature's land speed."
+      },
+      {
+        "label"         : "Water Speed",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "waterspeed_val",
+          1
+        ],
+        "description"   : "The creature's water speed."
+      },
+      {
+        "label"         : "Sight Radius",
+        "type"          : "float",
+        "decimal_places": 1,
+        "path"          : [
+          "attributes",
+          "sight_radius1",
+          1
+        ],
+        "description"   : "The creature's sight radius."
+      },
+      {
+        "label"      : "Front Legs",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
+          "composition",
+          0
+        ],
+        "description": "The animal from which the creature's front legs are composed."
+      },
+      {
+        "label"      : "Rear Legs",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
+          "composition",
+          1
+        ],
+        "description": "The animal from which the creature's rear legs are composed."
+      },
+      {
+        "label"      : "Head",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
+          "composition",
+          2
+        ],
+        "description": "The animal from which the creature's head is composed."
+      },
+      {
+        "label"      : "Tail",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
+          "composition",
+          3
+        ],
+        "description": "The animal from which the creature's tail is composed."
+      },
+      {
+        "label"      : "Torso",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
+          "composition",
+          4
+        ],
+        "description": "The animal from which the creature's torso is composed."
+      },
+      {
+        "label"      : "Pincers",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
+          "composition",
+          5
+        ],
+        "description": "The animal from which the creature's pincers are composed."
+      },
+      {
+        "label"      : "Wings",
+        "type"       : "string",
+        "format"     : true,
+        "path"       : [
+          "composition",
+          6
+        ],
+        "description": "The animal from which the creature's wings are composed."
+      },
+      {
+        "label": "Abilities",
+        "type" : "array"
       }
     ]
   }

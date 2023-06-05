@@ -2,21 +2,28 @@
   <q-table
     ref="tableRef"
     v-model:pagination="pagination"
+    v-model:selected="selectedRows"
     :columns="selectedColumns"
     :grid="gridMode"
     :hide-header="gridMode"
     :loading="loading"
-    :row-key="row => rowKey(row)"
     :rows="filteredRows"
     :rows-per-page-options="[100, 50, 20, 10, 5, 1]"
     :separator="separator"
     class="sticky-header-table"
     dense
     flat
+    row-key="_id"
+    selection="multiple"
     style="height: 1000px; font-family: monospace; font-weight: bold;"
+    table-header-class="cursive-font"
     @request="onRequest"
   >
     <template v-slot:top>
+      <div class="q-pr-sm">
+        <q-btn :icon="gridMode ? 'grid_on': 'list'" class="cursive-font" dense flat
+               @click="gridMode = !gridMode"/>
+      </div>
       <q-select :model-value="selectedMod" :options="modsDisplayNames"
                 class="cursive-font" dense flat
                 label="Mod" label-color="grey" rounded
@@ -57,27 +64,35 @@
                 size="sm"
                 @click="onDescendingSort(col)"
               />
-            <q-btn-dropdown :label="col.label" align="center" dense dropdown-icon="search" flat no-icon-animation
+
+            <q-btn-dropdown :label="col.label" align="center" dense dropdown-icon="none" flat icon="search"
+                            no-icon-animation
                             rounded>
+
               <q-item>
-                <q-input v-if="filters.find(f => f?.label === col.label && f?.type === 'string')"
-                         dense flat label="Filter" rounded
-                         @update:model-value="value => setStringFilter(value, col.label)"/>
+                <q-item-section v-if="filters.find(f => f?.label === col.label && f?.type === 'string')"
+                                class="row fit items-center">
+                  <q-input dense flat label="Filter" rounded
+                           @update:model-value="value => setStringFilter(value, col.label)"/>
+                  <q-btn dense flat label="Apply" @click="applyTextFilters"/>
+                </q-item-section>
+                <q-item-section
+                  v-else-if="col.label === 'Abilities'">
+                  <q-select v-model="selectedAbilities" :options="abilities" dense flat label="Ability Filter"
+                            multiple
+                            rounded
+                            @update:model-value="setAbilitiesFilter"/>
+                </q-item-section>
                 <suspense v-else>
-                <numeric-filter :ref="nf => addNumericFilter(nf, col.label)" :label="col.label"
-                                :max="filters.find(f => f?.label === col.label && f?.type === 'number')?.max"
-                                :min="filters.find(f => f?.label === col.label && f?.type === 'number')?.min"/>
+                  <q-item-section class="row fit items-center">
+                    <numeric-filter :ref="nf => addNumericFilter(nf, col.label)" :label="col.label"
+                                    :max="filters.find(f => f?.label === col.label && f?.type === 'number')?.max"
+                                    :min="filters.find(f => f?.label === col.label && f?.type === 'number')?.min"/>
+                    <q-btn dense flat label="Apply" @click="applyNumericFilters"/>
+                  </q-item-section>
                 </suspense>
               </q-item>
-              <div class="row fit justify-center" style="margin-bottom: 2%">
-                <q-space/>
-                <q-btn dense flat label="Apply" @click="applyFilters"/>
-                <q-space/>
-                <q-btn dense flat label="Reset" @click="() => clearFilter(col.label)"/>
-                <q-space/>
-              </div>
             </q-btn-dropdown>
-
             </span>
         </q-item>
 
@@ -86,7 +101,7 @@
       <div v-if="filtersAreActive" class="cursive-font">
         Active Filters:
         <q-chip v-for="filter in activeFilters" :key="filter.label"
-                :label="filter?.filter?.min && filter?.filter?.max ? `${filter.label}: Min: ${filter?.filter?.min}, Max: ${filter?.filter?.max}`: `${filter?.label}: ${filter?.filter}`"
+                :label="filter?.filter?.min && filter?.filter?.max ? `${filter.label}: Min: ${filter?.filter?.min}, Max: ${filter?.filter?.max}`: filter.type === 'array'? `${filter?.label}: ${filter?.filter?.join(', ')}` :`${filter?.label}: ${filter?.filter}`"
                 clickable color="grey" icon="close"
                 text-color="white"
                 @click="() => clearFilter(filter.label)"/>
@@ -100,19 +115,26 @@
              label="Clear Filters"
              @click="clearAllFilters"/>
       <q-space/>
-      <q-btn :icon="gridMode ? 'grid_on': 'list'" class="cursive-font" dense flat @click="gridMode = !gridMode"/>
+
     </template>
     <template v-slot:item="props">
       <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4">
         <q-card bordered flat>
           <q-card-section class="text-center cursive-font text-h6">
+
+            <q-checkbox v-model="props.selected" :label="props.row.name" dense/>
             {{ props.rowIndex + 1 }}
           </q-card-section>
           <q-separator/>
           <q-card-section>
             <div v-for="col in columns" :key="col.name">
               <div v-if="col.show" class="cursive-font text-h6">{{ col.name }}
-                <span class="mono-font">{{
+                <div v-if="col.name === 'Abilities'">
+                  <div v-for="ability in props.row[col.name]" :key="ability" class="mono-font">{{ ability.ability }}:
+                    {{ ability.source }}
+                  </div>
+                </div>
+                <span v-else class="mono-font">{{
                     props.row[col.name] === -1 ? ' (N/A)' : props.row[col.name]
                   }}</span></div>
             </div>
@@ -120,6 +142,62 @@
         </q-card>
       </div>
     </template>
+
+    <template v-slot:body-cell-Abilities="props">
+      <div style="width: 1000px">
+        <span
+          v-text="props.row.Abilities.map(a => `${a?.ability === undefined?'':a.ability}: ${a?.source === undefined?'':a.source}`).join(', ')"></span>
+      </div>
+    </template>
+
+    <template v-slot:top-right="scope">
+      <q-btn
+        v-if="scope.pagesNumber > 2"
+        :disable="scope.isFirstPage"
+        class="pagination-controls"
+        color="grey-8"
+        dense
+        flat
+        icon="first_page"
+        round
+        @click="scope.firstPage"
+      />
+
+      <q-btn
+        :disable="scope.isFirstPage"
+        class="pagination-controls"
+        color="grey-8"
+        dense
+        flat
+        icon="chevron_left"
+        round
+        @click="scope.prevPage"
+      />
+
+      <q-btn
+        :disable="scope.isLastPage"
+        class="pagination-controls"
+        color="grey-8"
+        dense
+        flat
+        icon="chevron_right"
+        round
+        @click="scope.nextPage"
+      />
+
+      <q-btn
+        v-if="scope.pagesNumber > 2"
+        :disable="scope.isLastPage"
+        class="pagination-controls"
+        color="grey-8"
+        dense
+        flat
+        icon="last_page"
+        round
+        @click="scope.lastPage"
+      />
+    </template>
+
   </q-table>
 </template>
 
@@ -157,7 +235,7 @@ const isMobile = computed(() => {
 })
 
 const {getMods, getModFromDisplayString, getModDisplayName} = useMods();
-const {getCombinations, combinationsError, getTotalCombinations, getMinMax} = useCombinations();
+const {getCombinations, combinationsError, getTotalCombinations, getMinMax, getAbilities} = useCombinations();
 
 const tableRef = ref();
 const filteredRows = ref([])
@@ -172,6 +250,9 @@ const filters = ref([])
 const mods = ref([])
 const pagination = ref({page: 1, rowsPerPage: isMobile.value ? 1 : 100})
 const gridMode = ref(true)
+const selectedRows = ref([])
+const abilities = ref([])
+const selectedAbilities = ref([])
 
 
 onBeforeMount(async () => {
@@ -183,9 +264,12 @@ onBeforeMount(async () => {
 
 const onModChange = async (modString) => {
   selectedMod.value = modString
+  filters.value = []
+  pagination.value.page = 1
   let mod = getModFromDisplayString(modString)
   if (combinationsError.value === null) {
     columns.value = getColumns(mod)
+    abilities.value = await getAbilities(mod)
     selectedColumns.value = columns.value
     await tableRef.value.requestServerInteraction()
   }
@@ -193,6 +277,7 @@ const onModChange = async (modString) => {
 
 async function onRequest(props) {
   loading.value = true
+  let mod = getModFromDisplayString(selectedMod.value)
 
   for (let numericFiltersKey in numericFilters.value) {
     let numericFilter = numericFilters.value[numericFiltersKey]
@@ -207,7 +292,7 @@ async function onRequest(props) {
     sorting = {column: sortedColumn.name, order: sortedColumn.isSorted.ascending ? 'ascending' : 'descending'}
   }
   let postBody = {
-    mod: getModFromDisplayString(selectedMod.value),
+    mod: mod,
     sorting: sorting,
     filters: filters.value !== null ? filters.value : [],
   }
@@ -216,7 +301,7 @@ async function onRequest(props) {
   let totalCombinations = await getTotalCombinations(postBody)
   props.pagination.rowsNumber = totalCombinations
   pagination.value.rowsNumber = totalCombinations
-  filters.value = await getFilters()
+  filters.value = await getFilters(mod)
 
   const {page, rowsPerPage} = props.pagination
   pagination.value.page = page
@@ -267,20 +352,30 @@ const getDescendingSortColor = (col) => {
 
 const clearFilter = async (columnLabel) => {
   filters.value.filter(filter => filter.label === columnLabel)[0].filter = null
-  await applyFilters()
+  await applyNumericFilters()
 }
 
-const applyFilters = async () => {
+
+const applyTextFilters = async () => {
+  filters.value.forEach(filter => {
+    if (filter?.filterText !== null && filter?.filterText !== undefined && filter?.filterText !== '') {
+      filter.filter = filter?.filterText
+    }
+  })
+  await tableRef.value.requestServerInteraction()
+}
+
+const applyNumericFilters = async () => {
   await tableRef.value.requestServerInteraction()
 }
 
 const clearAllFilters = async () => {
   filters.value.forEach(filter => filter.filter = null)
-  await applyFilters()
+  await applyNumericFilters()
 }
 
 const setStringFilter = (value, columnLabel) => {
-  filters.value.find(filter => filter.label === columnLabel).filter = value
+  filters.value.find(filter => filter.label === columnLabel).filterText = value
 }
 
 const addNumericFilter = (numericFilter, column) => {
@@ -303,9 +398,6 @@ const separator = computed(() => {
   return showGrid.value ? 'cell' : 'none'
 })
 
-const rowKey = (row) => {
-  return JSON.stringify(row)
-}
 
 const getColumns = (mod) => {
   return mod.columns.map(key => ({
@@ -324,15 +416,17 @@ const getColumns = (mod) => {
   }))
 }
 
-const getFilters = async () => {
+const getFilters = async (mod) => {
   if (filters.value.length > 0 || numericFilters.value.length > 0) {
     return filters.value
   } else {
     let result = columns.value.map(async column => {
-      let minmax = await getMinMax(column.label);
+      let minmax = await getMinMax(mod, column.label);
+      let type;
+      type = column.type === 'string' ? 'string' : column.type === 'array' ? 'array' : 'number';
       return {
         label: column.label,
-        type: column.type === 'string' ? 'string' : 'number',
+        type: type,
         min: minmax.min ? minmax.min : 0,
         max: minmax.max ? minmax.max : Number.MAX_SAFE_INTEGER,
         filter: null
@@ -340,6 +434,12 @@ const getFilters = async () => {
     })
     return await Promise.all(result)
   }
+}
+
+const setAbilitiesFilter = () => {
+  filters.value.find(filter => filter.label === 'Abilities').filter = selectedAbilities.value
+  tableRef.value.requestServerInteraction()
+  console.log(JSON.stringify(filters.value.find(filter => filter.label === 'Abilities').filter))
 }
 
 </script>

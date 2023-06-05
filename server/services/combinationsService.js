@@ -79,7 +79,6 @@ class CombinationsService extends MongoService {
                 await this.connect();
                 const query = this.buildFiltersQuery(body);
                 return await this.db.collection(this.toCollectionName(body.mod)).find(query)
-                    .project({'_id': 0})
                     .sort({[body.sorting.column]: body.sorting.order === "descending" ? -1 : 1})
                     .skip((pageNumber - 1) * nPerPage)
                     .limit(nPerPage)
@@ -91,28 +90,59 @@ class CombinationsService extends MongoService {
         }
     }
 
-    async getAttributeMinMax(query = {mod: {name: 'Impossible Creatures', version: '1.1'}, attribute: ''}) {
-        if (query?.mod?.name === null || query?.mod?.name === undefined || query?.mod?.name === '') {
-            return combinationErrors.ModNameError;
-        }
-        if (query?.mod?.version === null || query?.mod?.version === undefined || query?.mod?.version === '') {
-            return combinationErrors.ModVersionError;
-        }
-        if (query?.attribute === null || query?.attribute === undefined || query?.attribute === '') {
-            return combinationErrors.AttributeNotSuppliedError;
+    async getAttributeMinMax(body) {
+        const bodySchema = Joi.object({
+            mod: Joi.object({
+                name: Joi.string().valid(...mods.map(mod => mod.name)).required(),
+                version: Joi.string().valid(...mods.map(mod => mod.version)).required(),
+                columns: Joi.array().items(Joi.object()).optional(),
+            }).required(),
+            attribute: Joi.string().required()
+        })
+
+        const {error} = bodySchema.validate(body, {abortEarly: false});
+        if (error) {
+            return error
         }
         try {
             await this.connect();
-            return await this.db.collection(this.toCollectionName(query.mod)).aggregate([{
+            let minMax = await this.db.collection(this.toCollectionName(body.mod)).aggregate([{
                 $group: {
                     _id: null,
-                    min: {$min: `$${query.attribute}`},
-                    max: {$max: `$${query.attribute}`}
+                    min: {$min: `$${body.attribute}`},
+                    max: {$max: `$${body.attribute}`}
                 }
             }]).project({'_id': 0}).toArray();
+            return minMax[0]
         } catch (err) {
             console.error(err);
-            return {status: 500, body: err};
+        }
+    }
+
+
+    async getAbilities(body) {
+        const bodySchema = Joi.object({
+            mod: Joi.object({
+                name: Joi.string().valid(...mods.map(mod => mod.name)).required(),
+                version: Joi.string().valid(...mods.map(mod => mod.version)).required(),
+                columns: Joi.array().items(Joi.object()).optional(),
+            }).required(),
+        })
+
+        const {error} = bodySchema.validate(body, {abortEarly: false});
+        if (error) {
+            return error
+        }
+        try {
+            await this.connect();
+            let abilities = await this.db.collection(this.toCollectionName(body.mod)).aggregate([
+                {$unwind: '$Abilities'},
+                {$group: {_id: '$Abilities.ability'}},
+                {$project: {_id: 0, ability: '$_id'}}
+            ]).toArray();
+            return abilities.flatMap(ability => ability.ability)
+        } catch (err) {
+            console.error(err);
         }
     }
 
@@ -139,13 +169,19 @@ class CombinationsService extends MongoService {
                 if (obj.filter.min !== null && obj.filter.max !== null && obj.filter.min !== undefined && obj.filter.max !== undefined) query[obj.label] = {
                     $gte: obj.filter.min,
                     $lte: obj.filter.max
-                }; else {
+                }
+                else if (obj.label === "Abilities") {
+                    query["Abilities.ability"] = {$all: obj.filter};
+                } else {
                     query[obj.label] = {$regex: new RegExp(obj.filter, 'i')};
                 }
             }
         });
+        console.log(query);
         return query;
     }
+
+
 }
 
 

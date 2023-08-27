@@ -2,12 +2,12 @@ const modService = require('../../services/modService');
 const testModService = new modService()
 const app = require('../../app');
 const request = require('supertest');
-
+const TEST_MOD_COLLECTION_NAME = 'mods_test';
 
 describe('Mods routes', () => {
     beforeEach(async () => {
         await testModService.connect();
-        await testModService.db.collection('mods_test').insertMany([
+        await testModService.db.collection(TEST_MOD_COLLECTION_NAME).insertMany([
             {
                 name: 'test1',
                 version: '1.0.1',
@@ -26,7 +26,7 @@ describe('Mods routes', () => {
     });
 
     afterEach(async () => {
-        await testModService.db.collection('mods_test').drop();
+        await testModService.db.collection(TEST_MOD_COLLECTION_NAME).drop();
     });
 
     afterAll(async () => {
@@ -34,7 +34,7 @@ describe('Mods routes', () => {
     });
 
 
-    describe('GET /mods/name/:name', () => {
+    describe('GET /combinations/name/:name', () => {
         it('should return a mod by name', async () => {
             const response = await request(app).get('/mods/name/test1')
             expect(response.status).toEqual(200);
@@ -42,15 +42,13 @@ describe('Mods routes', () => {
         });
     });
 
-    describe('GET /mods', () => {
-        it('should return all mods', async () => {
+    describe('GET /combinations', () => {
+        it('should return all combinations', async () => {
             const response = await request(app).get('/mods')
             expect(response.status).toEqual(200);
             expect(response.body).toHaveLength(3);
         });
     });
-
-
 });
 
 

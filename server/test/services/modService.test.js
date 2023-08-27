@@ -32,7 +32,7 @@ describe('ModService', () => {
 
 
     describe('getMods', () => {
-        it('should return all mods', async () => {
+        it('should return all combinations', async () => {
             const mods = await testModService.getMods();
             expect(mods).toHaveLength(3);
         });

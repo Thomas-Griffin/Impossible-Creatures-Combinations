@@ -12,12 +12,14 @@ class ModService extends MongoService {
 
     async getMods() {
         await this.connect();
-        return await this.db.collection(this.collectionName).find({}).project({'_id': 0}).toArray();
+        let mods = await this.db.collection(this.collectionName).find({}).project({'_id': 0}).toArray();
+        return !mods ? [] : mods;
     }
 
     async getModsByName(name) {
         await this.connect();
-        return await this.db.collection(this.collectionName).find({name: name}, {'_id': 0}).toArray();
+        let mods = await this.db.collection(this.collectionName).find({name: name}, {'_id': 0}).toArray();
+        return !mods ? [] : mods;
     }
 
 }

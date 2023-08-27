@@ -21,12 +21,13 @@
   >
     <template v-slot:top>
       <div class="q-pr-sm">
-        <q-btn :icon="gridMode ? 'grid_on': 'list'" class="cursive-font" dense flat
+        <q-btn :icon="gridMode?'list':'grid_on'" class="cursive-font" dense flat
                @click="gridMode = !gridMode"/>
       </div>
       <q-select :model-value="selectedMod" :options="modsDisplayNames"
                 class="cursive-font" dense flat
-                label="Mod" label-color="grey" rounded
+                label="Mod" label-color="grey" options-selected-class="text-blue"
+                rounded
                 @update:model-value="value => {onModChange(value)}"/>
       <q-btn-dropdown
         class="cursive-font"
@@ -80,6 +81,7 @@
                   v-else-if="col.label === 'Abilities'">
                   <q-select v-model="selectedAbilities" :options="abilities" dense flat label="Ability Filter"
                             multiple
+                            options-selected-class="text-blue"
                             rounded
                             @update:model-value="setAbilitiesFilter"/>
                 </q-item-section>
@@ -120,34 +122,33 @@
     <template v-slot:item="props">
       <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4">
         <q-card bordered flat>
-          <q-card-section class="text-center cursive-font text-h6">
-
+          <q-card-section class="text-left cursive-font text-h6">
             <q-checkbox v-model="props.selected" :label="props.row.name" dense/>
-            {{ props.rowIndex + 1 }}
+            Combination {{ props.rowIndex + 1 }}
           </q-card-section>
           <q-separator/>
           <q-card-section>
-            <div v-for="col in columns" :key="col.name">
-              <div v-if="col.show" class="cursive-font text-h6">{{ col.name }}
-                <div v-if="col.name === 'Abilities'">
-                  <div v-for="ability in props.row[col.name]" :key="ability" class="mono-font">{{ ability.ability }}:
-                    {{ ability.source }}
-                  </div>
-                </div>
-                <span v-else class="mono-font">{{
-                    props.row[col.name] === -1 ? ' (N/A)' : props.row[col.name]
-                  }}</span></div>
-            </div>
+            <table>
+              <tr v-for="col in columns" :key="col.name">
+                <td v-if="col.show" class="cursive-font q-pa-sm">{{ col.name }}</td>
+                <td v-if="col.show && col.name === 'Abilities'">
+                  <p v-for="ability in props.row[col.name]" :key="ability" class="no-margin">
+                    {{ ability.ability }}: {{ ability.source }}
+                  </p>
+                </td>
+                <td v-else-if="col.show">{{ props.row[col.name] === -1 ? ' (N/A)' : props.row[col.name] }}</td>
+              </tr>
+            </table>
           </q-card-section>
         </q-card>
       </div>
     </template>
 
     <template v-slot:body-cell-Abilities="props">
-      <div style="width: 1000px">
+      <td style="width: 1000px">
         <span
           v-text="props.row.Abilities.map(a => `${a?.ability === undefined?'':a.ability}: ${a?.source === undefined?'':a.source}`).join(', ')"></span>
-      </div>
+      </td>
     </template>
 
     <template v-slot:top-right="scope">
@@ -282,12 +283,12 @@ async function onRequest(props) {
   for (let numericFiltersKey in numericFilters.value) {
     let numericFilter = numericFilters.value[numericFiltersKey]
     if (numericFilter?.getValues().min !== null && numericFilter?.getValues().max !== null && numericFilter?.getValues().min !== undefined && numericFilter?.getValues().max !== undefined) {
-      filters.value.find(filter => filter.label === numericFiltersKey).filter = numericFilter?.getValues() ?? null
+      filters.value.find(filter => filter?.label === numericFiltersKey).filter = numericFilter?.getValues() ?? null
     }
   }
 
   let sorting = {column: columns.value[0].name, order: 'ascending'}
-  let sortedColumn = columns.value.find(col => col.isSorted.ascending || col.isSorted.descending)
+  let sortedColumn = columns.value.find(col => col?.isSorted.ascending || col?.isSorted.descending)
   if (sortedColumn) {
     sorting = {column: sortedColumn.name, order: sortedColumn.isSorted.ascending ? 'ascending' : 'descending'}
   }
@@ -332,14 +333,14 @@ const onAscendingSort = async (col) => {
 }
 
 const toggleColumn = (colName) => {
-  columns.value.find(col => col.name === colName).show = !columns.value.find(col => col.name === colName).show
-  selectedColumns.value = columns.value.filter(col => col.show)
+  columns.value.find(col => col.name === colName).show = !columns.value.find(col => col.name === colName)?.show
+  selectedColumns.value = columns.value.filter(col => col?.show)
 }
 
 const toggleShowAllColumns = () => {
   showAllColumns.value = !showAllColumns.value
   columns.value.forEach(col => col.show = showAllColumns.value)
-  selectedColumns.value = columns.value.filter(col => col.show)
+  selectedColumns.value = columns.value.filter(col => col?.show)
 }
 
 const getAscendingSortColor = (col) => {
@@ -351,7 +352,7 @@ const getDescendingSortColor = (col) => {
 }
 
 const clearFilter = async (columnLabel) => {
-  filters.value.filter(filter => filter.label === columnLabel)[0].filter = null
+  filters.value.filter(filter => filter?.label === columnLabel)[0].filter = null
   await applyNumericFilters()
 }
 
@@ -375,7 +376,7 @@ const clearAllFilters = async () => {
 }
 
 const setStringFilter = (value, columnLabel) => {
-  filters.value.find(filter => filter.label === columnLabel).filterText = value
+  filters.value.find(filter => filter?.label === columnLabel).filterText = value
 }
 
 const addNumericFilter = (numericFilter, column) => {
@@ -423,9 +424,9 @@ const getFilters = async (mod) => {
     let result = columns.value.map(async column => {
       let minmax = await getMinMax(mod, column.label);
       let type;
-      type = column.type === 'string' ? 'string' : column.type === 'array' ? 'array' : 'number';
+      type = column?.type === 'string' ? 'string' : column.type === 'array' ? 'array' : 'number';
       return {
-        label: column.label,
+        label: column?.label,
         type: type,
         min: minmax.min ? minmax.min : 0,
         max: minmax.max ? minmax.max : Number.MAX_SAFE_INTEGER,
@@ -437,9 +438,8 @@ const getFilters = async (mod) => {
 }
 
 const setAbilitiesFilter = () => {
-  filters.value.find(filter => filter.label === 'Abilities').filter = selectedAbilities.value
+  filters.value.find(filter => filter?.label === 'Abilities').filter = selectedAbilities.value
   tableRef.value.requestServerInteraction()
-  console.log(JSON.stringify(filters.value.find(filter => filter.label === 'Abilities').filter))
 }
 
 </script>

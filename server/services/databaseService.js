@@ -7,6 +7,7 @@ const SCHEMA_FILE_NAME = 'schema.json';
 const SCHEMA_FILE_PATH = `services/${SCHEMA_FILE_NAME}`;
 const ABILITIES_FILE_NAME = 'abilities.json';
 const ABILITIES_FILE_PATH = `services/${ABILITIES_FILE_NAME}`;
+const COMBINATIONS_DIRECTORY = 'combinations';
 
 const abilitiesMap = JSON.parse(fs.readFileSync(ABILITIES_FILE_PATH, 'utf8'));
 
@@ -78,7 +79,7 @@ class DatabaseService extends MongoService {
     }
 
     createModFile(mod) {
-        let combinations = JSON.stringify(this.fetchCombinations(mod))
+        let combinations = JSON.stringify(this.fetchUnprocessedCombinations(mod))
         if (!fs.existsSync(`${MOD_DIRECTORY}/${mod.name}/${mod.version}/combinations.json`)) {
             fs.mkdirSync(`${MOD_DIRECTORY}/${mod.name}/${mod.version}`, {recursive: true});
             fs.writeFileSync(`${MOD_DIRECTORY}/${mod.name}/${mod.version}/combinations.json`, combinations, (err) => {
@@ -97,12 +98,12 @@ class DatabaseService extends MongoService {
         }
     }
 
-    fetchCombinations(mod) {
+    fetchUnprocessedCombinations(mod) {
         console.log('fetching all combinations for mod: ' + mod.name + ' ' + mod.version)
-        return JSON.parse(fs.readFileSync(`${mod.name} ${mod.version}.json`, 'utf8'));
+        return JSON.parse(fs.readFileSync(`${COMBINATIONS_DIRECTORY}/${mod.name} ${mod.version}.json`, 'utf8'));
     }
 
-    loadCombinations(mod) {
+    loadProcessedCombinations(mod) {
         return JSON.parse(fs.readFileSync(`${MOD_DIRECTORY}/${mod.name}/${mod.version}/combinations.json`, 'utf8'));
     }
 
@@ -112,9 +113,9 @@ class DatabaseService extends MongoService {
 
     getAnimalNameLimbBelongsTo(combination, limbIndex) {
         if (limbIndex === 1) {
-            return this.snakeToTitle(combination["stock_1"])
+            return this.snakeCaseToTitleCase(combination["stock_1"])
         } else if (limbIndex === 2) {
-            return this.snakeToTitle(combination["stock_2"])
+            return this.snakeCaseToTitleCase(combination["stock_2"])
         } else if (limbIndex === -1) {
             return "Inherent"
         } else
@@ -122,7 +123,7 @@ class DatabaseService extends MongoService {
     }
 
     async populateCombinationCollection(mod) {
-        let combinations = this.loadCombinations(mod);
+        let combinations = this.loadProcessedCombinations(mod);
         let totalProcessed = 0;
         for (const combination of combinations) {
             let processedCombination = {};
@@ -134,18 +135,18 @@ class DatabaseService extends MongoService {
                         if (column.path.includes('composition')) {
                             propertyValue = this.getAnimalNameLimbBelongsTo(combination, propertyValue)
                         }
-                        propertyValue = this.snakeToTitle(propertyValue)
+                        propertyValue = this.snakeCaseToTitleCase(propertyValue)
                     } else if (column.type === 'float' && column?.decimal_places !== undefined) {
                         if (propertyValue === undefined) {
                             propertyValue = -1
                         } else {
-                            propertyValue = parseFloat(this.roundToDecimal(propertyValue, column.decimal_places))
+                            propertyValue = parseFloat(this.roundToDecimal(propertyValue, column?.decimal_places))
                         }
-                    } else if (column.type === 'percentage' && column.decimal_places !== undefined) {
+                    } else if (column.type === 'percentage' && column?.decimal_places !== undefined) {
                         if (propertyValue === undefined) {
                             propertyValue = -1
                         } else {
-                            propertyValue = parseFloat(this.roundToDecimal(propertyValue * 100, column.decimal_places))
+                            propertyValue = parseFloat(this.roundToDecimal(propertyValue * 100, column?.decimal_places))
                         }
                     }
                     processedCombination[column.label] = propertyValue;
@@ -164,6 +165,9 @@ class DatabaseService extends MongoService {
     }
 
     getBodyPart(index) {
+        if (index - 2 < 0) {
+            return "Innate"
+        }
         switch (index) {
             case 0:
                 return "Front Legs"
@@ -180,9 +184,8 @@ class DatabaseService extends MongoService {
             case 6:
                 return "Wings"
             default:
-                return "Inherent"
+                return "None"
         }
-
     }
 
     getAbilities(combination) {
@@ -203,7 +206,7 @@ class DatabaseService extends MongoService {
         }
     }
 
-    snakeToTitle(str) {
+    snakeCaseToTitleCase(str) {
         return str.replace(/_/g, ' ').replace(/\b\w/g, (match) => match.toUpperCase());
     }
 

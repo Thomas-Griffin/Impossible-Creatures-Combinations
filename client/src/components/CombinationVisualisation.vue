@@ -6,7 +6,7 @@
 
 <script setup>
 import Vue3ChartJs from '@j-t-mcc/vue3-chartjs';
-import {defineProps, ref} from 'vue';
+import {ref} from 'vue';
 
 const props = defineProps(
   {

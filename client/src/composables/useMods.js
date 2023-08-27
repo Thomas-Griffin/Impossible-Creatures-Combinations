@@ -21,7 +21,7 @@ export function useMods() {
   }
 
   const getModFromDisplayString = (modString) => {
-    return mods.value.find(mod => `${mod.name} ${mod.version}` === modString)
+    return mods.value.find(mod => `${mod.name} ${mod?.version}` === modString)
   }
 
   const getModDisplayName = (mod) => {

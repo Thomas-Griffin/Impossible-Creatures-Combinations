@@ -4,7 +4,7 @@ const messagePack = require('msgpack-lite');
 const {deflateSync} = require("zlib");
 
 const SCHEMA_FILE_NAME = 'schema.json';
-const SCHEMA_FILE_PATH = `./services/${SCHEMA_FILE_NAME}`;
+const SCHEMA_FILE_PATH = `../../services/${SCHEMA_FILE_NAME}`;
 const schema = JSON.parse(fs.readFileSync(SCHEMA_FILE_PATH, 'utf8'));
 
 for (let mod of schema) {

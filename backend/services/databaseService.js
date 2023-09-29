@@ -1,13 +1,14 @@
 const MongoService = require('./mongoService')
 const fs = require("fs");
+const path = require('path');
 
 const MOD_COLLECTION = 'mods';
 const MOD_DIRECTORY = 'mods';
 const SCHEMA_FILE_NAME = 'schema.json';
-const SCHEMA_FILE_PATH = `services/${SCHEMA_FILE_NAME}`;
 const ABILITIES_FILE_NAME = 'abilities.json';
-const ABILITIES_FILE_PATH = `services/${ABILITIES_FILE_NAME}`;
-const COMBINATIONS_DIRECTORY = 'combinations';
+const SCHEMA_FILE_PATH = path.resolve(`./services/${SCHEMA_FILE_NAME}`);
+const ABILITIES_FILE_PATH = path.resolve(`./services/${ABILITIES_FILE_NAME}`);
+const COMBINATIONS_DIRECTORY = path.resolve('./database/combinations');
 
 const abilitiesMap = JSON.parse(fs.readFileSync(ABILITIES_FILE_PATH, 'utf8'));
 
@@ -246,6 +247,7 @@ class DatabaseService extends MongoService {
 
 
     async initialize() {
+        await this.acquireMissingJSONCombinationFiles();
         this.createModDirectories()
         await this.createDatabase();
         await this.createCollections();
@@ -253,6 +255,22 @@ class DatabaseService extends MongoService {
         this.deleteModDirectories()
     }
 
+
+    async acquireMissingJSONCombinationFiles() {
+        let jsonFilesExist = true;
+        for (const mod of this.schema) {
+            if (!fs.existsSync(`${COMBINATIONS_DIRECTORY}/${mod.name} ${mod.version}.json`)) {
+                jsonFilesExist = false;
+            }
+        }
+        if (!jsonFilesExist) {
+            console.log(`Combinations files are missing.`)
+            console.log('Running cleanup script...')
+            require(`${COMBINATIONS_DIRECTORY}/cleanup`)
+            console.log('Extracting combinations from compressed files...')
+            require(`${COMBINATIONS_DIRECTORY}/decompressor`)
+        }
+    }
 
     async resetDatabase() {
         try {

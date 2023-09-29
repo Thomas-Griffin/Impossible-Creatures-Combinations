@@ -14,13 +14,8 @@
       <q-btn :label="sorted ? 'Sorted' : 'Unsorted'" class="full-width" color="primary" @click="toggleSorted"/>
     </div>
   </div>
-  <div class="full-height full-width items-center">
-    <vue-plotly v-if="!sorted" :config="config" :data="animalData" :layout="layout"></vue-plotly>
-    <div v-else>
-      <vue-plotly v-for="researchLevel in 5" :key="researchLevel" :config="config"
-                  :data="sortByNumberInResearchLevel(researchLevel)" :layout="layout"></vue-plotly>
-    </div>
-  </div>
+  <vue-plotly :config="config" :data="animalData" :layout="layout"></vue-plotly>
+
 </template>
 <script setup>
 import {VuePlotly} from 'vue3-plotly';
@@ -36,7 +31,6 @@ const selectedMod = ref('')
 const mods = ref([])
 
 const animalData = ref([])
-const sortedAnimalData = ref({1: [], 2: [], 3: [], 4: [], 5: []})
 const sorted = ref(true)
 
 onBeforeMount(async () => {
@@ -57,68 +51,50 @@ const toggleSorted = async () => {
   await onModChange()
 }
 
-const sortByNumberInResearchLevel = (researchLevel) => {
-  let data = sortedAnimalData.value[researchLevel]
-  return data.sort((a, b) => b.y[0] - a.y[0])
-}
-
 const onModChange = async () => {
   const mod = getModFromDisplayString(selectedMod.value)
   const researchLevelsPerStock = await getResearchLevelsPerStock({mod})
-  if (sorted.value === true) {
-    sortedAnimalData.value = {
-      1: researchLevelsPerStock.map(obj => ({
-        x: ['Research Level 1'],
-        y: [obj.counts?.['Research Level 1'] ?? 0],
-        type: chartType.value,
-        name: obj.animal,
-      })),
-      2: researchLevelsPerStock.map(obj => ({
-        x: ['Research Level 2'],
-        y: [obj.counts?.['Research Level 2'] ?? 0],
-        type: chartType.value,
-        name: obj.animal,
-      })),
-      3: researchLevelsPerStock.map(obj => ({
-        x: ['Research Level 3'],
-        y: [obj.counts?.['Research Level 3'] ?? 0],
-        type: chartType.value,
-        name: obj.animal,
-      })),
-      4: researchLevelsPerStock.map(obj => ({
-        x: ['Research Level 4'],
-        y: [obj.counts?.['Research Level 4'] ?? 0],
-        type: chartType.value,
-        name: obj.animal,
-      })),
-      5: researchLevelsPerStock.map(obj => ({
-        x: ['Research Level 5'],
-        y: [obj.counts?.['Research Level 5'] ?? 0],
-        type: chartType.value,
-        name: obj.animal,
-      })),
-    }
+  animalData.value = [
+    formatChartData(researchLevelsPerStock, 'Research Level 1', sorted.value),
+    formatChartData(researchLevelsPerStock, 'Research Level 2', sorted.value),
+    formatChartData(researchLevelsPerStock, 'Research Level 3', sorted.value),
+    formatChartData(researchLevelsPerStock, 'Research Level 4', sorted.value),
+    formatChartData(researchLevelsPerStock, 'Research Level 5', sorted.value),
+  ]
+}
 
-  } else {
-    animalData.value = researchLevelsPerStock.map(obj => ({
-      x: ['Research Level 1', 'Research Level 2', 'Research Level 3', 'Research Level 4', 'Research Level 5'],
-      y: [obj.counts?.['Research Level 1'], obj.counts?.['Research Level 2'], obj.counts?.['Research Level 3'], obj.counts?.['Research Level 4'], obj.counts?.['Research Level 5']],
+const formatChartData = (data, researchLevel, sorting) => {
+  if (sorting) {
+    return {
+      name: researchLevel,
+      text: data.map(obj => obj.counts?.[researchLevel] ?? 0).sort((a, b) => b - a),
+      textposition: 'auto',
       type: chartType.value,
-      name: obj.animal,
-    }))
+      x: data.sort((a, b) => b.counts?.[researchLevel] - a.counts?.[researchLevel]).map(obj => obj.animal),
+      y: data.map(obj => obj.counts?.[researchLevel] ?? 0).sort((a, b) => b - a),
+    }
+  } else {
+    return {
+      name: researchLevel,
+      text: data.map(obj => obj.counts?.[researchLevel] ?? 0),
+      textposition: 'auto',
+      type: chartType.value,
+      x: data.map(obj => obj.animal),
+      y: data.map(obj => obj.counts?.[researchLevel] ?? 0),
+    }
   }
-
 }
 
 const layout = ref({
   title: 'Number of Combinations per Research Level',
-  xaxis: {title: 'Research Level'},
-  yaxis: {title: 'Number of Animals'},
+  xaxis: {title: 'Animal'},
+  yaxis: {title: 'Number of Combinations'},
   plot_bgcolor: $q.dark.isActive ? 'black' : 'white',
   paper_bgcolor: $q.dark.isActive ? 'black' : 'white',
   font: {
     color: $q.dark.isActive ? 'white' : 'black',
   },
+  barmode: sorted.value ? 'stack' : 'group',
 })
 
 const config = ref({

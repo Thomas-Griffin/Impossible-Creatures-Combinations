@@ -43,43 +43,78 @@ class VisualisationsService extends MongoService {
         } else {
             await this.connect();
             try {
-                const result = await this.db.collection(this.toCollectionName(body.mod)).aggregate([{
-                    $group: {
-                        _id: {
-                            Animal: {$ifNull: ["$Animal 1", "$Animal 2"]}, ResearchLevel: "$Research Level"
-                        }, count: {$sum: 1}
-                    }
-                }, {
-                    $group: {
-                        _id: "$_id.Animal", counts: {
-                            $push: {
-                                k: {$concat: ["Research Level ", {$toString: "$_id.ResearchLevel"}]}, v: "$count"
-                            }
+                const result = await this.db.collection(this.toCollectionName(body.mod)).aggregate([
+                    {
+                        $project: {
+                            "Research Level": 1,
+                            Animals: ["$Animal 1", "$Animal 2"]
                         }
-                    }
-                }, {
-                    $project: {
-                        _id: 0, animal: "$_id", counts: {$arrayToObject: "$counts"}
-                    }
-                }, {
-                    $sort: {
-                        "animal": 1,
-                    }
-                }, {
-                    $addFields: {
-                        "counts": {
-                            $arrayToObject: {
-                                $map: {
-                                    input: {$objectToArray: "$counts"}, in: {
-                                        k: "$$this.k", v: "$$this.v"
-                                    }
+                    },
+                    {
+                        $unwind: "$Animals"
+                    },
+                    {
+                        $group: {
+                            _id: {
+                                Animal: "$Animals",
+                                ResearchLevel: {
+                                    $cond: [
+                                        { $eq: ["$Research Level", null] },
+                                        "Unknown",
+                                        { $toString: "$Research Level" }
+                                    ]
+                                }
+                            },
+                            count: { $sum: 1 }
+                        }
+                    },
+                    {
+                        $project: {
+                            _id: 0,
+                            animal: "$_id.Animal",
+                            researchLevel: { $concat: ["Research Level ", "$_id.ResearchLevel"] },
+                            count: "$count"
+                        }
+                    },
+                    {
+                        $group: {
+                            _id: "$animal",
+                            counts: {
+                                $push: {
+                                    k: "$researchLevel",
+                                    v: "$count"
                                 }
                             }
                         }
+                    },
+                    {
+                        $project: {
+                            _id: 0,
+                            animal: "$_id",
+                            counts: { $arrayToObject: "$counts" }
+                        }
+                    },
+                    {
+                        $sort: { "animal": 1 }
                     }
-                }]).toArray();
+                ]).toArray();
                 result.forEach(doc => {
                     if (doc.counts) {
+                        if (doc.counts["Research Level 1"] === undefined) {
+                            doc.counts["Research Level 1"] = 0;
+                        }
+                        if (doc.counts["Research Level 2"] === undefined) {
+                            doc.counts["Research Level 2"] = 0;
+                        }
+                        if (doc.counts["Research Level 3"] === undefined) {
+                            doc.counts["Research Level 3"] = 0;
+                        }
+                        if (doc.counts["Research Level 4"] === undefined) {
+                            doc.counts["Research Level 4"] = 0;
+                        }
+                        if (doc.counts["Research Level 5"] === undefined) {
+                            doc.counts["Research Level 5"] = 0;
+                        }
                         doc.counts = this.sortObjectKeys(doc.counts);
                     }
                 });

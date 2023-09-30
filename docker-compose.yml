@@ -1,0 +1,35 @@
+services:
+  mongodb:
+    image: mongo
+    ports:
+      - '27017:27017'
+
+  init-mongo:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    depends_on:
+      - mongodb
+    command: node ./init-mongo.js
+
+  express-server:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    depends_on:
+      - init-mongo
+
+  quasar-client:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - '8080:4000'
+    depends_on:
+      - express-server
+
+
+
+

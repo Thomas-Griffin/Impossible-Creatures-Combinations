@@ -9,10 +9,6 @@ export function useMods() {
   let mods = ref([])
   const modsError = ref(null)
 
-  if (process.env.NODE_ENV === 'production') {
-    baseURL = process.env.API_URL
-  }
-
   const getMods = async () => {
     await axios.get(baseURL + '/mods')
       .then((res) => mods.value = res.data)

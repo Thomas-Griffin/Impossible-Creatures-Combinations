@@ -6,9 +6,6 @@ const axios = require('axios');
 
 
 export function useVisualisations() {
-  if (process.env.NODE_ENV === 'production') {
-    baseURL = process.env.API_URL
-  }
 
   const visualisationsError = ref(null)
 

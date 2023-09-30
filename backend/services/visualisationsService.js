@@ -24,7 +24,7 @@ class VisualisationsService extends MongoService {
     }
 
     toCollectionName(mod) {
-        return `${mod.name} ${mod.version}`;
+        return `${mod?.name} ${mod?.version}`;
     }
 
     sortObjectKeys(obj) {

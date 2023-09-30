@@ -1,4 +1,5 @@
-fetch('http://localhost:3000/database/reset', {
+console.log('Resetting database...');
+fetch('http://express-server:3000/database/reset', {
     method: 'GET',
     headers: {
         'Content-Type': 'application/json'

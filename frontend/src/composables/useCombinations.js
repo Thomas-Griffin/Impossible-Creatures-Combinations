@@ -5,10 +5,6 @@ let baseURL = 'http://localhost:3000'
 
 
 export function useCombinations() {
-  if (process.env.NODE_ENV === 'production') {
-    baseURL = process.env.API_URL
-  }
-
   const combinationsError = ref(null)
   const combinationsTotalError = ref(null)
 

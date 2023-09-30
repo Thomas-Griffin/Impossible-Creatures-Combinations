@@ -8,6 +8,7 @@ const SCHEMA_FILE_PATH = path.resolve(`./services/${SCHEMA_FILE_NAME}`);
 const schema = JSON.parse(fs.readFileSync(SCHEMA_FILE_PATH, 'utf8'));
 
 for (let mod of schema) {
+    console.log(`Decompressing ${mod.name} ${mod.version}...`);
     const modFileName = `${mod.name} ${mod.version}.msgpack.gz`;
     const modFilePath = path.resolve(`./database/combinations/${modFileName}`);
     const compressedData = fs.readFileSync(modFilePath);

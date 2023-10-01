@@ -5,7 +5,6 @@ let baseURL = 'http://localhost:3000'
 
 
 export function useCombinations() {
-  const combinationsError = ref(null)
   const combinationsTotalError = ref(null)
 
   const getTotalCombinations = async (body) => {
@@ -44,7 +43,6 @@ export function useCombinations() {
 
 
   return {
-    combinationsError,
     getCombinations,
     getTotalCombinations,
     getMinMax,

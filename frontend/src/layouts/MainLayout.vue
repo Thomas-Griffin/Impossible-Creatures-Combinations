@@ -32,6 +32,11 @@
           round
           @click="showDrawer = !showDrawer"
         />
+
+        <suspense>
+          <mod-select/>
+        </suspense>
+
         <q-toolbar-title class="cursive-font">
           <div class="text-wrapper">
             <div class="text-white flex mdi-format-text-wrapping-wrap justify-center items-center"
@@ -81,6 +86,7 @@
 import {ref} from 'vue';
 import {useQuasar} from 'quasar';
 import {useRouter} from 'vue-router';
+import ModSelect from 'components/layouts/main/ModSelect.vue';
 
 const router = useRouter();
 const $q = useQuasar();

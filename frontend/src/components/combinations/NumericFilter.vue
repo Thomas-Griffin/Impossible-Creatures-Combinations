@@ -54,10 +54,10 @@ function clamp(input, min, max) {
 
 const validateLower = (input) => {
   let lowerSchema = Joi.number().strict().min(props.min).max(upper.value).messages(
-    {
-      'number.min': `Must be greater than or equal to ${props.min}`,
-      'number.max': `Must be less than or equal to ${upper.value}`
-    }).label(`Minimum ${props.label}`)
+      {
+        'number.min': `Must be greater than or equal to ${props.min}`,
+        'number.max': `Must be less than or equal to ${upper.value}`
+      }).label(`Minimum ${props.label}`)
   let {error} = lowerSchema.validate(input)
   return error ? error : null;
 }

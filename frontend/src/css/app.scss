@@ -2,6 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Sigmar+One&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Rokkitt&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap');
 
 .standard-font {
   font-family: 'Rokkitt', serif;
@@ -11,10 +12,10 @@
   font-family: 'Sigmar One', cursive;
 }
 
-.mono-font {
-  font-family: 'Courier Prime', monospace;
+.title-font {
+  font-family: 'Permanent Marker', cursive;
 }
 
-.q-btn.btn--no-hover .q-focus-helper {
-  display: none;
+.mono-font {
+  font-family: 'Courier Prime', monospace;
 }

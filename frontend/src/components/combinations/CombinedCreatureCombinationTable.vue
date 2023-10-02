@@ -27,7 +27,7 @@
       <q-btn-dropdown
           class="cursive-font"
           flat
-          label="Columns"
+          label="Sort / Filter"
       >
         <q-item clickable @click="toggleShowAllColumns">
           <q-item-section avatar>
@@ -42,6 +42,8 @@
         <q-item-section>
           <q-input clear-icon="close" clearable dense
                    label="Find Filter"
+                   outlined
+                   rounded
                    @update:model-value="value => filterFiltersList(value)"/>
         </q-item-section>
 
@@ -50,7 +52,6 @@
           <span class="cursive-font">
             <q-btn
                 :text-color="getAscendingSortColor(col)"
-                color="black"
                 dense
                 flat
                 icon="arrow_upward"
@@ -60,7 +61,6 @@
             />
               <q-btn
                   :text-color="getDescendingSortColor(col)"
-                  color="black"
                   dense
                   flat
                   icon="arrow_downward"
@@ -102,15 +102,6 @@
         </q-item>
 
       </q-btn-dropdown>
-      <q-space/>
-      <div v-if="filtersAreActive" class="cursive-font">
-        Active Filters:
-        <q-chip v-for="filter in activeFilters" :key="filter.label"
-                :label="filter?.filter?.min && filter?.filter?.max ? `${filter.label}: Min: ${filter?.filter?.min}, Max: ${filter?.filter?.max}`: filter.type === 'array'? `${filter?.label}: ${filter?.filter?.join(', ')}` :`${filter?.label}: ${filter?.filter}`"
-                clickable color="grey" icon="close"
-                text-color="white"
-                @click="() => clearFilter(filter.label)"/>
-      </div>
       <q-btn v-if="filtersAreActive"
              class="cursive-font"
              color="red"
@@ -119,6 +110,15 @@
              icon="clear"
              label="Clear Filters"
              @click="clearAllFilters"/>
+      <div v-if="filtersAreActive" class="cursive-font" style="margin-left: 5%">
+        Active Filters:
+        <q-chip v-for="filter in activeFilters" :key="filter.label"
+                :label="filter?.filter?.min && filter?.filter?.max ? `${filter.label}: Min: ${filter?.filter?.min}, Max: ${filter?.filter?.max}`: filter.type === 'array'? `${filter?.label}: ${filter?.filter?.join(', ')}` :`${filter?.label}: ${filter?.filter}`"
+                class="mono-font" clickable color="info"
+                icon="close"
+                @click="() => clearFilter(filter.label)"/>
+      </div>
+
       <q-space/>
 
     </template>
@@ -211,7 +211,7 @@
   height: calc(100vh - 50px) !important
 
   thead tr:first-child th
-    background-color: #8a8a8a
+    background-color: var(--q-primary)
 
   thead tr th
     position: sticky
@@ -345,11 +345,11 @@ const toggleShowAllColumns = (value) => {
 }
 
 const getAscendingSortColor = (col) => {
-  return col.isSorted.ascending ? 'green' : 'white';
+  return col.isSorted.ascending ? 'green' : 'primary';
 }
 
 const getDescendingSortColor = (col) => {
-  return col.isSorted.descending ? 'green' : 'white';
+  return col.isSorted.descending ? 'green' : 'primary';
 }
 
 const clearFilter = async (columnLabel) => {

@@ -1,10 +1,8 @@
 <template>
   <div class="row">
     <div class="col">
-      <q-select v-model="chartType" :options="['bar', 'lines']" filled hide-dropdown-icon
-                label="Chart Type"
-                options-selected-class="text-blue" square @update:model-value="onChartTypeChange"/>
-      <q-btn :label="sorted ? 'Sorted' : 'Unsorted'" class="full-width" color="primary" @click="toggleSorted"/>
+      <q-btn :icon="isBarChart? 'bar_chart' : 'stacked_line_chart'" flat @click="onChartTypeChange"/>
+      <q-btn :icon="sorted? 'format_list_numbered' : 'sort_by_alpha'" :model-value="sorted" flat @click="toggleSorted"/>
     </div>
   </div>
   <vue-plotly :config="config" :data="animalData" :layout="layout"></vue-plotly>
@@ -12,7 +10,7 @@
 </template>
 <script setup>
 import {VuePlotly} from 'vue3-plotly';
-import {onBeforeMount, ref, watch} from 'vue';
+import {computed, onBeforeMount, ref, watch} from 'vue';
 import {useVisualisations} from 'src/composables/useVisualisations';
 import {useQuasar} from 'quasar';
 import {useModStore} from 'stores/modStore';
@@ -30,20 +28,20 @@ onBeforeMount(async () => {
   await getData()
 })
 
-const chartType = ref('bar')
+const isBarChart = ref(true)
+const chartType = computed(() => isBarChart.value ? 'bar' : 'line')
 
-const onChartTypeChange = async (value) => {
-  chartType.value = value
+const onChartTypeChange = async () => {
+  isBarChart.value = !isBarChart.value
   await getData()
 }
-
 const toggleSorted = async () => {
   sorted.value = !sorted.value
   await getData()
 }
 
 const getData = async () => {
-  const researchLevelsPerStock = await getResearchLevelsPerStock({mod:modStore.getMod})
+  const researchLevelsPerStock = await getResearchLevelsPerStock({mod: modStore.getMod})
   animalData.value = [
     formatChartData(researchLevelsPerStock, 'Research Level 1', sorted.value),
     formatChartData(researchLevelsPerStock, 'Research Level 2', sorted.value),

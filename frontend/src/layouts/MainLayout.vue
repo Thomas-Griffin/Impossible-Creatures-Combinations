@@ -29,8 +29,8 @@
             dense
             flat
             icon="menu"
-            @click="showDrawer = !showDrawer"
             style="margin-right: .5%; margin-left: .15%"
+            @click="showDrawer = !showDrawer"
         />
 
         <suspense>
@@ -70,11 +70,11 @@
 
 <script setup>
 import {ref} from 'vue';
-import {setCssVar, useQuasar} from 'quasar';
+import {colors, getCssVar, setCssVar, useQuasar} from 'quasar';
 import {useRouter} from 'vue-router';
 import ModSelect from 'components/layouts/main/ModSelect.vue';
 
-
+const {lighten} = colors;
 const router = useRouter();
 const $q = useQuasar();
 const darkModeEnabled = ref(true);
@@ -88,7 +88,8 @@ const currentPage = ref(pages.value.find(page => page.path === router.currentRou
 const toggleDarkMode = () => {
   $q.dark.toggle();
   darkModeEnabled.value = $q.dark.isActive;
-  setCssVar('primary', $q.dark.isActive ? '#222222' : '#b7b7b7');
+  let primaryColor = $q.dark.isActive ? lighten(getCssVar('primary'), -50) : lighten(getCssVar('primary'), 50);
+  setCssVar('primary', primaryColor);
 };
 
 const navigateTo = (page) => {

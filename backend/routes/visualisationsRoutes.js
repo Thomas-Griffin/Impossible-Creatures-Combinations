@@ -11,8 +11,14 @@ router.post('/research-levels-per-stock', function (request, response) {
 })
 
 
-router.post('/coal-cost-per-stock', function (request, response) {
-    visualisationsService.getCoalCostPerStock(request.body).then(combinations => {
+router.post('/coal-distribution', function (request, response) {
+    visualisationsService.getCoalCostDistribution(request.body).then(combinations => {
+        response.json(combinations);
+    });
+})
+
+router.post('/coal-distribution-per-research-level', function (request, response) {
+    visualisationsService.getCoalCostDistributionPerResearchLevel(request.body).then(combinations => {
         response.json(combinations);
     });
 })

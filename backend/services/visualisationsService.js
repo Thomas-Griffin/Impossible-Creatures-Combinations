@@ -35,6 +35,28 @@ class VisualisationsService extends MongoService {
         return sorted;
     }
 
+    formatResearchLevels(doc) {
+        if (doc.counts) {
+            if (doc.counts["Research Level 1"] === undefined) {
+                doc.counts["Research Level 1"] = 0;
+            }
+            if (doc.counts["Research Level 2"] === undefined) {
+                doc.counts["Research Level 2"] = 0;
+            }
+            if (doc.counts["Research Level 3"] === undefined) {
+                doc.counts["Research Level 3"] = 0;
+            }
+            if (doc.counts["Research Level 4"] === undefined) {
+                doc.counts["Research Level 4"] = 0;
+            }
+            if (doc.counts["Research Level 5"] === undefined) {
+                doc.counts["Research Level 5"] = 0;
+            }
+            doc.counts = this.sortObjectKeys(doc.counts);
+        }
+        return doc;
+    }
+
 
     async getResearchLevelsPerStock(body) {
         const {error} = this.modSchema.validate(body);
@@ -59,20 +81,20 @@ class VisualisationsService extends MongoService {
                                 Animal: "$Animals",
                                 ResearchLevel: {
                                     $cond: [
-                                        { $eq: ["$Research Level", null] },
+                                        {$eq: ["$Research Level", null]},
                                         "Unknown",
-                                        { $toString: "$Research Level" }
+                                        {$toString: "$Research Level"}
                                     ]
                                 }
                             },
-                            count: { $sum: 1 }
+                            count: {$sum: 1}
                         }
                     },
                     {
                         $project: {
                             _id: 0,
                             animal: "$_id.Animal",
-                            researchLevel: { $concat: ["Research Level ", "$_id.ResearchLevel"] },
+                            researchLevel: {$concat: ["Research Level ", "$_id.ResearchLevel"]},
                             count: "$count"
                         }
                     },
@@ -91,33 +113,14 @@ class VisualisationsService extends MongoService {
                         $project: {
                             _id: 0,
                             animal: "$_id",
-                            counts: { $arrayToObject: "$counts" }
+                            counts: {$arrayToObject: "$counts"}
                         }
                     },
                     {
-                        $sort: { "animal": 1 }
+                        $sort: {"animal": 1}
                     }
                 ]).toArray();
-                result.forEach(doc => {
-                    if (doc.counts) {
-                        if (doc.counts["Research Level 1"] === undefined) {
-                            doc.counts["Research Level 1"] = 0;
-                        }
-                        if (doc.counts["Research Level 2"] === undefined) {
-                            doc.counts["Research Level 2"] = 0;
-                        }
-                        if (doc.counts["Research Level 3"] === undefined) {
-                            doc.counts["Research Level 3"] = 0;
-                        }
-                        if (doc.counts["Research Level 4"] === undefined) {
-                            doc.counts["Research Level 4"] = 0;
-                        }
-                        if (doc.counts["Research Level 5"] === undefined) {
-                            doc.counts["Research Level 5"] = 0;
-                        }
-                        doc.counts = this.sortObjectKeys(doc.counts);
-                    }
-                });
+                result.forEach(doc => this.formatResearchLevels(doc ));
                 return result;
             } catch (err) {
                 console.error(err);
@@ -126,20 +129,108 @@ class VisualisationsService extends MongoService {
         }
     }
 
-    async getCoalCostPerStock(body) {
+    async getCoalCostDistribution(body) {
         const {error} = this.modSchema.validate(body);
         if (error) {
             return error;
         } else {
             await this.connect();
             try {
-                return await Promise.all(this.db.collection(this.toCollectionName(body.mod)).toArray());
+                return await this.db.collection(this.toCollectionName(body.mod)).aggregate([
+                    {
+                        $bucket: {
+                            groupBy: '$Coal', // Field to group by
+                            boundaries: Array.from({length: 21}, (_, i) => i * 100), // Intervals from 0 to 2000
+                            default: 'Other', // Default bucket name for values outside the defined boundaries
+                            output: {
+                                count: {$sum: 1}, // Count occurrences within each bucket
+                                lowerBound: {$min: '$Coal'}, // Calculate the lower bound for each bucket
+                                upperBound: {$max: '$Coal'}, // Calculate the upper bound for each bucket
+                            },
+                        },
+                    },
+                    {
+                        $project: {
+                            _id: 0, // Exclude the "_id" field
+                            count: 1, // Include the "count" field
+                            bounds: {
+                                lower: '$lowerBound', // Include the lower bound in the "bounds" object
+                                upper: '$upperBound', // Include the upper bound in the "bounds" object
+                            },
+                        },
+                    },
+                ]).toArray();
             } catch (err) {
                 console.error(err);
                 return InternalServerError;
             }
         }
     }
+
+    async getCoalCostDistributionPerResearchLevel(body) {
+        const {error} = this.modSchema.validate(body);
+        if (error) {
+            return error;
+        } else {
+            await this.connect();
+            try {
+                let result = await this.db.collection(this.toCollectionName(body.mod)).aggregate([
+                    {
+                        $addFields: {
+                            coalInterval: {
+                                $floor: {$divide: ['$Coal', 100]} // Calculate the interval of 100 for Coal
+                            }
+                        }
+                    },
+                    {
+                        $group: {
+                            _id: {
+                                ResearchLevel: '$Research Level',
+                                CoalInterval: '$coalInterval'
+                            },
+                            count: {$sum: 1}
+                        }
+                    },
+                    {
+                        $group: {
+                            _id: '$_id.CoalInterval',
+                            counts: {
+                                $push: {
+                                    k: {$concat: ['Research Level ', {$toString: '$_id.ResearchLevel'}]},
+                                    v: '$count'
+                                }
+                            }
+                        }
+                    },
+                    {
+                        $sort: {
+                            '_id': 1 // Sort by CoalInterval in ascending order
+                        }
+                    },
+                    {
+                        $project: {
+                            _id: 0,
+                            bounds: {
+                                lower: {$multiply: ['$_id', 100]}, // Calculate the lower bound
+                                upper: {$add: [{$multiply: ['$_id', 100]}, 100]} // Calculate the upper bound
+                            },
+                            counts: {$arrayToObject: '$counts'} // Convert the counts array to an object
+                        }
+                    }
+                ]).toArray();
+
+                result.forEach(doc => this.formatResearchLevels(doc));
+
+                return result;
+
+            } catch (err) {
+                console.error(err);
+                return InternalServerError;
+            }
+        }
+    }
+
+
 }
 
 

@@ -1,10 +1,6 @@
 <template>
-  <div class="row">
-    <div class="col">
-      <q-btn :icon="isBarChart? 'bar_chart' : 'stacked_line_chart'" flat @click="onChartTypeChange"/>
-      <q-btn :icon="sorted? 'format_list_numbered' : 'sort_by_alpha'" :model-value="sorted" flat @click="toggleSorted"/>
-    </div>
-  </div>
+  <q-btn :icon="isBarChart? 'bar_chart' : 'stacked_line_chart'" flat @click="onChartTypeChange"/>
+  <q-btn :icon="sorted? 'format_list_numbered' : 'sort_by_alpha'" :model-value="sorted" flat @click="toggleSorted"/>
   <vue-plotly :config="config" :data="animalData" :layout="layout"></vue-plotly>
 
 </template>
@@ -78,7 +74,7 @@ const formatChartData = (data, researchLevel, sorting) => {
 
 const layout = ref({
   title: 'Number of Combinations per Research Level',
-  xaxis: {title: 'Animal'},
+  xaxis: {title: 'Animal', automargin: true},
   yaxis: {title: 'Number of Combinations'},
   plot_bgcolor: $q.dark.isActive ? 'black' : 'white',
   paper_bgcolor: $q.dark.isActive ? 'black' : 'white',

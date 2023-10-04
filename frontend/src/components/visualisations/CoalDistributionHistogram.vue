@@ -30,7 +30,6 @@ const getData = async () => {
     text: coalDistribution.map(obj => obj.count),
     type: chartType.value,
   }]
-  console.log(data.value)
 }
 
 watch(() => modStore.getMod, getData)

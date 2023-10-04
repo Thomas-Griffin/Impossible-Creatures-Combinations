@@ -61,7 +61,6 @@ const getData = async () => {
       name: 'Research Level 5',
     },
   ]
-  console.log(data.value)
 }
 
 watch(() => modStore.getMod, getData)

@@ -139,13 +139,13 @@ class DatabaseService extends MongoService {
                         propertyValue = this.snakeCaseToTitleCase(propertyValue)
                     } else if (column.type === 'float' && column?.decimal_places !== undefined) {
                         if (propertyValue === undefined) {
-                            propertyValue = -1
+                            propertyValue = 0
                         } else {
                             propertyValue = parseFloat(this.roundToDecimal(propertyValue, column?.decimal_places))
                         }
                     } else if (column.type === 'percentage' && column?.decimal_places !== undefined) {
                         if (propertyValue === undefined) {
-                            propertyValue = -1
+                            propertyValue = 0
                         } else {
                             propertyValue = parseFloat(this.roundToDecimal(propertyValue * 100, column?.decimal_places))
                         }

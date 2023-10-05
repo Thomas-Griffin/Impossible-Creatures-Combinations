@@ -73,7 +73,7 @@ const formatChartData = (data, researchLevel, sorting) => {
 }
 
 const layout = ref({
-  title: 'Number of Combinations per Research Level',
+  title: 'Number of Combinations Per Research Level',
   xaxis: {title: 'Animal', automargin: true, tickangle: 45},
   yaxis: {title: 'Number of Combinations'},
   plot_bgcolor: $q.dark.isActive ? 'black' : 'white',

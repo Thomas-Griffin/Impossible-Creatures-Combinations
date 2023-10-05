@@ -50,11 +50,41 @@ export function useVisualisations() {
         return result
     }
 
+    const getElectricityDistribution = async (body) => {
+        let result = []
+        await axios.post(`${baseURL}/visualisations/electricity-distribution`, body)
+            .then((response) => {
+                if (response.data?.error) {
+                    visualisationsError.value = response?.data
+                } else {
+                    result = response?.data
+                }
+            })
+            .catch((err) => (visualisationsError.value = err))
+        return result
+    }
+
+    const getElectricityDistributionPerResearchLevel = async (body) => {
+        let result = []
+        await axios.post(`${baseURL}/visualisations/electricity-distribution-per-research-level`, body)
+            .then((response) => {
+                if (response.data?.error) {
+                    visualisationsError.value = response?.data
+                } else {
+                    result = response?.data
+                }
+            })
+            .catch((err) => (visualisationsError.value = err))
+        return result
+    }
+
     return {
         visualisationsError,
         getResearchLevelsPerStock,
         getCoalDistribution,
-        getCoalDistributionPerResearchLevel
+        getCoalDistributionPerResearchLevel,
+        getElectricityDistribution,
+        getElectricityDistributionPerResearchLevel
     }
 }
 

@@ -231,6 +231,107 @@ class VisualisationsService extends MongoService {
     }
 
 
+    async getElectricityDistribution(body) {
+        const {error} = this.modSchema.validate(body);
+        if (error) {
+            return error;
+        } else {
+            await this.connect();
+            try {
+                return await this.db.collection(this.toCollectionName(body.mod)).aggregate([
+                    {
+                        $bucket: {
+                            groupBy: '$Electricity', // Field to group by
+                            boundaries: Array.from({length: 21}, (_, i) => i * 100), // Intervals from 0 to 2000
+                            default: 'Other', // Default bucket name for values outside the defined boundaries
+                            output: {
+                                count: {$sum: 1}, // Count occurrences within each bucket
+                                lowerBound: {$min: '$Electricity'}, // Calculate the lower bound for each bucket
+                                upperBound: {$max: '$Electricity'}, // Calculate the upper bound for each bucket
+                            },
+                        },
+                    },
+                    {
+                        $project: {
+                            _id: 0, // Exclude the "_id" field
+                            count: 1, // Include the "count" field
+                            bounds: {
+                                lower: '$lowerBound', // Include the lower bound in the "bounds" object
+                                upper: '$upperBound', // Include the upper bound in the "bounds" object
+                            },
+                        },
+                    },
+                ]).toArray();
+            } catch (err) {
+                console.error(err);
+                return InternalServerError;
+            }
+        }
+    }
+
+
+    async getElectricityDistributionPerResearchLevel(body) {
+        const {error} = this.modSchema.validate(body);
+        if (error) {
+            return error;
+        } else {
+            await this.connect();
+            try {
+                let result = await this.db.collection(this.toCollectionName(body.mod)).aggregate([
+                    {
+                        $addFields: {
+                            electricityInterval: {
+                                $floor: {$divide: ['$Electricity', 100]} // Calculate the interval of 100 for Electricity
+                            }
+                        }
+                    },
+                    {
+                        $group: {
+                            _id: {
+                                ResearchLevel: '$Research Level',
+                                ElectricityInterval: '$electricityInterval'
+                            },
+                            count: {$sum: 1}
+                        }
+                    },
+                    {
+                        $group: {
+                            _id: '$_id.ElectricityInterval',
+                            counts: {
+                                $push: {
+                                    k: {$concat: ['Research Level ', {$toString: '$_id.ResearchLevel'}]},
+                                    v: '$count'
+                                }
+                            }
+                        }
+                    },
+                    {
+                        $sort: {
+                            '_id': 1 // Sort by ElectricityInterval in ascending order
+                        }
+                    },
+                    {
+                        $project: {
+                            _id: 0,
+                            bounds: {
+                                lower: {$multiply: ['$_id', 100]}, // Calculate the lower bound
+                                upper: {$add: [{$multiply: ['$_id', 100]}, 100]} // Calculate the upper bound
+                            },
+                            counts: {$arrayToObject: '$counts'} // Convert the counts array to an object
+                        }
+                    }
+                ]).toArray();
+
+                result.forEach(doc => this.formatResearchLevels(doc));
+
+                return result;
+
+            } catch (err) {
+                console.error(err);
+                return InternalServerError;
+            }
+        }
+    }
 }
 
 

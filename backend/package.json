@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "scripts": {
     "server": "NODE_ENV=production MONGO_URL=mongodb://mongodb:27017 node ./bin/www",
-    "dev": "NODE_ENV=development nodemon ./bin/www",
+    "dev": "NODE_ENV=development ./bin/www",
+    "dev:nodemon": "NODE_ENV=development nodemon ./bin/www",
     "test": "NODE_ENV=test jest",
     "docs": "node swagger.js",
     "mutation": "stryker run"

@@ -36,10 +36,10 @@ class DatabaseService extends MongoService {
     async createCollections() {
         try {
             await this.db.createCollection(MOD_COLLECTION);
-            this.schema.forEach(mod => {
-                this.db.createCollection(`${mod.name} ${mod.version}`);
+            for (const mod of this.schema) {
+                await this.db.createCollection(`${mod.name} ${mod.version}`);
                 console.log(`Collection '${mod.name} ${mod.version}' was created.`)
-            });
+            }
             console.log(`All collections were created.`);
         } catch (err) {
             console.error(err);
@@ -101,7 +101,11 @@ class DatabaseService extends MongoService {
 
     fetchUnprocessedCombinations(mod) {
         console.log('fetching all combinations for mod: ' + mod.name + ' ' + mod.version)
-        return JSON.parse(fs.readFileSync(`${COMBINATIONS_DIRECTORY}/${mod.name} ${mod.version}.json`, 'utf8'));
+        try {
+            return JSON.parse(fs.readFileSync(`${COMBINATIONS_DIRECTORY}/${mod.name} ${mod.version}.json`, 'utf8'));
+        } catch (err) {
+            console.error(err);
+        }
     }
 
     loadProcessedCombinations(mod) {
@@ -123,7 +127,7 @@ class DatabaseService extends MongoService {
             return "None"
     }
 
-    async populateCombinationCollection(mod) {
+    async populateModCollectionWithCombinations(mod) {
         let combinations = this.loadProcessedCombinations(mod);
         let totalProcessed = 0;
         for (const combination of combinations) {
@@ -162,7 +166,7 @@ class DatabaseService extends MongoService {
             await this.db.collection(`${mod.name} ${mod.version}`).insertOne(processedCombination)
             totalProcessed += 1;
         }
-        console.log(`Processed ${totalProcessed} combinations for mod: ${mod.name} ${mod.version}`)
+        console.log(`Collection '${mod.name} ${mod.version}' was populated with ${totalProcessed} documents.`)
     }
 
     getBodyPart(index) {
@@ -231,11 +235,11 @@ class DatabaseService extends MongoService {
     }
 
     async populateCollections() {
-        this.schema.forEach(mod => {
+        for (const mod of this.schema) {
             console.log(`populating collections for mod: ${mod.name} ${mod.version}`)
-            this.populateModCollection(mod)
-            this.populateCombinationCollection(mod);
-        })
+            await this.populateModCollection(mod)
+            await this.populateModCollectionWithCombinations(mod);
+        }
         console.log('All collections populated.')
     }
 
@@ -275,8 +279,9 @@ class DatabaseService extends MongoService {
     async resetDatabase() {
         try {
             await this.deleteDatabase();
-            await this.initialize();
-            return {message: "The Database was reset."};
+            await this.initialize().then(() => {
+                return {message: "The Database was reset."}
+            })
         } catch (err) {
             console.error(err);
             return {message: "The Database could not be reset.", error: err};

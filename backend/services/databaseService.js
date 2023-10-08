@@ -23,24 +23,31 @@ class DatabaseService extends MongoService {
         await super.connect();
     }
 
-
     async createDatabase() {
         try {
-            this.db = this.client.db(this.mongoDbName);
+            this.db = await this.client.db(this.mongoDbName);
             console.log(`Database '${this.mongoDbName}' was created.`);
         } catch (err) {
             console.error(err);
         }
     }
 
-    async createCollections() {
+    async createModsCollection() {
         try {
             await this.db.createCollection(MOD_COLLECTION);
+            console.log(`Mod collection '${MOD_COLLECTION}' was created.`);
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    async createModCollections() {
+        try {
             for (const mod of this.schema) {
                 await this.db.createCollection(`${mod.name} ${mod.version}`);
-                console.log(`Collection '${mod.name} ${mod.version}' was created.`)
+                console.log(`Mod collection '${mod.name} ${mod.version}' was created.`)
             }
-            console.log(`All collections were created.`);
+            console.log(`All mod collections were created.`);
         } catch (err) {
             console.error(err);
         }
@@ -108,7 +115,7 @@ class DatabaseService extends MongoService {
         }
     }
 
-    loadProcessedCombinations(mod) {
+    loadCombinations(mod) {
         return JSON.parse(fs.readFileSync(`${MOD_DIRECTORY}/${mod.name}/${mod.version}/combinations.json`, 'utf8'));
     }
 
@@ -123,17 +130,16 @@ class DatabaseService extends MongoService {
             return this.snakeCaseToTitleCase(combination["stock_2"])
         } else if (limbIndex === -1) {
             return "Inherent"
-        } else
-            return "None"
+        } else return "None"
     }
 
-    async populateModCollectionWithCombinations(mod) {
-        let combinations = this.loadProcessedCombinations(mod);
+    async populateModCollectionWithCombinations(modSchema, combinations) {
+        combinations = combinations ?? this.loadCombinations(modSchema);
         let totalProcessed = 0;
         for (const combination of combinations) {
             let processedCombination = {};
             let propertyValue;
-            mod.columns.forEach(column => {
+            modSchema.columns.forEach(column => {
                 if (column?.path !== undefined) {
                     propertyValue = this.getPropertyValue(combination, column.path)
                     if (column.type === 'string' && column.format === true) {
@@ -163,10 +169,10 @@ class DatabaseService extends MongoService {
 
             processedCombination.Abilities = this.getAbilities(combination)
 
-            await this.db.collection(`${mod.name} ${mod.version}`).insertOne(processedCombination)
+            await this.db.collection(`${modSchema.name} ${modSchema.version}`).insertOne(processedCombination)
             totalProcessed += 1;
         }
-        console.log(`Collection '${mod.name} ${mod.version}' was populated with ${totalProcessed} documents.`)
+        console.log(`Collection '${modSchema.name} ${modSchema.version}' was populated with ${totalProcessed} documents.`)
     }
 
     getBodyPart(index) {
@@ -204,7 +210,6 @@ class DatabaseService extends MongoService {
         return abilities.filter(ability => ability !== undefined && ability !== null)
     }
 
-
     calculateEHP(combination) {
         if (combination?.Health && combination?.Defence) {
             return this.roundToDecimal(combination.Health / (1 - (combination.Defence / 100)), 1)
@@ -225,22 +230,23 @@ class DatabaseService extends MongoService {
         }
     }
 
-    async populateModCollection(mod) {
-        let modData = {
-            name: mod.name, version: mod.version, columns: mod.columns.map(column => {
-                return {label: column.label, type: column.type}
-            })
-        };
-        this.db.collection(MOD_COLLECTION).insertOne(modData);
+    async populateModCollectionWithModData() {
+        for (const mod of this.schema) {
+            console.log(`populating collection for mod: ${mod.name} ${mod.version} with mod data`)
+            let modData = {
+                name: mod.name, version: mod.version, columns: mod.columns.map(column => {
+                    return {label: column.label, type: column.type}
+                })
+            };
+            await this.db.collection(MOD_COLLECTION).insertOne(modData);
+        }
     }
 
-    async populateCollections() {
+    async populateModCollectionsWithCombinations() {
         for (const mod of this.schema) {
-            console.log(`populating collections for mod: ${mod.name} ${mod.version}`)
-            await this.populateModCollection(mod)
-            await this.populateModCollectionWithCombinations(mod);
+            console.log(`populating collection for mod: ${mod.name} ${mod.version} with combinations`)
+            await this.populateModCollectionWithCombinations(mod)
         }
-        console.log('All collections populated.')
     }
 
     deleteModDirectories() {
@@ -249,16 +255,16 @@ class DatabaseService extends MongoService {
         }
     }
 
-
     async initialize() {
         await this.acquireMissingJSONCombinationFiles();
         this.createModDirectories()
         await this.createDatabase();
-        await this.createCollections();
-        await this.populateCollections();
+        await this.createModsCollection();
+        await this.createModCollections();
+        await this.populateModCollectionWithModData();
+        await this.populateModCollectionsWithCombinations();
         this.deleteModDirectories()
     }
-
 
     async acquireMissingJSONCombinationFiles() {
         let jsonFilesExist = true;

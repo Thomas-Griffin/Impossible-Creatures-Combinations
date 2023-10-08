@@ -11,6 +11,5 @@ router.get('/reset', async function (request, response) {
     );
 });
 
-
 module.exports = router;
 

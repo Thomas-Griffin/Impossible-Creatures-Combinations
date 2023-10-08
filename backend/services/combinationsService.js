@@ -7,7 +7,6 @@ let mods = JSON.parse(fs.readFileSync('services/schema.json', 'utf8'));
 const testMods = JSON.parse(fs.readFileSync('services/testSchema.json', 'utf8'));
 mods = mods.concat(testMods);
 
-
 class CombinationsService extends MongoService {
     constructor() {
         super();
@@ -119,7 +118,6 @@ class CombinationsService extends MongoService {
         }
     }
 
-
     async getAbilities(body) {
         const bodySchema = Joi.object({
             mod: Joi.object({
@@ -181,8 +179,6 @@ class CombinationsService extends MongoService {
         return query;
     }
 
-
 }
-
 
 module.exports = CombinationsService;

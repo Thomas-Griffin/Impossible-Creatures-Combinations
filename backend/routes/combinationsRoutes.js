@@ -3,7 +3,6 @@ const router = express.Router();
 const CombinationService = require('../services/combinationsService');
 const combinationsService = new CombinationService();
 
-
 router.post('/', function (request, response) {
     combinationsService.getCombinations(request.body, parseInt(request.query?.pageNumber) || 1, parseInt(request.query?.nPerPage) || 1).then(combinations => {
         response.json(combinations);

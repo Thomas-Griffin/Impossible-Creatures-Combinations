@@ -164,8 +164,10 @@ class DatabaseService extends MongoService {
                 }
             })
             if (processedCombination?.EHP === null || processedCombination?.EHP === undefined) {
-                processedCombination.EHP = parseFloat(this.calculateEHP(processedCombination))
+                processedCombination.EHP = this.calculateEHP(processedCombination)
             }
+
+            processedCombination.SDT = this.calculateSelfDestructionTime(processedCombination)
 
             processedCombination.Abilities = this.getAbilities(combination)
 
@@ -212,8 +214,12 @@ class DatabaseService extends MongoService {
 
     calculateEHP(combination) {
         if (combination?.Health && combination?.Defence) {
-            return this.roundToDecimal(combination.Health / (1 - (combination.Defence / 100)), 1)
+            return parseFloat(this.roundToDecimal(combination.Health / (1 - (combination.Defence / 100)), 1))
         }
+    }
+
+    calculateSelfDestructionTime(processedCombination) {
+        return parseFloat(this.roundToDecimal((processedCombination?.EHP / processedCombination?.["Melee Damage"]), 1))
     }
 
     snakeCaseToTitleCase(str) {

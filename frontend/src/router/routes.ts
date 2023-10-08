@@ -1,28 +1,26 @@
-import {RouteRecordRaw} from 'vue-router';
+import { RouteRecordRaw } from 'vue-router';
 
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    component: () => import('layouts/MainLayout.vue'),
+    component: async () => import('layouts/MainLayout.vue'),
     children: [
-      {path: '', component: () => import('pages/CombinationsPage.vue')}
+      { path: '', component: () => import('pages/CombinationsPage.vue') },
     ],
   },
 
   {
     path: '/visualisations',
-    component: () => import('layouts/MainLayout.vue'),
+    component: async () => import('layouts/MainLayout.vue'),
     children: [
-      {path: '', component: () => import('pages/VisualisationsPage.vue')},
+      { path: '', component: () => import('pages/VisualisationsPage.vue') },
     ],
   },
 
   {
     path: '/about',
-    component: () => import('layouts/MainLayout.vue'),
-    children: [
-      {path: '', component: () => import('pages/AboutPage.vue')}
-    ],
+    component: async () => import('layouts/MainLayout.vue'),
+    children: [{ path: '', component: () => import('pages/AboutPage.vue') }],
   },
 
   // Always leave this as last one,

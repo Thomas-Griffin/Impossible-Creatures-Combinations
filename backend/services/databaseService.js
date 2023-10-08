@@ -164,7 +164,7 @@ class DatabaseService extends MongoService {
                 }
             })
             if (processedCombination?.EHP === null || processedCombination?.EHP === undefined) {
-                processedCombination.EHP = this.calculateEHP(processedCombination)
+                processedCombination.EHP = parseFloat(this.calculateEHP(processedCombination))
             }
 
             processedCombination.Abilities = this.getAbilities(combination)

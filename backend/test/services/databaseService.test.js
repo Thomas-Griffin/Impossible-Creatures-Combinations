@@ -17,7 +17,7 @@ beforeEach(async () => {
     await databaseService.client.db(testDatabaseName).dropDatabase();
 });
 afterAll(async () => {
-    await databaseService.close();
+    await databaseService.client.close();
 });
 describe('Database service tests', () => {
     describe('create database', () => {

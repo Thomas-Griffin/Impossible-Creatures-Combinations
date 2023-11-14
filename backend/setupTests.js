@@ -1,14 +1,13 @@
-const {MongoMemoryServer} = require('mongodb-memory-server');
-const {testDatabaseName} = require('./test/constants/globalTestConstants');
-let testMongoDatabase;
+import { MongoClient } from 'mongodb'
 
-beforeAll(async () => {
-    process.env.NODE_ENV = 'test';
-    testMongoDatabase = await MongoMemoryServer.create();
-    process.env.MONGO_URL = testMongoDatabase.getUri();
-    process.env.MONGO_DB_NAME = testDatabaseName;
-});
+const deleteTestDatabase = async () => {
+  await MongoClient.connect(process.env['MONGO_URI'])
+    .then(client => client.db(process.env['MONGO_DB_NAME']))
+    .then(db => db.dropDatabase())
+    .then(() => MongoClient.connect(process.env['MONGO_URI']))
+    .then(client => client.close())
+    .catch(err => console.error(err))
+}
 
-afterAll(async () => {
-    await testMongoDatabase.stop();
-});
+beforeAll(deleteTestDatabase)
+afterAll(deleteTestDatabase)

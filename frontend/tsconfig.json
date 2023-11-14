@@ -1,6 +1,42 @@
 {
-  "extends": "@quasar/app-webpack/tsconfig-preset",
+  "extends": "@quasar/app-vite/tsconfig-preset",
   "compilerOptions": {
-    "baseUrl": "."
-  }
+    "skipLibCheck": true,
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "removeComments": true,
+    "strict": true,
+    "target": "es2019",
+    "moduleResolution": "node",
+    "lib": [
+      "es5",
+      "dom"
+    ],
+    "types": [
+      "cypress"
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "src": [
+        "./src"
+      ]
+    }
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+    "src-pwa",
+    "src-cordova",
+    "src-electron",
+    "src-bex"
+  ]
 }

@@ -3,11 +3,11 @@
     ref="tableRef"
     v-model:pagination="pagination"
     v-model:selected="selectedRows"
-    :columns="selectedColumns"
+    :columns="Object.values(shownTableColumns)"
     :grid="gridMode"
     :hide-header="gridMode"
     :loading="loading"
-    :rows="filteredRows"
+    :rows="tableRows"
     :rows-per-page-options="[100, 50, 20, 10, 5, 1]"
     :separator="separator"
     class="sticky-header-table"
@@ -17,28 +17,19 @@
     selection="multiple"
     style="height: 1000px; font-family: monospace; font-weight: bold"
     table-header-class="cursive-font"
-    @request="onRequest"
+    @request="(props: QTableProps) => onTableRequest(props)"
   >
     <template v-slot:top>
       <div class="q-pr-sm">
-        <q-btn
-          :icon="gridMode ? 'list' : 'grid_on'"
-          class="cursive-font"
-          dense
-          flat
-          @click="gridMode = !gridMode"
-        />
+        <q-btn :icon="gridMode ? 'list' : 'grid_on'" class="cursive-font" dense flat @click="gridMode = !gridMode" />
       </div>
       <q-btn-dropdown class="cursive-font" flat label="Sort / Filter">
-        <q-item clickable @click="toggleShowAllColumns">
+        <q-item>
           <q-item-section avatar>
-            <q-checkbox
-              :model-value="showAllColumns && allColumnsAreShown"
-              @update:model-value="(value) => toggleShowAllColumns(value)"
-            />
+            <q-checkbox :model-value="allColumnsAreShown" @update:model-value="toggleShowAllColumns" />
           </q-item-section>
           <q-item-section>
-            <q-item-label class="cursive-font">Show All</q-item-label>
+            <q-item-label class="cursive-font"> Show All</q-item-label>
           </q-item-section>
         </q-item>
 
@@ -52,103 +43,88 @@
             outlined
             rounded
             @clear="filterFiltersList('')"
-            @update:model-value="(value) => filterFiltersList(value)"
+            @update:model-value="value => filterFiltersList(value)"
           />
         </q-item-section>
+        <div v-if="Object.values(shownColumnFilters).length > 0">
+          <div v-for="(column, label) in tableColumns" :key="label">
+            <q-item v-if="shownColumnFilters[label]">
+              <q-checkbox :model-value="column.shown" @click="toggleColumn(column.label)" />
+              <span class="cursive-font">
+                <q-btn
+                  :text-color="getAscendingSortColor(column)"
+                  dense
+                  flat
+                  icon="arrow_upward"
+                  round
+                  size="sm"
+                  @click="onAscendingSort(column)"
+                />
+                <q-btn
+                  :text-color="getDescendingSortColor(column)"
+                  dense
+                  flat
+                  icon="arrow_downward"
+                  round
+                  size="sm"
+                  @click="onDescendingSort(column)"
+                />
 
-        <q-item v-for="col in filtersDisplayedInList" :key="col.name">
-          <q-checkbox :model-value="col.show" @click="toggleColumn(col.name)" />
-          <span class="cursive-font">
-            <q-btn
-              :text-color="getAscendingSortColor(col)"
-              dense
-              flat
-              icon="arrow_upward"
-              round
-              size="sm"
-              @click="onAscendingSort(col)"
-            />
-            <q-btn
-              :text-color="getDescendingSortColor(col)"
-              dense
-              flat
-              icon="arrow_downward"
-              round
-              size="sm"
-              @click="onDescendingSort(col)"
-            />
-
-            <q-btn-dropdown
-              :label="col.label"
-              align="center"
-              dense
-              dropdown-icon="none"
-              flat
-              icon="search"
-              no-icon-animation
-              rounded
-            >
-              <q-item>
-                <q-item-section
-                  v-if="
-                    filters.find(
-                      (f) => f?.label === col.label && f?.type === 'string',
-                    )
-                  "
-                  class="row fit items-center"
+                <q-btn-dropdown
+                  :label="column.label"
+                  align="center"
+                  dense
+                  dropdown-icon="none"
+                  flat
+                  icon="search"
+                  no-icon-animation
+                  rounded
                 >
-                  <q-input
-                    dense
-                    flat
-                    label="Filter"
-                    rounded
-                    @update:model-value="
-                      (value) => setStringFilter(value, col.label)
-                    "
-                  />
-                  <q-btn dense flat label="Apply" @click="applyTextFilters" />
-                </q-item-section>
-                <q-item-section v-else-if="col.label === 'Abilities'">
-                  <q-select
-                    v-model="selectedAbilities"
-                    :options="abilities"
-                    dense
-                    flat
-                    label="Ability Filter"
-                    multiple
-                    options-selected-class="text-blue"
-                    rounded
-                    @update:model-value="setAbilitiesFilter"
-                  />
-                </q-item-section>
-                <suspense v-else>
-                  <q-item-section class="row fit items-center">
-                    <numeric-filter
-                      :ref="(nf) => addNumericFilter(nf, col.label)"
-                      :label="col.label"
-                      :max="
-                        filters.find(
-                          (f) => f?.label === col.label && f?.type === 'number',
-                        )?.max
-                      "
-                      :min="
-                        filters.find(
-                          (f) => f?.label === col.label && f?.type === 'number',
-                        )?.min
-                      "
-                    />
-                    <q-btn
-                      dense
-                      flat
-                      label="Apply"
-                      @click="applyNumericFilters"
-                    />
-                  </q-item-section>
-                </suspense>
-              </q-item>
-            </q-btn-dropdown>
-          </span>
-        </q-item>
+                  <q-item>
+                    <q-item-section
+                      v-if="Object.values(columnFilters).find(f => f?.label === column.label && f?.type === 'string')"
+                      class="row fit items-center"
+                    >
+                      <q-input
+                        dense
+                        flat
+                        label="Filter"
+                        model-value=""
+                        rounded
+                        @update:model-value="value => setStringFilter(value, column.label)"
+                      />
+                      <q-btn dense flat label="Apply" @click="applyTextFilters" />
+                    </q-item-section>
+                    <q-item-section v-else-if="column.label === 'Abilities'">
+                      <q-select
+                        v-model="selectedAbilities"
+                        :options="abilities"
+                        dense
+                        flat
+                        label="Ability Filter"
+                        multiple
+                        options-selected-class="text-blue"
+                        rounded
+                        @update:model-value="setAbilitiesFilter"
+                      />
+                    </q-item-section>
+                    <suspense v-else>
+                      <q-item-section class="row fit items-center">
+                        <numeric-filter
+                          :ref="(nf: NumericFilterInterface) => addNumericFilter(nf, column.label)"
+                          :label="column.label"
+                          :max="columnFilters[column.label]?.max"
+                          :min="columnFilters[column.label]?.min"
+                        />
+                        <q-btn dense flat label="Apply" @click="applyNumericFilters" />
+                      </q-item-section>
+                    </suspense>
+                  </q-item>
+                </q-btn-dropdown>
+              </span>
+            </q-item>
+          </div>
+        </div>
       </q-btn-dropdown>
       <q-btn
         v-if="filtersAreActive"
@@ -165,13 +141,7 @@
         <q-chip
           v-for="filter in activeFilters"
           :key="filter.label"
-          :label="
-            filter?.filter?.min && filter?.filter?.max
-              ? `${filter.label}: Min: ${filter?.filter?.min}, Max: ${filter?.filter?.max}`
-              : filter.type === 'array'
-              ? `${filter?.label}: ${filter?.filter?.join(', ')}`
-              : `${filter?.label}: ${filter?.filter}`
-          "
+          :label="getFilterLabel(filter)"
           class="mono-font"
           clickable
           color="info"
@@ -182,40 +152,30 @@
 
       <q-space />
     </template>
-    <template v-slot:item="props">
+    <template #item="props">
       <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4">
         <q-card bordered flat>
           <q-card-section class="text-left cursive-font text-h6">
-            <q-checkbox
-              v-model="props.selected"
-              :label="props.row.name"
-              dense
-            />
+            <q-checkbox v-model="props.selected" :label="props.row.name" dense />
             Combination {{ props.rowIndex + 1 }}
           </q-card-section>
           <q-separator />
           <q-card-section>
             <table>
-              <tr v-for="col in columns" :key="col.name">
-                <td v-if="col.show" class="cursive-font q-pa-sm">
-                  {{ col.name }}
+              <tr v-for="tableColumn in Object.values(tableColumns)" :key="tableColumn.name">
+                <td v-if="columnIsShown(tableColumn.name)" class="cursive-font q-pa-sm">
+                  {{ tableColumn.name }}
                 </td>
                 <td
-                  v-if="col.show && col.name === 'Abilities'"
+                  v-if="tableColumn.name in shownTableColumns && tableColumn.name === 'Abilities'"
                   style="height: 100px !important"
                 >
-                  <p
-                    v-for="ability in props.row[col.name]"
-                    :key="ability"
-                    class="no-margin"
-                  >
+                  <p v-for="ability in props.row[tableColumn.name]" :key="ability" class="no-margin">
                     {{ ability.ability }}: {{ ability.source }}
                   </p>
                 </td>
-                <td v-else-if="col.show">
-                  {{
-                    props.row[col.name] === -1 ? ' (N/A)' : props.row[col.name]
-                  }}
+                <td v-else-if="tableColumn.name in shownTableColumns">
+                  {{ props.row[tableColumn.name] === -1 ? ' (N/A)' : props.row[tableColumn.name] }}
                 </td>
               </tr>
             </table>
@@ -224,25 +184,337 @@
       </div>
     </template>
 
-    <template v-slot:body-cell-Abilities="props">
+    <template #body-cell-Abilities="props">
       <td style="width: 1000px">
         <span
           v-text="
             props.row.Abilities.map(
-              (a) =>
-                `${a?.ability === undefined ? '' : a.ability}: ${
-                  a?.source === undefined ? '' : a.source
-                }`,
+              (a: Ability) => `${a?.ability === undefined ? '' : a.ability}: ${a?.source === undefined ? '' : a.source}`
             ).join(', ')
           "
-        ></span>
+        />
       </td>
     </template>
   </q-table>
 </template>
 
-<style lang="sass">
+<script lang="ts" setup>
+import { computed, onMounted, ref, watch } from 'vue'
+import { useCombinations } from 'src/composables/useCombinations'
+import NumericFilter from 'components/combinations/NumericFilter.vue'
+import { useModStore } from 'src/stores/modStore'
+import { QTable, QTableProps } from 'quasar'
+import CombinationTableFilter from 'src/types/CombinationTableFilter'
+import CombinationTableColumn from 'src/types/CombinationTableColumn'
+import { NumericFilterDataStructure } from 'src/types/NumericFilterDataStructure'
+import FilterDataStructure from 'src/types/FilterDataStructure'
+import ColumnDataStructure from 'src/types/ColumnDataStructure'
+import QTablePagination from 'src/types/QTablePagination'
+import Ability from 'src/types/Ability'
+import Combination from 'src/types/Combination'
+import NumericFilterInterface from 'src/types/NumericFilter'
+import { GetTotalCombinationsRequestBody } from '../../types/getTotalCombinationsRequestBody'
 
+const modStore = useModStore()
+
+const { getCombinations, getTotalCombinations, getMinMax, getAbilities } = useCombinations()
+
+const tableRef = ref<QTable | null>()
+const tableRows = ref([])
+const tableColumns = ref<ColumnDataStructure>({})
+
+const shownTableColumns = computed(() => {
+  let shownColumns: ColumnDataStructure = {}
+  Object.values(tableColumns.value).forEach(column => {
+    if (column.shown) shownColumns[column.name] = column
+  })
+  return shownColumns
+})
+
+const columnFilters = ref<FilterDataStructure>({})
+const activeFilters = ref<FilterDataStructure>({})
+
+const shownColumnFilters = computed(() => {
+  let shownFilters: FilterDataStructure = {}
+  Object.values(columnFilters.value).forEach(filter => {
+    if (filter.shown) shownFilters[filter.label] = filter
+  })
+  return shownFilters
+})
+
+const numericColumnFilters = ref<NumericFilterDataStructure>({})
+
+const selectedRows = ref<Array<Combination>>([])
+const abilities = ref<Array<Ability>>([])
+const selectedAbilities = ref<Array<Ability>>([])
+
+const filterFilterString = ref<string | number | null>('')
+
+const showAllColumns = ref<boolean>(true)
+const loading = ref<boolean>(true)
+const showGrid = ref<boolean>(true)
+const gridMode = ref<boolean>(true)
+
+const pagination = ref<QTablePagination>({
+  page: 1,
+  rowsPerPage: 100,
+  rowsNumber: 0
+})
+
+const columnIsShown = (columnName: string) => {
+  return tableColumns.value[columnName].shown
+}
+
+const allColumnsAreShown = computed(() => {
+  return Object.values(tableColumns.value).every(column => column.shown)
+})
+
+onMounted(async () => {
+  columnFilters.value = {}
+  pagination.value.page = 1
+  tableColumns.value = getColumns()
+  abilities.value = await getAbilities(modStore.getMod)
+  if (tableRef.value) tableRef.value.requestServerInteraction()
+})
+
+const onTableRequest = async (tableProps: QTableProps) => {
+  loading.value = true
+  for (let numericFiltersKey in Object.keys(numericColumnFilters.value)) {
+    let numericFilter = numericColumnFilters.value[numericFiltersKey]
+    if (numericFilter?.getValues().min !== undefined && numericFilter?.getValues().max !== undefined) {
+      columnFilters.value[numericFiltersKey].min = numericFilter.getValues().min ?? null
+      columnFilters.value[numericFiltersKey].max = numericFilter.getValues().max ?? null
+    }
+  }
+  let tableColumnSorting = undefined
+  let sortedColumn = Object.values(tableColumns.value).find(
+    column => column?.isSorted.ascending || column?.isSorted.descending
+  )
+  if (sortedColumn) {
+    tableColumnSorting = {
+      column: sortedColumn.name,
+      order: sortedColumn.isSorted.ascending ? 'ascending' : 'descending'
+    }
+  }
+  let totalCombinationsRequestBody: GetTotalCombinationsRequestBody = {
+    mod: modStore.getMod,
+    sorting: tableColumnSorting ?? { column: 'Animal 1', order: 'ascending' },
+    filters: activeFilters.value
+  }
+  tableRows.value = await getCombinations(
+    tableProps.pagination?.page ?? 1,
+    tableProps.pagination?.rowsPerPage ?? 100,
+    totalCombinationsRequestBody
+  )
+  let totalCombinations = await getTotalCombinations(totalCombinationsRequestBody)
+  if (tableProps.pagination?.rowsNumber) {
+    tableProps.pagination.rowsNumber = totalCombinations
+  }
+  pagination.value.rowsNumber = totalCombinations
+  columnFilters.value = await getFilters()
+
+  if (tableProps?.pagination?.page && tableProps?.pagination?.rowsPerPage) {
+    pagination.value.page = tableProps.pagination.page
+    pagination.value.rowsPerPage = tableProps.pagination.rowsPerPage
+  }
+  loading.value = false
+}
+
+watch(
+  () => modStore.mod,
+  async () => {
+    if (tableRef.value) tableRef.value.requestServerInteraction()
+  }
+)
+
+const resetSort = () => {
+  Object.values(tableColumns.value).forEach(col => {
+    col.isSorted.ascending = false
+    col.isSorted.descending = false
+  })
+}
+
+const onDescendingSort = async (tableColumn: CombinationTableColumn) => {
+  resetSort()
+  tableColumn.isSorted.descending = true
+  tableColumn.isSorted.ascending = false
+  if (tableRef.value) tableRef.value.requestServerInteraction()
+}
+
+const onAscendingSort = async (tableColumn: CombinationTableColumn) => {
+  resetSort()
+  tableColumn.isSorted.descending = false
+  tableColumn.isSorted.ascending = true
+  if (tableRef.value) tableRef.value.requestServerInteraction()
+}
+
+const toggleColumn = (columnName: string) => {
+  tableColumns.value[columnName].shown = !tableColumns.value[columnName].shown
+}
+
+const toggleShowAllColumns = () => {
+  if (!allColumnsAreShown.value) {
+    showAllColumns.value = true
+    Object.values(tableColumns.value).forEach(column => {
+      column.shown = true
+    })
+  } else {
+    showAllColumns.value = !showAllColumns.value
+    if (showAllColumns.value) {
+      Object.values(tableColumns.value).forEach(column => {
+        column.shown = true
+      })
+    } else {
+      Object.values(tableColumns.value).forEach(column => {
+        column.shown = false
+      })
+    }
+  }
+}
+
+const getAscendingSortColor = (column: CombinationTableColumn) => {
+  return column.isSorted.ascending ? 'green' : 'primary'
+}
+
+const getDescendingSortColor = (column: CombinationTableColumn) => {
+  return column.isSorted.descending ? 'green' : 'primary'
+}
+
+const clearFilter = async (columnLabel: string) => {
+  columnFilters.value[columnLabel].value = {
+    text: '',
+    labels: [],
+    min: undefined,
+    max: undefined
+  }
+  await applyNumericFilters()
+}
+
+const applyTextFilters = async () => {
+  if (tableRef.value) tableRef.value.requestServerInteraction()
+}
+
+const applyNumericFilters = async () => {
+  if (tableRef.value) tableRef.value.requestServerInteraction()
+}
+
+const clearAllFilters = async () => {
+  Object.values(columnFilters.value).forEach(filter => {
+    filter.value.text = ''
+    filter.value.labels = []
+    filter.value.min = undefined
+    filter.value.max = undefined
+  })
+  await applyNumericFilters()
+}
+
+const setStringFilter = (value: string | number | null, columnLabel: string) => {
+  if (typeof value !== 'string') {
+    return
+  }
+  columnFilters.value[columnLabel].value.text = value
+}
+
+const addNumericFilter = (numericFilter: NumericFilterInterface, column: string) => {
+  numericColumnFilters.value[column] = numericFilter
+  return column
+}
+
+const filtersAreActive = computed((): boolean => {
+  return Object.entries(activeFilters.value).length !== 0
+})
+
+const separator = computed((): 'horizontal' | 'vertical' | 'cell' | 'none' | undefined => {
+  return showGrid.value ? 'cell' : 'none'
+})
+
+const getColumns = (): { [key: string]: CombinationTableColumn } => {
+  let columns: { [key: string]: CombinationTableColumn } = {}
+  modStore.getMod.columns.forEach((column: { label: string; type: string }) => {
+    columns[column.label] = {
+      name: column.label,
+      format: val => (val === -1 || val === undefined ? 'N/A' : `${val}`),
+      label: column.label,
+      field: column.label,
+      type: column.type,
+      sortable: false,
+      isSorted: {
+        ascending: false,
+        descending: false
+      },
+      align: 'center',
+      shown: true
+    }
+  })
+  return columns
+}
+
+const getFilters = async (): Promise<{ [key: string]: CombinationTableFilter }> => {
+  let filters: { [key: string]: CombinationTableFilter } = {}
+  if (Object.entries(columnFilters.value).length > 0 || Object.entries(numericColumnFilters.value).length > 0) {
+    return columnFilters.value
+  } else {
+    let filterObjects = Object.values(tableColumns.value).map(async column => {
+      let minmax = await getMinMax(modStore.getMod, column.label)
+      let type
+      type = column?.type === 'string' ? 'string' : column.type === 'array' ? 'array' : 'number'
+      return {
+        label: column?.label,
+        type: type,
+        min: minmax.min ? minmax.min : 0,
+        max: minmax.max ? minmax.max : Number.MAX_SAFE_INTEGER,
+        value: {
+          text: '',
+          labels: []
+        },
+        shown: true
+      }
+    })
+    let resolvedFilters = await Promise.all(filterObjects)
+    resolvedFilters.forEach(filter => {
+      filters[filter.label] = filter
+    })
+    return filters
+  }
+}
+
+const setAbilitiesFilter = () => {
+  columnFilters.value['Abilities'].value.labels = selectedAbilities.value.map(ability => ability.ability)
+  tableRef.value?.requestServerInteraction()
+}
+
+const filterFiltersList = (value: string | number | null) => {
+  if (typeof value !== 'string') {
+    return
+  }
+
+  Object.keys(columnFilters.value).forEach(key => {
+    columnFilters.value[key].shown = false
+  })
+
+  filterFilterString.value = value
+  if (filterFilterString.value === '') {
+    Object.keys(columnFilters.value).forEach(key => {
+      columnFilters.value[key].shown = true
+    })
+    return
+  }
+  Object.keys(columnFilters.value).forEach(key => {
+    if (key.toLowerCase().includes(value.toLowerCase())) {
+      columnFilters.value[key].shown = true
+    }
+  })
+}
+const getFilterLabel = (filter: CombinationTableFilter) => {
+  return filter?.min && filter?.max
+    ? `${filter.label}: Min: ${filter?.min}, Max: ${filter?.max}`
+    : filter.type === 'array'
+    ? `${filter?.label}: ${filter?.value.labels?.join(', ')}`
+    : `${filter?.label}: ${filter?.value.text}`
+}
+</script>
+
+<style lang="sass">
 .sticky-header-table
   height: calc(100vh - 50px) !important
 
@@ -256,262 +528,6 @@
   thead tr:first-child th
     top: 0
 
-
   &.q-table--loading thead tr:last-child th
-
     top: 48px
 </style>
-
-<script setup>
-import { computed, onMounted, ref, watch } from 'vue';
-import { useCombinations } from 'src/composables/useCombinations';
-import NumericFilter from 'components/combinations/NumericFilter.vue';
-import { useModStore } from 'stores/modStore';
-
-const modStore = useModStore();
-
-const isMobile = computed(() => {
-  return window.innerWidth < 700;
-});
-
-const { getCombinations, getTotalCombinations, getMinMax, getAbilities } =
-  useCombinations();
-
-const tableRef = ref();
-const filteredRows = ref([]);
-const selectedColumns = ref([]);
-const showAllColumns = ref(true);
-const loading = ref(true);
-const numericFilters = ref({});
-const showGrid = ref(false);
-const columns = ref([]);
-const filters = ref([]);
-const pagination = ref({ page: 1, rowsPerPage: isMobile.value ? 1 : 100 });
-const gridMode = ref(true);
-const selectedRows = ref([]);
-const abilities = ref([]);
-const selectedAbilities = ref([]);
-const filtersDisplayedInList = ref([]);
-const filterFilterString = ref('');
-
-const allColumnsAreShown = computed(() => {
-  return (
-    columns.value.filter((col) => col?.show).length === columns.value.length
-  );
-});
-
-onMounted(async () => {
-  filters.value = [];
-  pagination.value.page = 1;
-  columns.value = getColumns();
-  filtersDisplayedInList.value = columns.value;
-  abilities.value = await getAbilities(modStore.getMod);
-  selectedColumns.value = columns.value;
-  await tableRef.value.requestServerInteraction();
-});
-
-async function onRequest(props) {
-  loading.value = true;
-
-  for (let numericFiltersKey in numericFilters.value) {
-    let numericFilter = numericFilters.value[numericFiltersKey];
-    if (
-      numericFilter?.getValues().min !== null &&
-      numericFilter?.getValues().max !== null &&
-      numericFilter?.getValues().min !== undefined &&
-      numericFilter?.getValues().max !== undefined
-    ) {
-      filters.value.find(
-        (filter) => filter?.label === numericFiltersKey,
-      ).filter = numericFilter?.getValues() ?? null;
-    }
-  }
-  let sorting = { column: columns.value[0].name, order: 'ascending' };
-  let sortedColumn = columns.value.find(
-    (col) => col?.isSorted.ascending || col?.isSorted.descending,
-  );
-  if (sortedColumn) {
-    sorting = {
-      column: sortedColumn.name,
-      order: sortedColumn.isSorted.ascending ? 'ascending' : 'descending',
-    };
-  }
-  let postBody = {
-    mod: modStore.getMod,
-    sorting: sorting,
-    filters: filters.value !== null ? filters.value : [],
-  };
-  filteredRows.value = await getCombinations(
-    props.pagination.page,
-    props.pagination.rowsPerPage,
-    postBody,
-  );
-  let totalCombinations = await getTotalCombinations(postBody);
-  props.pagination.rowsNumber = totalCombinations;
-  pagination.value.rowsNumber = totalCombinations;
-  filters.value = await getFilters(modStore.getMod);
-
-  const { page, rowsPerPage } = props.pagination;
-  pagination.value.page = page;
-  pagination.value.rowsPerPage = rowsPerPage;
-
-  loading.value = false;
-}
-
-watch(
-  () => modStore.mod,
-  async () => {
-    await tableRef.value.requestServerInteraction();
-  },
-);
-
-const resetSort = () => {
-  columns.value.forEach((col) => {
-    col.isSorted.ascending = false;
-    col.isSorted.descending = false;
-  });
-};
-
-const onDescendingSort = async (col) => {
-  resetSort();
-  col.isSorted.descending = true;
-  col.isSorted.ascending = false;
-  await tableRef.value.requestServerInteraction();
-};
-
-const onAscendingSort = async (col) => {
-  resetSort();
-  col.isSorted.descending = false;
-  col.isSorted.ascending = true;
-  await tableRef.value.requestServerInteraction();
-};
-
-const toggleColumn = (colName) => {
-  columns.value.find((col) => col.name === colName).show = !columns.value.find(
-    (col) => col.name === colName,
-  )?.show;
-  selectedColumns.value = columns.value.filter((col) => col?.show);
-};
-
-const toggleShowAllColumns = (value) => {
-  showAllColumns.value = value;
-  columns.value.forEach((col) => (col.show = showAllColumns.value));
-  selectedColumns.value = columns.value.filter((col) => col?.show);
-};
-
-const getAscendingSortColor = (col) => {
-  return col.isSorted.ascending ? 'green' : 'primary';
-};
-
-const getDescendingSortColor = (col) => {
-  return col.isSorted.descending ? 'green' : 'primary';
-};
-
-const clearFilter = async (columnLabel) => {
-  filters.value.filter((filter) => filter?.label === columnLabel)[0].filter =
-    null;
-  await applyNumericFilters();
-};
-
-const applyTextFilters = async () => {
-  filters.value.forEach((filter) => {
-    if (
-      filter?.filterText !== null &&
-      filter?.filterText !== undefined &&
-      filter?.filterText !== ''
-    ) {
-      filter.filter = filter?.filterText;
-    }
-  });
-  await tableRef.value.requestServerInteraction();
-};
-
-const applyNumericFilters = async () => {
-  await tableRef.value.requestServerInteraction();
-};
-
-const clearAllFilters = async () => {
-  filters.value.forEach((filter) => (filter.filter = null));
-  await applyNumericFilters();
-};
-
-const setStringFilter = (value, columnLabel) => {
-  filters.value.find((filter) => filter?.label === columnLabel).filterText =
-    value;
-};
-
-const addNumericFilter = (numericFilter, column) => {
-  numericFilters.value[column] = numericFilter;
-};
-
-const filtersAreActive = computed(() => {
-  return activeFilters.value.length !== 0;
-});
-
-const activeFilters = computed(() => {
-  return filters.value?.filter((f) => f?.filter !== null);
-});
-
-const separator = computed(() => {
-  return showGrid.value ? 'cell' : 'none';
-});
-
-const getColumns = () => {
-  return modStore.getMod.columns.map((key) => ({
-    name: key.label,
-    format: (val) => (val === -1 || val === undefined ? 'N/A' : `${val}`),
-    label: key.label,
-    field: key.label,
-    type: key.type,
-    sortable: false,
-    isSorted: {
-      ascending: false,
-      descending: false,
-    },
-    show: true,
-    align: 'center',
-  }));
-};
-
-const getFilters = async () => {
-  if (filters.value.length > 0 || numericFilters.value.length > 0) {
-    return filters.value;
-  } else {
-    let result = columns.value.map(async (column) => {
-      let minmax = await getMinMax(modStore.getMod, column.label);
-      let type;
-      type =
-        column?.type === 'string'
-          ? 'string'
-          : column.type === 'array'
-          ? 'array'
-          : 'number';
-      return {
-        label: column?.label,
-        type: type,
-        min: minmax.min ? minmax.min : 0,
-        max: minmax.max ? minmax.max : Number.MAX_SAFE_INTEGER,
-        filter: null,
-      };
-    });
-    return await Promise.all(result);
-  }
-};
-
-const setAbilitiesFilter = () => {
-  filters.value.find((filter) => filter?.label === 'Abilities').filter =
-    selectedAbilities.value;
-  tableRef.value.requestServerInteraction();
-};
-
-const filterFiltersList = (value) => {
-  filterFilterString.value = value;
-  filtersDisplayedInList.value = columns.value;
-  if (filterFilterString.value === '') {
-    return;
-  }
-  filtersDisplayedInList.value = filtersDisplayedInList.value.filter((filter) =>
-    filter?.label.toLowerCase().includes(value.toLowerCase()),
-  );
-};
-</script>

@@ -1,154 +1,143 @@
 {
   "swagger": "2.0",
   "info": {
-	"title": "Combinations API",
-	"description": "Documentation",
-	"version": "1.0.0"
+    "title": "Combinations API",
+    "description": "Documentation",
+    "version": "1.0.0"
   },
   "host": "localhost:3000",
   "basePath": "/",
   "schemes": [
-	"http"
+    "http"
   ],
   "paths": {
-	"/mods/": {
-	  "get": {
-		"description": "",
-		"parameters": [],
-		"responses": {
-		  "200": {
-			"description": "OK"
-		  }
-		}
-	  }
-	},
-	"/mods/name/{name}": {
-	  "get": {
-		"description": "",
-		"parameters": [
-		  {
-			"name": "name",
-			"in": "path",
-			"required": true,
-			"type": "string"
-		  }
-		],
-		"responses": {
-		  "200": {
-			"description": "OK"
-		  }
-		}
-	  }
-	},
-	"/combinations/": {
-	  "post": {
-		"description": "",
-		"parameters": [],
-		"responses": {
-		  "200": {
-			"description": "OK"
-		  }
-		}
-	  }
-	},
-	"/combinations/total": {
-	  "post": {
-		"description": "",
-		"parameters": [],
-		"responses": {
-		  "200": {
-			"description": "OK"
-		  }
-		}
-	  }
-	},
-	"/combinations/min-max": {
-	  "post": {
-		"description": "",
-		"parameters": [],
-		"responses": {
-		  "200": {
-			"description": "OK"
-		  }
-		}
-	  }
-	},
-	"/combinations/abilities": {
-	  "post": {
-		"description": "",
-		"parameters": [],
-		"responses": {
-		  "200": {
-			"description": "OK"
-		  }
-		}
-	  }
-	},
-	"/database/reset": {
-	  "get": {
-		"description": "",
-		"parameters": [],
-		"responses": {
-		  "200": {
-			"description": "OK"
-		  }
-		}
-	  }
-	},
-	"/visualisations/research-levels-per-stock": {
-	  "post": {
-		"description": "",
-		"parameters": [],
-		"responses": {
-		  "200": {
-			"description": "OK"
-		  }
-		}
-	  }
-	},
-	"/visualisations/coal-distribution": {
-	  "post": {
-		"description": "",
-		"parameters": [],
-		"responses": {
-		  "200": {
-			"description": "OK"
-		  }
-		}
-	  }
-	},
-	"/visualisations/coal-distribution-per-research-level": {
-	  "post": {
-		"description": "",
-		"parameters": [],
-		"responses": {
-		  "200": {
-			"description": "OK"
-		  }
-		}
-	  }
-	},
-	"/visualisations/electricity-distribution": {
-	  "post": {
-		"description": "",
-		"parameters": [],
-		"responses": {
-		  "200": {
-			"description": "OK"
-		  }
-		}
-	  }
-	},
-	"/visualisations/electricity-distribution-per-research-level": {
-	  "post": {
-		"description": "",
-		"parameters": [],
-		"responses": {
-		  "200": {
-			"description": "OK"
-		  }
-		}
-	  }
-	}
+    "/mods/": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/mods/name/{name}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/combinations/": {
+      "post": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/combinations/total": {
+      "post": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/combinations/min-max": {
+      "post": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/combinations/abilities": {
+      "post": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/database/reset": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/visualisations/research-levels-per-stock": {
+      "post": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/visualisations/coal-distribution": {
+      "post": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/visualisations/coal-distribution-per-research-level": {
+      "post": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/visualisations/electricity-distribution": {
+      "post": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/visualisations/electricity-distribution-per-research-level": {
+      "post": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
   }
 }

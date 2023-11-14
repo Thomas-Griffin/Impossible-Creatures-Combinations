@@ -18,13 +18,14 @@
   />
 </template>
 
-<script setup>
+<script lang="ts" setup>
 import { computed, onBeforeMount, ref, watch } from 'vue';
 import { useMods } from 'src/composables/useMods';
-import { useModStore } from 'stores/modStore';
+import { useModStore } from 'src/stores/modStore';
+import { Mod } from 'src/types/Mod';
 
 const { getMods, getModDisplayName, getModFromDisplayString } = useMods();
-const mods = ref([]);
+const mods = ref<Mod[]>([]);
 const modStore = useModStore();
 const selectedMod = ref('');
 
@@ -37,15 +38,15 @@ watch(
   () => modStore.getMod,
   (newValue) => {
     selectedMod.value = getModDisplayName(newValue);
-  },
+  }
 );
 
-const onModChange = (value) => {
-  modStore.setMod(getModFromDisplayString(value));
+const onModChange = (modName: string) => {
+  modStore.setMod(getModFromDisplayString(modName));
   selectedMod.value = getModDisplayName(modStore.getMod);
 };
 
 const modsDisplayNames = computed(() => {
-  return mods.value.map((mod) => `${mod?.name} ${mod?.version}`);
+  return mods.value.map((mod: Mod) => `${mod?.name} ${mod?.version}`);
 });
 </script>

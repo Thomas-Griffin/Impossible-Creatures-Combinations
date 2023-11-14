@@ -10,7 +10,7 @@ services:
       dockerfile: Dockerfile
     depends_on:
       - mongodb
-    command: node ./init-mongo.js
+    command: node ./init-mongo.ts
 
   express-server:
     build:

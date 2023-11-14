@@ -1,6 +1,6 @@
-# Combiner (combiner)
+# Combinations
 
-Tool for viewing/filtering all possible creature combinations for the game Impossible Creatures
+A Quasar Project
 
 ## Install the dependencies
 
@@ -40,4 +40,4 @@ quasar build
 
 ### Customize the configuration
 
-See [Configuring quasar.config.js](https://v2.quasar.dev/quasar-cli-webpack/quasar-config-js).
+See [Configuring quasar.config.js](https://v2.quasar.dev/quasar-cli-vite/quasar-config-js).

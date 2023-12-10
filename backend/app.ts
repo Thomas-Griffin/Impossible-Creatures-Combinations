@@ -1,4 +1,4 @@
-import express from 'express'
+import express, { NextFunction, Request, Response } from 'express'
 import modsRouter from './routes/modsRoutes'
 import combinationsRouter from './routes/combinationsRoutes'
 import databaseInitializerRouter from './routes/databaseRoutes'
@@ -6,8 +6,20 @@ import visualisationsRouter from './routes/visualisationsRoutes'
 import morgan from 'morgan'
 import swaggerUi from 'swagger-ui-express'
 import fs from 'fs'
+import NodeCache from 'node-cache'
 
+export const cache = new NodeCache()
 const swaggerFile = JSON.parse(fs.readFileSync('./swagger.json', 'utf8'))
+
+const cacheMiddleware = (request: Request, response: Response, next: NextFunction) => {
+  const key = request.originalUrl
+  const cachedResponse = cache.get(key)
+  if (cachedResponse) {
+    response.send(cachedResponse)
+  } else {
+    next()
+  }
+}
 
 const allowCrossDomain = (_request: express.Request, response: express.Response, next: express.NextFunction) => {
   response.header('Access-Control-Allow-Origin', '*')
@@ -17,7 +29,7 @@ const allowCrossDomain = (_request: express.Request, response: express.Response,
 }
 
 const app = express()
-
+app.use(cacheMiddleware)
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerFile))
 app.use(morgan('dev'))
 app.use(express.json())

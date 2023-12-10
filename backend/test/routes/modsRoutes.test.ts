@@ -7,6 +7,7 @@ const testModService = new modService()
 describe('Mods routes', () => {
   beforeEach(async () => {
     await testModService.client.connect()
+    await testModService.client.db(process.env['MONGO_DB_NAME']).collection(testModsCollectionName).drop()
     await testModService.client
       .db(process.env['MONGO_DB_NAME'])
       .collection(testModsCollectionName)
@@ -24,18 +25,22 @@ describe('Mods routes', () => {
           version: '1.0.3',
         },
       ])
+    return await testModService.client.close()
   })
-
   afterEach(async () => {
+    await testModService.client.connect()
     await testModService.client.db(process.env['MONGO_DB_NAME']).collection(testModsCollectionName).drop()
+    return await testModService.client.close()
   })
-
   afterAll(async () => {
-    await testModService.client.close()
+    await testModService.client.connect()
+    await testModService.client.db(process.env['MONGO_DB_NAME']).collection(testModsCollectionName).drop()
+    return await testModService.client.close()
   })
 
   describe('GET /combinations/name/:name', () => {
     it('should return a mod by name', async () => {
+      await testModService.client.connect()
       const response = await request(app).get('/mods/name/test1')
       expect(response.status).toEqual(200)
       expect(response.body).toHaveLength(1)
@@ -44,6 +49,7 @@ describe('Mods routes', () => {
 
   describe('GET /combinations', () => {
     it('should return all combinations', async () => {
+      await testModService.client.connect()
       const response = await request(app).get('/mods')
       expect(response.status).toEqual(200)
       expect(response.body).toHaveLength(3)

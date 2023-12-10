@@ -1,19 +1,20 @@
 import ModService from '../services/modService'
 import { Router } from 'express'
+import { cache } from '../app'
 
 const router = Router()
 const modService = new ModService()
 
-router.get('/', function (_request, response) {
-  modService.getMods().then(mods => {
-    response.json(mods)
-  })
+router.get('/', async function (request, response) {
+  const data = await modService.getMods()
+  cache.set(request.originalUrl, data)
+  response.json(data)
 })
 
-router.get('/name/:name', function (request, response) {
-  modService.getModsByName(request.params.name).then(mod => {
-    response.json(mod)
-  })
+router.get('/name/:name', async function (request, response) {
+  const data = await modService.getModsByName(request.params.name)
+  cache.set(request.originalUrl, data)
+  response.json(data)
 })
 
 export default router

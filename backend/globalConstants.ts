@@ -3,7 +3,8 @@ import { resolve } from 'path'
 export const ROOT_DIRECTORY = resolve('./')
 
 export const MOD_COLLECTION_NAME = 'mods'
-export const MOD_DIRECTORY = 'mods'
+export const MOD_DIRECTORY_NAME = 'mods'
+export const MOD_DIRECTORY = resolve(ROOT_DIRECTORY, `./${MOD_DIRECTORY_NAME}`)
 export const SCHEMA_FILE_NAME = 'schema.json'
 export const ABILITIES_FILE_NAME = 'abilities.json'
 

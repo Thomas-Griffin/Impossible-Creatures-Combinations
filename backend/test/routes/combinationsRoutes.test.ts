@@ -7,6 +7,7 @@ const testCombinationsService = new CombinationsService()
 describe('Combinations routes', () => {
   beforeEach(async () => {
     await testCombinationsService.client.connect()
+    await testCombinationsService.client.db(process.env['MONGO_DB_NAME']).collection(testModName).drop()
     await testCombinationsService.client
       .db(process.env['MONGO_DB_NAME'])
       .collection(testModName)
@@ -78,22 +79,25 @@ describe('Combinations routes', () => {
           Wings: 'testAnimal5',
         },
       ])
+    return await testCombinationsService.client.close()
   })
   afterEach(async () => {
+    await testCombinationsService.client.connect()
     await testCombinationsService.client.db(process.env['MONGO_DB_NAME']).collection(testModName).drop()
-    await testCombinationsService.client.close()
+    return await testCombinationsService.client.close()
+  })
+  afterAll(async () => {
+    await testCombinationsService.client.connect()
+    await testCombinationsService.client.db(process.env['MONGO_DB_NAME']).collection(testModName).drop()
+    return await testCombinationsService.client.close()
   })
 
   describe('Post /combinations', () => {
     it('should return all combinations', async () => {
-      await request(app)
-        .post('/combinations?nPerPage=3&pageNumber=1')
-        .send({ mod: testMod })
-        .then(response => {
-          expect(response.status).toEqual(200)
-          expect(Array.isArray(response.body)).toBe(true)
-          expect(response.body.length).toEqual(3)
-        })
+      await testCombinationsService.client.connect()
+      const response = await request(app).post('/combinations?nPerPage=3&pageNumber=1').send({ mod: testMod })
+      expect(response.status).toEqual(200)
+      expect(response.body.length).toEqual(3)
     })
   })
 })

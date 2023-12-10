@@ -16,13 +16,39 @@ class CombinationsService extends MongoService {
   }
 
   async getTotalCombinations(body: {
-    mod: Mod
-    filters: object
-    sorting: {
-      column: string
-      order: SortingType
+    mod?: Mod
+    filters?: object
+    sorting?: {
+      column?: string
+      order?: SortingType
     }
   }) {
+    const bodySchema = Joi.object({
+      mod: Joi.object({
+        name: Joi.string()
+          .valid(...mods.map((mod: Mod) => mod.name))
+          .required(),
+        version: Joi.string()
+          .valid(...mods.map((mod: Mod) => mod.version))
+          .required(),
+        columns: Joi.array().items(Joi.object()).optional(),
+      }),
+      filters: Joi.object().optional(),
+      sorting: Joi.object({
+        column: Joi.string().optional(),
+        order: Joi.string().valid('ascending', 'descending').optional().messages({
+          'any.only': 'The "order" field must be either "ascending" or "descending"',
+        }),
+      })
+        .optional()
+        .messages({
+          'object.base': 'The "sorting" field must be an object',
+        }),
+    })
+    const { error } = bodySchema.validate(body, { abortEarly: false })
+    if (error) {
+      return error
+    }
     const mod = body?.mod
     if (mod === null || mod === undefined) {
       return combinationErrors.ModMissingError
@@ -116,7 +142,7 @@ class CombinationsService extends MongoService {
     return genericErrors.InternalServerError
   }
 
-  async getAttributeMinMax(body: { mod: Mod; attribute: string }) {
+  async getAttributeMinMax(body: { mod?: Mod; attribute?: string | any }) {
     const bodySchema = Joi.object({
       mod: Joi.object({
         name: Joi.string()
@@ -192,12 +218,15 @@ class CombinationsService extends MongoService {
     return genericErrors.InternalServerError
   }
 
-  toCollectionName(mod: Mod) {
+  toCollectionName(mod: Mod | undefined) {
+    if (mod === null || mod === undefined) {
+      return ''
+    }
     return `${mod.name} ${mod.version}`
   }
 
   buildFiltersQuery(body: {
-    mod: Mod
+    mod?: Mod
     sorting?: {
       column?: string
       order?: SortingType

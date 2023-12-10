@@ -226,7 +226,9 @@ const tableColumns = ref<ColumnDataStructure>({})
 const shownTableColumns = computed(() => {
   let shownColumns: ColumnDataStructure = {}
   Object.values(tableColumns.value).forEach(column => {
-    if (column.shown) shownColumns[column.name] = column
+    if (column.shown) {
+      shownColumns[column.name] = column
+    }
   })
   return shownColumns
 })
@@ -237,7 +239,9 @@ const activeFilters = ref<FilterDataStructure>({})
 const shownColumnFilters = computed(() => {
   let shownFilters: FilterDataStructure = {}
   Object.values(columnFilters.value).forEach(filter => {
-    if (filter.shown) shownFilters[filter.label] = filter
+    if (filter.shown) {
+      shownFilters[filter.label] = filter
+    }
   })
   return shownFilters
 })
@@ -274,7 +278,9 @@ onMounted(async () => {
   pagination.value.page = 1
   tableColumns.value = getColumns()
   abilities.value = await getAbilities(modStore.getMod)
-  if (tableRef.value) tableRef.value.requestServerInteraction()
+  if (tableRef.value) {
+    tableRef.value.requestServerInteraction()
+  }
 })
 
 const onTableRequest = async (tableProps: QTableProps) => {
@@ -323,7 +329,9 @@ const onTableRequest = async (tableProps: QTableProps) => {
 watch(
   () => modStore.mod,
   async () => {
-    if (tableRef.value) tableRef.value.requestServerInteraction()
+    if (tableRef.value) {
+      tableRef.value.requestServerInteraction()
+    }
   }
 )
 
@@ -338,14 +346,18 @@ const onDescendingSort = async (tableColumn: CombinationTableColumn) => {
   resetSort()
   tableColumn.isSorted.descending = true
   tableColumn.isSorted.ascending = false
-  if (tableRef.value) tableRef.value.requestServerInteraction()
+  if (tableRef.value) {
+    tableRef.value.requestServerInteraction()
+  }
 }
 
 const onAscendingSort = async (tableColumn: CombinationTableColumn) => {
   resetSort()
   tableColumn.isSorted.descending = false
   tableColumn.isSorted.ascending = true
-  if (tableRef.value) tableRef.value.requestServerInteraction()
+  if (tableRef.value) {
+    tableRef.value.requestServerInteraction()
+  }
 }
 
 const toggleColumn = (columnName: string) => {
@@ -353,12 +365,7 @@ const toggleColumn = (columnName: string) => {
 }
 
 const toggleShowAllColumns = () => {
-  if (!allColumnsAreShown.value) {
-    showAllColumns.value = true
-    Object.values(tableColumns.value).forEach(column => {
-      column.shown = true
-    })
-  } else {
+  if (allColumnsAreShown.value) {
     showAllColumns.value = !showAllColumns.value
     if (showAllColumns.value) {
       Object.values(tableColumns.value).forEach(column => {
@@ -369,6 +376,11 @@ const toggleShowAllColumns = () => {
         column.shown = false
       })
     }
+  } else {
+    showAllColumns.value = true
+    Object.values(tableColumns.value).forEach(column => {
+      column.shown = true
+    })
   }
 }
 
@@ -391,11 +403,15 @@ const clearFilter = async (columnLabel: string) => {
 }
 
 const applyTextFilters = async () => {
-  if (tableRef.value) tableRef.value.requestServerInteraction()
+  if (tableRef.value) {
+    tableRef.value.requestServerInteraction()
+  }
 }
 
 const applyNumericFilters = async () => {
-  if (tableRef.value) tableRef.value.requestServerInteraction()
+  if (tableRef.value) {
+    tableRef.value.requestServerInteraction()
+  }
 }
 
 const clearAllFilters = async () => {
@@ -509,8 +525,8 @@ const getFilterLabel = (filter: CombinationTableFilter) => {
   return filter?.min && filter?.max
     ? `${filter.label}: Min: ${filter?.min}, Max: ${filter?.max}`
     : filter.type === 'array'
-    ? `${filter?.label}: ${filter?.value.labels?.join(', ')}`
-    : `${filter?.label}: ${filter?.value.text}`
+      ? `${filter?.label}: ${filter?.value.labels?.join(', ')}`
+      : `${filter?.label}: ${filter?.value.text}`
 }
 </script>
 

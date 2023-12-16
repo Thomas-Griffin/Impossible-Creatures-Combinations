@@ -29,13 +29,12 @@ const allowCrossDomain = (_request: express.Request, response: express.Response,
 }
 
 const app = express()
-app.use(cacheMiddleware)
+
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerFile))
 app.use(morgan('dev'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(allowCrossDomain)
-
 app.disable('etag')
 
 app.use('/mods', modsRouter)
@@ -43,4 +42,5 @@ app.use('/combinations', combinationsRouter)
 app.use('/database', databaseInitializerRouter)
 app.use('/visualisations', visualisationsRouter)
 
+app.use(cacheMiddleware)
 export default app

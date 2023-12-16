@@ -199,7 +199,43 @@ describe('Visualisation Service', () => {
       const result = await visualisationsService.getCoalCostDistribution({
         mod: { name: 'Impossible Creatures', version: '1.1' },
       })
-      expect(result).toEqual([])
+      expect(result).toEqual([
+        {
+          bounds: {
+            lower: 100,
+            upper: 100,
+          },
+          count: 1,
+        },
+        {
+          bounds: {
+            lower: 200,
+            upper: 200,
+          },
+          count: 1,
+        },
+        {
+          bounds: {
+            lower: 300,
+            upper: 300,
+          },
+          count: 1,
+        },
+        {
+          bounds: {
+            lower: 400,
+            upper: 400,
+          },
+          count: 1,
+        },
+        {
+          bounds: {
+            lower: 500,
+            upper: 500,
+          },
+          count: 1,
+        },
+      ])
     })
   })
 })

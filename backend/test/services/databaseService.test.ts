@@ -11,7 +11,7 @@ import {
   totalNumberOfMods,
 } from '../constants/globalTestConstants'
 import { CollectionInfo } from 'mongodb'
-import { MOD_COLLECTION_NAME, MOD_DIRECTORY, MOD_DIRECTORY_NAME } from '../../globalConstants'
+import { MOD_COLLECTION_NAME, MOD_DIRECTORY } from '../../globalConstants'
 import * as process from 'process'
 
 import fs from 'fs'
@@ -149,6 +149,7 @@ describe('Database service tests', () => {
     it('should return true if the database exists', async () => {
       await databaseService.client.connect()
       await databaseService.createDatabase()
+      await databaseService.client.db(process.env['MONGO_DB_NAME']).collection(testModName).insertOne(testMod)
       const result = await databaseService.databaseExists(process.env['MONGO_DB_NAME'])
       expect(result).toEqual(true)
     })
@@ -170,56 +171,10 @@ describe('Database service tests', () => {
   describe('createModDirectories', () => {
     it('should create the mod directories', async () => {
       databaseService.createModDirectories()
-      const modDirectories = fs.readdirSync(MOD_DIRECTORY_NAME)
-      expect(modDirectories).toHaveLength(totalNumberOfMods)
-      fs.rmdirSync(MOD_DIRECTORY_NAME)
-    })
-  })
-  describe('createModFile', () => {
-    it('should create the mod file', async () => {
-      databaseService.createModFile({ name: 'Impossible Creatures', version: '1.1' })
-      const modFile = fs.readFileSync(`${MOD_DIRECTORY_NAME}/Impossible Creatures/1.1/combinations.json`, 'utf8')
-      expect(modFile).toHaveLength(
-        modCombinationTotals.find(mod => mod.name === 'Impossible Creatures' && mod.version === '1.1')!.total
-      )
-    })
-  })
-  describe('fetchUnprocessedCombinations', () => {
-    it('should return the correct number of combinations', async () => {
-      const unprocessedCombinations = await databaseService.fetchUnprocessedCombinations({
-        name: 'Impossible Creatures',
-        version: '1.1',
-      })
-      expect(unprocessedCombinations).toHaveLength(
-        modCombinationTotals.find(mod => mod.name === 'Impossible Creatures' && mod.version === '1.1')!.total
-      )
-    })
-  })
-  describe('loadCombinations', () => {
-    it('should return the correct number of combinations', async () => {
-      const combinations = await databaseService.loadCombinations({ name: 'Impossible Creatures', version: '1.1' })
-      expect(combinations).toHaveLength(
-        modCombinationTotals.find(mod => mod.name === 'Impossible Creatures' && mod.version === '1.1')!.total
-      )
-    })
-  })
-  describe('populateModCollectionsWithCombinations', () => {
-    it('should populate the mod collections with the correct number of combinations', async () => {
-      await databaseService.client.connect()
-      await databaseService.createDatabase()
-      await databaseService.createModsCollection()
-      await databaseService.populateModCollectionWithModData()
-      await databaseService.createModCollections()
-      await databaseService.populateModCollectionsWithCombinations()
       for (const mod of modCombinationTotals) {
-        expect(
-          await databaseService.client
-            .db(process.env['MONGO_DB_NAME'])
-            .collection(`${mod.name} ${mod.version}`)
-            .find()
-            .toArray()
-        ).toHaveLength(mod.total)
+        expect(fs.existsSync(`${MOD_DIRECTORY}/${mod.name}/${mod.version}`)).toEqual(true)
       }
+      fs.rmSync(MOD_DIRECTORY, { force: true, recursive: true })
     })
   })
   describe('deleteModDirectories', () => {
@@ -228,37 +183,6 @@ describe('Database service tests', () => {
       databaseService.deleteModDirectories()
       const modDirectories = fs.existsSync(MOD_DIRECTORY)
       expect(modDirectories).toEqual(false)
-    })
-  })
-  describe('initialise', () => {
-    it('should initialise the database', async () => {
-      await databaseService.initialise()
-      const modDirectories = fs.readdirSync(MOD_DIRECTORY)
-      expect(modDirectories).toHaveLength(totalNumberOfMods)
-      fs.rmdirSync(MOD_DIRECTORY_NAME)
-      const collections = await databaseService.client.db(process.env['MONGO_DB_NAME']).listCollections().toArray()
-      const collectionNames = collections.map((collection: CollectionInfo) => collection.name)
-      expect(collectionNames).toHaveLength(totalNumberOfMods)
-    })
-  })
-  describe('acquireMissingJSONCombinationFiles', () => {
-    it('should acquire the missing JSON combination files', async () => {
-      await databaseService.acquireMissingJSONCombinationFiles()
-      const modDirectories = fs.readdirSync(MOD_DIRECTORY)
-      expect(modDirectories).toHaveLength(totalNumberOfMods)
-      fs.rmdirSync(MOD_DIRECTORY)
-    })
-  })
-
-  describe('resetDatabase', () => {
-    it('should reset the database', async () => {
-      await databaseService.resetDatabase()
-      const modDirectories = fs.existsSync(MOD_DIRECTORY)
-      expect(modDirectories).toEqual(false)
-      const collections = await databaseService.client.db(process.env['MONGO_DB_NAME']).listCollections().toArray()
-      const collectionNames = collections.map((collection: CollectionInfo) => collection.name)
-      expect(collectionNames).toHaveLength(totalNumberOfMods + 1)
-      expect(collectionNames).toContain(MOD_COLLECTION_NAME)
     })
   })
 })

@@ -144,6 +144,11 @@ class VisualisationsService extends MongoService {
           .collection(this.toCollectionName(body.mod))
           .aggregate([
             {
+              $match: {
+                Coal: { $ne: null },
+              },
+            },
+            {
               $bucket: {
                 groupBy: '$Coal',
                 boundaries: Array.from({ length: 21 }, (_, i) => i * 100),

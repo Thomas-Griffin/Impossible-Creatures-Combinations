@@ -1,4 +1,4 @@
-import { access, constants, existsSync, mkdir, mkdirSync, readFileSync, rmSync, writeFileSync } from 'fs'
+import { access, constants, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'fs'
 import MongoService from './mongoService'
 import Mod from '../types/Mod'
 import Combination from '../types/Combination'
@@ -10,7 +10,7 @@ import {
   ABILITIES_FILE_PATH,
   COMBINATIONS_DIRECTORY,
   MOD_COLLECTION_NAME,
-  MOD_DIRECTORY_NAME,
+  MOD_DIRECTORY,
   SCHEMA_FILE_PATH,
 } from '../globalConstants'
 
@@ -94,35 +94,34 @@ class DatabaseService extends MongoService {
 
   createModDirectories() {
     for (const mod of this.schema) {
-      mkdir(`${MOD_DIRECTORY_NAME}/${mod.name}/${mod.version}`, { recursive: true }, err => {
-        if (err) throw err
-      })
+      mkdirSync(`${MOD_DIRECTORY}/${mod.name}/${mod.version}`, { recursive: true })
+    }
+  }
+
+  createModFiles() {
+    for (const mod of this.schema) {
       this.createModFile(mod)
     }
   }
 
   createModFile(mod: Mod) {
     let combinations = JSON.stringify(this.fetchUnprocessedCombinations(mod))
-    if (existsSync(`${MOD_DIRECTORY_NAME}/${mod.name}/${mod.version}/combinations.json`)) {
-      access(
-        `${MOD_DIRECTORY_NAME}/${mod.name}/${mod.version}/combinations.json`,
-        constants.R_OK | constants.W_OK,
-        err => {
-          if (err) {
-            console.error(`no access to mod file: ${MOD_DIRECTORY_NAME}/${mod.name}/${mod.version}/combinations.json`)
-          } else {
-            writeFileSync(`${MOD_DIRECTORY_NAME}/${mod.name}/${mod.version}/combinations.json`, combinations)
-          }
+    if (existsSync(`${MOD_DIRECTORY}/${mod.name}/${mod.version}/combinations.json`)) {
+      access(`${MOD_DIRECTORY}/${mod.name}/${mod.version}/combinations.json`, constants.R_OK | constants.W_OK, err => {
+        if (err) {
+          console.error(`no access to mod file: ${MOD_DIRECTORY}/${mod.name}/${mod.version}/combinations.json`)
+        } else {
+          writeFileSync(`${MOD_DIRECTORY}/${mod.name}/${mod.version}/combinations.json`, combinations)
         }
-      )
+      })
     } else {
-      mkdirSync(`${MOD_DIRECTORY_NAME}/${mod.name}/${mod.version}`, { recursive: true })
-      writeFileSync(`${MOD_DIRECTORY_NAME}/${mod.name}/${mod.version}/combinations.json`, combinations)
+      mkdirSync(`${MOD_DIRECTORY}/${mod.name}/${mod.version}`, { recursive: true })
+      writeFileSync(`${MOD_DIRECTORY}/${mod.name}/${mod.version}/combinations.json`, combinations)
     }
   }
 
   fetchUnprocessedCombinations(mod: Mod) {
-    console.log('fetching all combinations for mod: ' + mod.name + ' ' + mod.version)
+    console.log(`fetching all combinations for mod: ${mod.name} ${mod.version}`)
     try {
       return JSON.parse(readFileSync(`${COMBINATIONS_DIRECTORY}/${mod.name} ${mod.version}.json`, 'utf8'))
     } catch (err) {
@@ -131,7 +130,11 @@ class DatabaseService extends MongoService {
   }
 
   loadCombinations(mod: Mod) {
-    return JSON.parse(readFileSync(`${MOD_DIRECTORY_NAME}/${mod.name}/${mod.version}/combinations.json`, 'utf8'))
+    try {
+      return JSON.parse(readFileSync(`${MOD_DIRECTORY}/${mod.name}/${mod.version}/combinations.json`, 'utf8'))
+    } catch (err) {
+      console.error(err)
+    }
   }
 
   getPropertyValue(combination: Combination | undefined, path: any[]): string | number | undefined {
@@ -289,14 +292,15 @@ class DatabaseService extends MongoService {
   }
 
   deleteModDirectories() {
-    if (existsSync(`${MOD_DIRECTORY_NAME}`)) {
-      rmSync(`${MOD_DIRECTORY_NAME}`, { recursive: true })
+    if (existsSync(`${MOD_DIRECTORY}`)) {
+      rmSync(`${MOD_DIRECTORY}`, { recursive: true })
     }
   }
 
   async initialise() {
     await this.acquireMissingJSONCombinationFiles()
     this.createModDirectories()
+    this.createModFiles()
     await this.createDatabase()
     await this.createModsCollection()
     await this.createModCollections()
@@ -331,10 +335,10 @@ class DatabaseService extends MongoService {
 
   async resetDatabase() {
     console.log(`Resetting database '${process.env['MONGO_DB_NAME']}'...`)
-    if (existsSync(`../${MOD_DIRECTORY_NAME}`)) {
-      console.log(`Directory '${MOD_DIRECTORY_NAME}' exists.`)
-      console.log(`Deleting directory '${MOD_DIRECTORY_NAME}'...`)
-      rmSync(`../${MOD_DIRECTORY_NAME}`, { recursive: true })
+    if (existsSync(`../${MOD_DIRECTORY}`)) {
+      console.log(`Directory '${MOD_DIRECTORY}' exists.`)
+      console.log(`Deleting directory '${MOD_DIRECTORY}'...`)
+      rmSync(`../${MOD_DIRECTORY}`, { recursive: true })
     }
     try {
       await this.deleteDatabase()

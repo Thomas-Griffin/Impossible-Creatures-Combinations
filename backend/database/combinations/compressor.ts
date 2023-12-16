@@ -3,7 +3,7 @@ import readline from 'readline'
 import messagePack from 'msgpack-lite'
 import { deflateSync } from 'zlib'
 
-import { SCHEMA_FILE_PATH } from '../../globalConstants.js'
+import { SCHEMA_FILE_PATH } from '../../globalConstants'
 
 const schema = JSON.parse(fs.readFileSync(SCHEMA_FILE_PATH, 'utf8'))
 

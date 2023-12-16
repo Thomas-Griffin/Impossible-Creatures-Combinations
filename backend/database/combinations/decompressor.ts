@@ -3,7 +3,7 @@ import path from 'path'
 import messagePack from 'msgpack-lite'
 import { unzipSync } from 'zlib'
 
-import { SCHEMA_FILE_PATH } from '../../globalConstants.js'
+import { SCHEMA_FILE_PATH } from '../../globalConstants'
 
 const schema = JSON.parse(fs.readFileSync(SCHEMA_FILE_PATH, 'utf8'))
 

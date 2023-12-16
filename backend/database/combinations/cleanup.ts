@@ -1,6 +1,6 @@
 import fs from 'fs'
 
-import { SCHEMA_FILE_PATH } from '../../globalConstants.js'
+import { SCHEMA_FILE_PATH } from '../../globalConstants'
 
 const schema = JSON.parse(fs.readFileSync(SCHEMA_FILE_PATH, 'utf8'))
 

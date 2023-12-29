@@ -157,7 +157,6 @@ async function updateChart() {
     },
     bucketSize: bucketSize.value > 0 ? bucketSize.value : 1
   })
-  console.log(response)
   chartData.value = response || []
   if (chartDrawn.value) {
     await Plotly.react(chartId.value, chartData.value, layout.value, config.value)

@@ -232,7 +232,6 @@ class VisualisationsService extends MongoService {
       .execute()
       .then(queryResult => {
         const queryResultAsRecordArray = queryResult as unknown as Record<string, any>[]
-        console.log(JSON.stringify(queryResultAsRecordArray, null, 2))
         return queryResultAsRecordArray.map(obj => {
           const xSorted = obj?.['x']?.sort((a: number, b: number) => a - b)
           const dataLength = obj?.['x']?.length

@@ -6,7 +6,6 @@
   "author": "Thomas Griffin <40271229+Thomas-Griffin@users.noreply.github.com>",
   "private": true,
   "scripts": {
-    "frontend:dev": "quasar dev",
     "compile": "tsc",
     "lint": "eslint --ext .js,.ts,.vue ./",
     "format": "prettier --write \"**/*.{js,ts,vue,scss,html,md,json}\" --ignore-path .gitignore",

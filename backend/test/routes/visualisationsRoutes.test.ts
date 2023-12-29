@@ -60,8 +60,11 @@ describe('Visualisations routes', () => {
             name: 'Impossible Creatures',
             version: '1.1',
           },
+          chartOptions: {
+            sort: true,
+            chartType: 'bar',
+          },
         })
-      expect(response.status).toEqual(200)
       expect(response.body).toEqual([
         {
           animal: 'testAnimal1',

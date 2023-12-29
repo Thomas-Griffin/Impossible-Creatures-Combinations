@@ -11,7 +11,7 @@ import {
   totalNumberOfMods,
 } from '../constants/globalTestConstants'
 import { CollectionInfo } from 'mongodb'
-import { MOD_COLLECTION_NAME, MOD_DIRECTORY } from '../../globalConstants'
+import { MOD_COLLECTION_NAME, MOD_DIRECTORY_PATH } from '../../globalConstants'
 import * as process from 'process'
 
 import fs from 'fs'
@@ -28,8 +28,8 @@ describe('Database service tests', () => {
 
   afterEach(async () => {
     await databaseService.client.connect()
-    if (fs.existsSync(MOD_DIRECTORY)) {
-      fs.rmSync(MOD_DIRECTORY, { recursive: true })
+    if (fs.existsSync(MOD_DIRECTORY_PATH)) {
+      fs.rmSync(MOD_DIRECTORY_PATH, { recursive: true })
     }
     return databaseService.client
       .db(process.env['MONGO_DB_NAME'])
@@ -172,16 +172,16 @@ describe('Database service tests', () => {
     it('should create the mod directories', async () => {
       databaseService.createModDirectories()
       for (const mod of modCombinationTotals) {
-        expect(fs.existsSync(`${MOD_DIRECTORY}/${mod.name}/${mod.version}`)).toEqual(true)
+        expect(fs.existsSync(`${MOD_DIRECTORY_PATH}/${mod.name}/${mod.version}`)).toEqual(true)
       }
-      fs.rmSync(MOD_DIRECTORY, { force: true, recursive: true })
+      fs.rmSync(MOD_DIRECTORY_PATH, { force: true, recursive: true })
     })
   })
   describe('deleteModDirectories', () => {
     it('should delete the mod directories', async () => {
       databaseService.createModDirectories()
       databaseService.deleteModDirectories()
-      const modDirectories = fs.existsSync(MOD_DIRECTORY)
+      const modDirectories = fs.existsSync(MOD_DIRECTORY_PATH)
       expect(modDirectories).toEqual(false)
     })
   })

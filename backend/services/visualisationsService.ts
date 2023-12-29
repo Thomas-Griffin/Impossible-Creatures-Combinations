@@ -1,356 +1,322 @@
-import { readFileSync } from 'fs'
 import MongoService from './mongoService'
-import Joi from 'joi'
-import { InternalServerError } from '../errors/genericErrors'
+import { Data } from 'plotly.js'
 import Mod from '../types/Mod'
+import { JOI_CHART_REQUEST_BODY_SCHEMA, JOI_MOD_SCHEMA } from '../globalConstants'
+import ChartRequestBody from '../types/ChartRequestBody'
+import Joi from 'joi'
+import StockPerResearchLevel from '../types/StockPerResearchLevel'
 
-let mods: Mod[] = JSON.parse(readFileSync('services/schema.json', 'utf8'))
-const testMods: Mod[] = JSON.parse(readFileSync('services/testSchema.json', 'utf8'))
-mods = mods.concat(testMods)
+type AggregationStage = Record<string, any>
 
 class VisualisationsService extends MongoService {
-  modSchema: Joi.ObjectSchema
-
   constructor() {
     super()
-    this.modSchema = Joi.object({
-      mod: Joi.object({
-        name: Joi.string()
-          .valid(...mods.map(mod => mod.name))
-          .required(),
-        version: Joi.string()
-          .valid(...mods.map(mod => mod.version))
-          .required(),
-        columns: Joi.array().items(Joi.object()).optional(),
-      }),
-    })
   }
 
-  toCollectionName(mod: Mod) {
+  async getStockPerResearchLevel(body: ChartRequestBody): Promise<Partial<Data>[]> {
+    return new ChartQueryPipeline(body, [
+      {
+        $group: {
+          _id: {
+            $cond: {
+              if: '$Animal 1',
+              then: '$Animal 1',
+              else: '$Animal 2',
+            },
+          },
+          researchLevel: {
+            $push: '$Research Level',
+          },
+          count: {
+            $sum: 1,
+          },
+        },
+      },
+      {
+        $unwind: '$researchLevel',
+      },
+      {
+        $group: {
+          _id: {
+            animal: '$_id',
+            researchLevel: '$researchLevel',
+          },
+          count: {
+            $sum: 1,
+          },
+        },
+      },
+      {
+        $sort: {
+          count: -1,
+        },
+      },
+      {
+        $group: {
+          _id: '$_id.researchLevel',
+          animals: {
+            $push: {
+              animal: '$_id.animal',
+              count: '$count',
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          researchLevel: '$_id',
+          animals: 1,
+        },
+      },
+      {
+        $sort: {
+          researchLevel: 1,
+        },
+      },
+    ])
+      .execute()
+      .then(queryResult => {
+        let chartData = [] as Partial<Data>[]
+        for (let i = 1; i <= 5; i++) {
+          const researchLevel = (queryResult as unknown as StockPerResearchLevel[]).find(
+            obj => obj?.researchLevel === i
+          )
+          if (researchLevel) {
+            chartData.push({
+              name: `Research Level ${i}`,
+              text: researchLevel.animals.map(obj => `${obj.animal}`),
+              textposition: 'auto',
+              type: body?.chartOptions?.chartType || 'bar',
+              x: researchLevel.animals.map(obj => obj.animal),
+              y: researchLevel.animals.map(obj => obj.count),
+            })
+          }
+        }
+        return chartData as Partial<Data>[]
+      })
+  }
+
+  async getAttributeChart(body: ChartRequestBody): Promise<Partial<Data>[]> {
+    const attributeMax = await new ChartQueryPipeline(body, [
+      {
+        $group: {
+          _id: null,
+          max: { $max: `$${body.attributes.x}` },
+        },
+      },
+    ])
+      .execute()
+      .then(result => {
+        const resultAsRecordArray = result as unknown as Record<string, any>[]
+        return resultAsRecordArray[0]?.['max'] || 0
+      })
+    return new ChartQueryPipeline(body, [
+      {
+        $bucket: {
+          groupBy: `$${body.attributes.x}`,
+          boundaries: [
+            0,
+            ...Array.from({ length: Math.ceil(attributeMax / (body?.bucketSize || 1)) }, (_, i) => {
+              return (i + 1) * (body?.bucketSize || 1)
+            }),
+          ],
+          default: 'Other',
+          output: {
+            count: { $sum: 1 },
+            lower: { $min: `$${body.attributes.x}` },
+            upper: { $max: `$${body.attributes.x}` },
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          range: '$_id',
+          count: 1,
+          lower: 1,
+          upper: 1,
+        },
+      },
+    ])
+      .execute()
+      .then(queryResult => {
+        const queryResultAsRecordArray = queryResult as unknown as Record<string, any>[]
+        return [
+          {
+            x: queryResultAsRecordArray.map(obj => {
+              return obj['lower'] === obj['upper']
+                ? `${body?.attributes?.x} ${obj['lower']}`
+                : `${body?.attributes?.x} ${obj['lower']} - ${obj['upper']}`
+            }),
+            y: queryResultAsRecordArray.map(obj => obj['count']),
+            text: queryResultAsRecordArray.map(obj => obj['count'].toString()),
+            type: body?.chartOptions?.chartType || 'bar',
+          } as Partial<Data>,
+        ] as Partial<Data>[]
+      })
+  }
+
+  async getXPerYChart(body: ChartRequestBody): Promise<Partial<Data>[]> {
+    const xAttributeMax = await new ChartQueryPipeline(body, [
+      {
+        $group: {
+          _id: null,
+          max: { $max: `$${body.attributes.x}` },
+        },
+      },
+    ])
+      .execute()
+      .then(result => {
+        const resultAsRecordArray = result as unknown as Record<string, any>[]
+        return resultAsRecordArray[0]?.['max'] || 0
+      })
+
+    return new ChartQueryPipeline(
+      body,
+      //   [
+      //   {
+      //     $group: {
+      //       _id: `$${body.attributes.y}`,
+      //       xCount: {
+      //         $push: `$${body.attributes.x}`,
+      //       },
+      //     },
+      //   },
+      //   {
+      //     $unwind: '$xCount',
+      //   },
+      //   {
+      //     $group: {
+      //       _id: {
+      //         y: '$_id',
+      //         x: '$xCount',
+      //       },
+      //       count: {
+      //         $sum: 1,
+      //       },
+      //     },
+      //   },
+      //   {
+      //     $sort: {
+      //       '_id.y': 1,
+      //     },
+      //   },
+      // ]
+
+      [
+        {
+          $bucket: {
+            groupBy: `$${body.attributes.y}`,
+            boundaries: [
+              0,
+              ...Array.from({ length: Math.ceil(xAttributeMax / (body?.bucketSize || 1)) }, (_, i) => {
+                return (i + 1) * (body?.bucketSize || 1)
+              }),
+            ],
+            default: 'Other',
+            output: {
+              x: {
+                $push: `$${body.attributes.x}`,
+              },
+            },
+          },
+        },
+        {
+          $sort: {
+            _id: 1,
+          },
+        },
+      ]
+    )
+      .execute()
+      .then(queryResult => {
+        const queryResultAsRecordArray = queryResult as unknown as Record<string, any>[]
+        console.log(JSON.stringify(queryResultAsRecordArray, null, 2))
+        return queryResultAsRecordArray.map(obj => {
+          const xSorted = obj?.['x']?.sort((a: number, b: number) => a - b)
+          const dataLength = obj?.['x']?.length
+          return {
+            x: [obj['_id']],
+            y: [xSorted?.length],
+            text:
+              xSorted.length === 1
+                ? `${body?.attributes?.x} ${xSorted[0]} ${body?.attributes?.y}: ${obj?.['_id']}`
+                : `${body?.attributes?.x} ${xSorted[0]} - ${xSorted[dataLength - 1]} ${body?.attributes?.y}: ${obj?.[
+                    '_id'
+                  ]}`,
+            name: `${body?.attributes?.y}: ${obj?.['_id']}`,
+            type: body?.chartOptions?.chartType || 'bar',
+          } as Partial<Data>
+        }) as Partial<Data>[]
+      })
+  }
+}
+
+interface MongoRequestBody {
+  mod: Mod
+  columns?: string[]
+}
+
+class MongoQueryPipeline {
+  body: MongoRequestBody
+  service: MongoService
+  query: AggregationStage[]
+  bodySchema: Joi.ObjectSchema
+  queryResult: Document[]
+
+  constructor(body: MongoRequestBody, bodySchema: Joi.ObjectSchema, query: AggregationStage[]) {
+    this.body = body
+    this.bodySchema = bodySchema || JOI_MOD_SCHEMA
+    this.service = new MongoService()
+    this.query = query
+    this.queryResult = [] as Document[]
+  }
+
+  async execute() {
+    try {
+      const validationError = this.validateBody(this.body)
+      if (validationError) {
+        console.error(validationError)
+        return [] as Document[]
+      }
+      this.queryResult = await this.getQueryResult()
+      return this.queryResult
+    } catch (err) {
+      console.error(err)
+      return [] as Document[]
+    }
+  }
+
+  private toCollectionName(mod: Mod) {
     return `${mod?.name} ${mod?.version}`
   }
 
-  sortObjectKeys<T extends Record<string, any>>(obj: T): T {
-    const sortedKeys: string[] = Object.keys(obj).sort()
-    const sortedObject: Partial<Record<string, any>> = {}
-    for (const key of sortedKeys) {
-      sortedObject[key] = obj[key]
-    }
-    return sortedObject as T
+  private validateBody(body: MongoRequestBody) {
+    const { error } = this.bodySchema.validate(body)
+    return error
   }
 
-  formatResearchLevels(document: { counts: Record<string, number> }) {
-    if (document.counts) {
-      if (document.counts['Research Level 1'] === undefined) {
-        document.counts['Research Level 1'] = 0
-      }
-      if (document.counts['Research Level 2'] === undefined) {
-        document.counts['Research Level 2'] = 0
-      }
-      if (document.counts['Research Level 3'] === undefined) {
-        document.counts['Research Level 3'] = 0
-      }
-      if (document.counts['Research Level 4'] === undefined) {
-        document.counts['Research Level 4'] = 0
-      }
-      if (document.counts['Research Level 5'] === undefined) {
-        document.counts['Research Level 5'] = 0
-      }
-      document.counts = this.sortObjectKeys(document.counts)
-    }
-    return document
-  }
-
-  async getResearchLevelsPerStock(body: { mod: Mod }) {
-    const { error } = this.modSchema.validate(body)
-    if (error) {
-      return error
-    } else {
-      await this.client.connect()
-      try {
-        const result = await this.client
-          .db(process.env['MONGO_DB_NAME'])
-          .collection(this.toCollectionName(body.mod))
-          .aggregate([
-            {
-              $project: {
-                'Research Level': 1,
-                Animals: ['$Animal 1', '$Animal 2'],
-              },
-            },
-            {
-              $unwind: '$Animals',
-            },
-            {
-              $group: {
-                _id: {
-                  Animal: '$Animals',
-                  ResearchLevel: {
-                    $cond: [{ $eq: ['$Research Level', null] }, 'Unknown', { $toString: '$Research Level' }],
-                  },
-                },
-                count: { $sum: 1 },
-              },
-            },
-            {
-              $project: {
-                _id: 0,
-                animal: '$_id.Animal',
-                researchLevel: { $concat: ['Research Level ', '$_id.ResearchLevel'] },
-                count: '$count',
-              },
-            },
-            {
-              $group: {
-                _id: '$animal',
-                counts: {
-                  $push: {
-                    k: '$researchLevel',
-                    v: '$count',
-                  },
-                },
-              },
-            },
-            {
-              $project: {
-                _id: 0,
-                animal: '$_id',
-                counts: { $arrayToObject: '$counts' },
-              },
-            },
-            {
-              $sort: { animal: 1 },
-            },
-          ])
-          .toArray()
-        result.forEach((document: any) => this.formatResearchLevels(document))
-        return result
-      } catch (err) {
-        console.error(err)
-        return InternalServerError
-      }
+  private async getQueryResult() {
+    try {
+      await this.service.client.connect()
+      const response = await this.service.client
+        .db(process.env['MONGO_DB_NAME'])
+        .collection(this.toCollectionName(this.body.mod))
+        .aggregate(this.query)
+        .toArray()
+      await this.service.client.close()
+      return response as Document[]
+    } catch (err) {
+      console.error(err)
+      return [] as Document[]
     }
   }
+}
 
-  async getCoalCostDistribution(body: { mod: Mod }) {
-    const { error } = this.modSchema.validate(body)
-    if (error) {
-      return error
-    } else {
-      await this.client.connect()
-      try {
-        return await this.client
-          .db(process.env['MONGO_DB_NAME'])
-          .collection(this.toCollectionName(body.mod))
-          .aggregate([
-            {
-              $match: {
-                Coal: { $ne: null },
-              },
-            },
-            {
-              $bucket: {
-                groupBy: '$Coal',
-                boundaries: Array.from({ length: 21 }, (_, i) => i * 100),
-                default: 'Other',
-                output: {
-                  count: { $sum: 1 },
-                  lowerBound: { $min: '$Coal' },
-                  upperBound: { $max: '$Coal' },
-                },
-              },
-            },
-            {
-              $project: {
-                _id: 0,
-                count: 1,
-                bounds: {
-                  lower: '$lowerBound',
-                  upper: '$upperBound',
-                },
-              },
-            },
-          ])
-          .toArray()
-      } catch (err) {
-        console.error(err)
-        return InternalServerError
-      }
-    }
-  }
-
-  async getCoalCostDistributionPerResearchLevel(body: { mod: Mod }) {
-    const { error } = this.modSchema.validate(body)
-    if (error) {
-      return error
-    } else {
-      await this.client.connect()
-      try {
-        let result = await this.client
-          .db(process.env['MONGO_DB_NAME'])
-          .collection(this.toCollectionName(body.mod))
-          .aggregate([
-            {
-              $addFields: {
-                coalInterval: {
-                  $floor: { $divide: ['$Coal', 100] },
-                },
-              },
-            },
-            {
-              $group: {
-                _id: {
-                  ResearchLevel: '$Research Level',
-                  CoalInterval: '$coalInterval',
-                },
-                count: { $sum: 1 },
-              },
-            },
-            {
-              $group: {
-                _id: '$_id.CoalInterval',
-                counts: {
-                  $push: {
-                    k: { $concat: ['Research Level ', { $toString: '$_id.ResearchLevel' }] },
-                    v: '$count',
-                  },
-                },
-              },
-            },
-            {
-              $sort: {
-                _id: 1,
-              },
-            },
-            {
-              $project: {
-                _id: 0,
-                bounds: {
-                  lower: { $multiply: ['$_id', 100] },
-                  upper: { $add: [{ $multiply: ['$_id', 100] }, 100] },
-                },
-                counts: { $arrayToObject: '$counts' },
-              },
-            },
-          ])
-          .toArray()
-
-        result.forEach((document: any) => this.formatResearchLevels(document))
-
-        return result
-      } catch (err) {
-        console.error(err)
-        return InternalServerError
-      }
-    }
-  }
-
-  async getElectricityDistribution(body: { mod: Mod }) {
-    const { error } = this.modSchema.validate(body)
-    if (error) {
-      return error
-    } else {
-      await this.client.connect()
-      try {
-        return await this.client
-          .db(process.env['MONGO_DB_NAME'])
-          .collection(this.toCollectionName(body.mod))
-          .aggregate([
-            {
-              $bucket: {
-                groupBy: '$Electricity',
-                boundaries: Array.from({ length: 21 }, (_, i) => i * 100),
-                default: 'Other',
-                output: {
-                  count: { $sum: 1 },
-                  lowerBound: { $min: '$Electricity' },
-                  upperBound: { $max: '$Electricity' },
-                },
-              },
-            },
-            {
-              $project: {
-                _id: 0,
-                count: 1,
-                bounds: {
-                  lower: '$lowerBound',
-                  upper: '$upperBound',
-                },
-              },
-            },
-          ])
-          .toArray()
-      } catch (err) {
-        console.error(err)
-        return InternalServerError
-      }
-    }
-  }
-
-  async getElectricityDistributionPerResearchLevel(body: { mod: Mod }) {
-    const { error } = this.modSchema.validate(body)
-    if (error) {
-      return error
-    } else {
-      await this.client.connect()
-      try {
-        let result = await this.client
-          .db(process.env['MONGO_DB_NAME'])
-          .collection(this.toCollectionName(body.mod))
-          .aggregate([
-            {
-              $addFields: {
-                electricityInterval: {
-                  $floor: { $divide: ['$Electricity', 100] },
-                },
-              },
-            },
-            {
-              $group: {
-                _id: {
-                  ResearchLevel: '$Research Level',
-                  ElectricityInterval: '$electricityInterval',
-                },
-                count: { $sum: 1 },
-              },
-            },
-            {
-              $group: {
-                _id: '$_id.ElectricityInterval',
-                counts: {
-                  $push: {
-                    k: { $concat: ['Research Level ', { $toString: '$_id.ResearchLevel' }] },
-                    v: '$count',
-                  },
-                },
-              },
-            },
-            {
-              $sort: {
-                _id: 1,
-              },
-            },
-            {
-              $project: {
-                _id: 0,
-                bounds: {
-                  lower: { $multiply: ['$_id', 100] },
-                  upper: { $add: [{ $multiply: ['$_id', 100] }, 100] },
-                },
-                counts: { $arrayToObject: '$counts' },
-              },
-            },
-          ])
-          .toArray()
-
-        result.forEach((document: any) => this.formatResearchLevels(document))
-
-        return result
-      } catch (err) {
-        console.error(err)
-        return InternalServerError
-      }
-    }
+class ChartQueryPipeline extends MongoQueryPipeline {
+  constructor(body: ChartRequestBody, query: AggregationStage[]) {
+    super(body, JOI_CHART_REQUEST_BODY_SCHEMA, query)
   }
 }
 

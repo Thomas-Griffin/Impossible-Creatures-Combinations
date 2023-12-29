@@ -1,15 +1,7 @@
 <template>
-  <ResearchLevelsPerStockGraph />
-  <CoalDistributionHistogram />
-  <CoalDistributionPerResearchLevelHistogram />
-  <ElectricityDistributionHistogram />
-  <ElectricityDistributionPerResearchLevelHistogram />
+  <chart-select />
 </template>
 
-<script setup>
-import ResearchLevelsPerStockGraph from 'components/visualisations/ResearchLevelsPerStockGraph.vue'
-import CoalDistributionHistogram from 'components/visualisations/CoalDistributionHistogram.vue'
-import CoalDistributionPerResearchLevelHistogram from 'components/visualisations/CoalDistributionPerResearchLevelHistogram.vue'
-import ElectricityDistributionHistogram from 'components/visualisations/ElectricityDistributionHistogram.vue'
-import ElectricityDistributionPerResearchLevelHistogram from 'components/visualisations/ElectricityDistributionPerResearchLevelHistogram.vue'
+<script lang="ts" setup>
+import ChartSelect from '../components/visualisations/ChartSelect.vue'
 </script>

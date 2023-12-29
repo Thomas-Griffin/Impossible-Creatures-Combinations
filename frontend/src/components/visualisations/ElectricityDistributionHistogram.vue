@@ -1,9 +1,9 @@
 <template>
   <q-btn :icon="isBarChart ? 'bar_chart' : 'stacked_line_chart'" flat @click="onChartTypeChange" />
-  <div id="chart"></div>
+  <div :id="chartName"></div>
 </template>
 <script lang="ts" setup>
-import { computed, onBeforeMount, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, ComputedRef, onMounted, ref, watch } from 'vue'
 import { useVisualisations } from 'src/composables/useVisualisations'
 import { useQuasar } from 'quasar'
 import { useModStore } from 'src/stores/modStore'
@@ -12,29 +12,21 @@ import Plotly, { PlotType } from 'plotly.js-dist-min'
 import ElectricityDistributionResponse from '../../types/ElectrivityDistributionResponse'
 
 const modStore = useModStore()
+const chartName = ref('ElectricityDistributionHistogram')
 
 const $q = useQuasar()
 const { getElectricityDistribution } = useVisualisations()
-const selectedMod = ref('')
 const data = ref<Data[]>([])
 
-onBeforeMount(async () => {
-  selectedMod.value = modStore.getMod
-  await getData()
-})
-
-onMounted(() => {
-  Plotly.newPlot('chart', data.value, layout.value, config.value)
-})
-
-onBeforeUnmount(() => {
-  Plotly.purge('chart')
+onMounted(async () => {
+  await Plotly.newPlot(chartName.value, data.value, layout.value, config.value)
 })
 
 const getData = async () => {
-  const electricityDistribution: ElectricityDistributionResponse[] = await getElectricityDistribution({
-    mod: modStore.getMod
-  })
+  const electricityDistribution: ElectricityDistributionResponse[] =
+    (await getElectricityDistribution({
+      mod: modStore.getMod
+    })) || []
   data.value = [
     {
       x: electricityDistribution.map(obj => `${obj.bounds.lower} - ${obj.bounds.upper}`),
@@ -45,15 +37,24 @@ const getData = async () => {
   ]
 }
 
-watch(() => modStore.getMod, getData)
+watch(
+  () => modStore.getMod,
+  async () => {
+    await getData()
+    await Plotly.react(chartName.value, data.value, layout.value, config.value)
+  }
+)
 
 const onChartTypeChange = async () => {
   isBarChart.value = !isBarChart.value
   await getData()
+  await Plotly.react(chartName.value, data.value, layout.value, config.value)
 }
 
 const isBarChart = ref(true)
-const chartType = computed((): PlotType => (isBarChart.value ? 'bar' : 'histogram'))
+const chartType: ComputedRef<PlotType> = computed(
+  (): PlotType => (isBarChart.value ? ('bar' as PlotType) : ('histogram' as PlotType))
+)
 
 const layout = ref<Partial<Layout>>({
   title: 'Electricity Cost Distribution',
@@ -74,10 +75,14 @@ const config = ref<Partial<Config>>({
 
 watch(
   () => $q.dark.isActive,
-  newDarkModeState => {
+  async newDarkModeState => {
     layout.value.plot_bgcolor = newDarkModeState ? 'black' : 'white'
     layout.value.paper_bgcolor = newDarkModeState ? 'black' : 'white'
-    if (layout.value.font?.color) layout.value.font.color = newDarkModeState ? 'white' : 'black'
+    if (layout.value.font?.color) {
+      layout.value.font.color = newDarkModeState ? 'white' : 'black'
+    }
+    await getData()
+    await Plotly.react(chartName.value, data.value, layout.value, config.value)
   }
 )
 </script>

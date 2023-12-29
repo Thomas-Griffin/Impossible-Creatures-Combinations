@@ -1,66 +1,50 @@
 <template>
   <q-btn :icon="isBarChart ? 'bar_chart' : 'stacked_line_chart'" flat @click="onChartTypeChange" />
   <q-btn :icon="sorted ? 'format_list_numbered' : 'sort_by_alpha'" :model-value="sorted" flat @click="toggleSorted" />
-  <div id="chart"></div>
+  <div :id="chartName"></div>
 </template>
 <script lang="ts" setup>
-import { computed, onBeforeMount, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, ComputedRef, onMounted, ref, watch } from 'vue'
 import { useVisualisations } from 'src/composables/useVisualisations'
 import { useQuasar } from 'quasar'
 import { useModStore } from 'src/stores/modStore'
 import { Config, Data, Layout } from 'plotly.js'
-import Plotly from 'plotly.js-dist-min'
+import Plotly, { PlotType } from 'plotly.js-dist-min'
 import ResearchLevel from '../../types/ResearchLevel'
 
 const modStore = useModStore()
+const chartName = ref('ResearchLevelsPerStockGraph')
 
 const $q = useQuasar()
 const { getResearchLevelsPerStock } = useVisualisations()
-const selectedMod = ref('')
 const animalData = ref<Data[]>([])
 const sorted = ref(true)
 
-onBeforeMount(async () => {
-  selectedMod.value = modStore.getMod
-  await getData()
-})
-
-onMounted(() => {
-  Plotly.newPlot('chart', animalData.value, layout.value, config.value)
-})
-
-onBeforeUnmount(() => {
-  Plotly.purge('chart')
+onMounted(async () => {
+  await Plotly.newPlot(chartName.value, animalData.value, layout.value, config.value)
 })
 
 const isBarChart = ref(true)
-const chartType = computed(() => (isBarChart.value ? 'bar' : 'histogram'))
+const chartType: ComputedRef<PlotType> = computed(() =>
+  isBarChart.value ? ('bar' as PlotType) : ('histogram' as PlotType)
+)
 
 const onChartTypeChange = async () => {
   isBarChart.value = !isBarChart.value
   await getData()
+  await Plotly.react(chartName.value, animalData.value, layout.value, config.value)
 }
 const toggleSorted = async () => {
   sorted.value = !sorted.value
   await getData()
-}
-
-interface ResearchLevelsPerStockResponse {
-  animal: string
-  counts: {
-    'Research Level 1': number
-    'Research Level 2': number
-    'Research Level 3': number
-    'Research Level 4': number
-    'Research Level 5': number
-  }
+  await Plotly.react(chartName.value, animalData.value, layout.value, config.value)
 }
 
 const getData = async () => {
-  const researchLevelsPerStock: ResearchLevelsPerStockResponse[] = await getResearchLevelsPerStock({
-    mod: modStore.getMod
-  })
-  console.log(researchLevelsPerStock)
+  const researchLevelsPerStock: ResearchLevelsPerStockResponse[] =
+    (await getResearchLevelsPerStock({
+      mod: modStore.getMod
+    })) || []
   animalData.value = [
     formatChartData(researchLevelsPerStock, 'Research Level 1', sorted.value),
     formatChartData(researchLevelsPerStock, 'Research Level 2', sorted.value),
@@ -70,10 +54,16 @@ const getData = async () => {
   ]
 }
 
-watch(() => modStore.getMod, getData)
+watch(
+  () => modStore.getMod,
+  async () => {
+    await getData()
+    await Plotly.react(chartName.value, animalData.value, layout.value, config.value)
+  }
+)
 
 const formatChartData = (
-  data: ResearchLevelsPerStockResponse[],
+  data: ResearchLevelsPerStockResponse[] = [],
   researchLevel: ResearchLevel,
   sort: boolean
 ): Partial<Data> => {
@@ -121,10 +111,14 @@ const config = ref<Partial<Config>>({
 
 watch(
   () => $q.dark.isActive,
-  newDarkModeState => {
+  async newDarkModeState => {
     layout.value.plot_bgcolor = newDarkModeState ? 'black' : 'white'
     layout.value.paper_bgcolor = newDarkModeState ? 'black' : 'white'
-    if (layout.value.font?.color) layout.value.font.color = newDarkModeState ? 'white' : 'black'
+    if (layout.value.font?.color) {
+      layout.value.font.color = newDarkModeState ? 'white' : 'black'
+    }
+    await getData()
+    await Plotly.react(chartName.value, animalData.value, layout.value, config.value)
   }
 )
 </script>

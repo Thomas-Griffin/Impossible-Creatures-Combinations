@@ -5,9 +5,10 @@ import { readFileSync } from 'fs'
 import Mod from '../types/Mod'
 import SortingType from '../types/SortingType'
 import Joi from 'joi'
+import { SCHEMA_FILE_PATH, TEST_SCHEMA_FILE_PATH } from '../globalConstants'
 
-let mods = JSON.parse(readFileSync('services/schema.json', 'utf8'))
-const testMods = JSON.parse(readFileSync('services/testSchema.json', 'utf8'))
+let mods = JSON.parse(readFileSync(SCHEMA_FILE_PATH, 'utf8'))
+const testMods = JSON.parse(readFileSync(TEST_SCHEMA_FILE_PATH, 'utf8'))
 mods = mods.concat(testMods)
 
 class CombinationsService extends MongoService {

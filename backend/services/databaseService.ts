@@ -8,11 +8,14 @@ import Ability from '../types/Ability'
 
 import {
   ABILITIES_FILE_PATH,
-  COMBINATIONS_DIRECTORY,
+  CLEANUP_SCRIPT_PATH,
+  COMBINATIONS_DIRECTORY_PATH,
+  DECOMPRESSOR_SCRIPT_PATH,
   MOD_COLLECTION_NAME,
-  MOD_DIRECTORY,
+  MOD_DIRECTORY_PATH,
   SCHEMA_FILE_PATH,
 } from '../globalConstants'
+import { modCombinationTotals } from '../test/constants/globalTestConstants'
 
 const abilitiesMap: Record<string, string> = JSON.parse(readFileSync(ABILITIES_FILE_PATH, 'utf8'))
 
@@ -94,7 +97,7 @@ class DatabaseService extends MongoService {
 
   createModDirectories() {
     for (const mod of this.schema) {
-      mkdirSync(`${MOD_DIRECTORY}/${mod.name}/${mod.version}`, { recursive: true })
+      mkdirSync(`${MOD_DIRECTORY_PATH}/${mod.name}/${mod.version}`, { recursive: true })
     }
   }
 
@@ -106,24 +109,28 @@ class DatabaseService extends MongoService {
 
   createModFile(mod: Mod) {
     let combinations = JSON.stringify(this.fetchUnprocessedCombinations(mod))
-    if (existsSync(`${MOD_DIRECTORY}/${mod.name}/${mod.version}/combinations.json`)) {
-      access(`${MOD_DIRECTORY}/${mod.name}/${mod.version}/combinations.json`, constants.R_OK | constants.W_OK, err => {
-        if (err) {
-          console.error(`no access to mod file: ${MOD_DIRECTORY}/${mod.name}/${mod.version}/combinations.json`)
-        } else {
-          writeFileSync(`${MOD_DIRECTORY}/${mod.name}/${mod.version}/combinations.json`, combinations)
+    if (existsSync(`${MOD_DIRECTORY_PATH}/${mod.name}/${mod.version}/combinations.json`)) {
+      access(
+        `${MOD_DIRECTORY_PATH}/${mod.name}/${mod.version}/combinations.json`,
+        constants.R_OK | constants.W_OK,
+        err => {
+          if (err) {
+            console.error(`no access to mod file: ${MOD_DIRECTORY_PATH}/${mod.name}/${mod.version}/combinations.json`)
+          } else {
+            writeFileSync(`${MOD_DIRECTORY_PATH}/${mod.name}/${mod.version}/combinations.json`, combinations)
+          }
         }
-      })
+      )
     } else {
-      mkdirSync(`${MOD_DIRECTORY}/${mod.name}/${mod.version}`, { recursive: true })
-      writeFileSync(`${MOD_DIRECTORY}/${mod.name}/${mod.version}/combinations.json`, combinations)
+      mkdirSync(`${MOD_DIRECTORY_PATH}/${mod.name}/${mod.version}`, { recursive: true })
+      writeFileSync(`${MOD_DIRECTORY_PATH}/${mod.name}/${mod.version}/combinations.json`, combinations)
     }
   }
 
   fetchUnprocessedCombinations(mod: Mod) {
     console.log(`fetching all combinations for mod: ${mod.name} ${mod.version}`)
     try {
-      return JSON.parse(readFileSync(`${COMBINATIONS_DIRECTORY}/${mod.name} ${mod.version}.json`, 'utf8'))
+      return JSON.parse(readFileSync(`${COMBINATIONS_DIRECTORY_PATH}/${mod.name} ${mod.version}.json`, 'utf8'))
     } catch (err) {
       console.error(err)
     }
@@ -131,7 +138,7 @@ class DatabaseService extends MongoService {
 
   loadCombinations(mod: Mod) {
     try {
-      return JSON.parse(readFileSync(`${MOD_DIRECTORY}/${mod.name}/${mod.version}/combinations.json`, 'utf8'))
+      return JSON.parse(readFileSync(`${MOD_DIRECTORY_PATH}/${mod.name}/${mod.version}/combinations.json`, 'utf8'))
     } catch (err) {
       console.error(err)
     }
@@ -157,7 +164,7 @@ class DatabaseService extends MongoService {
       console.error('No combinations were found for mod: ' + modSchema.name + ' ' + modSchema.version)
       return
     }
-    let totalProcessed = 0
+    let processedCombinations: ProcessedCombination[] = []
     for (const combination of combinations) {
       let processedCombination: ProcessedCombination = {}
       let propertyValue
@@ -193,14 +200,15 @@ class DatabaseService extends MongoService {
       processedCombination.SDT = this.calculateSelfDestructionTime(processedCombination)
 
       processedCombination.Abilities = this.getAbilities(combination)
-
-      await this.client
-        .db(process.env['MONGO_DB_NAME'])
-        .collection(`${modSchema.name} ${modSchema.version}`)
-        .insertOne(processedCombination)
-      totalProcessed += 1
+      processedCombinations.push(processedCombination)
     }
-    console.log(`Collection '${modSchema.name} ${modSchema.version}' was populated with ${totalProcessed} documents.`)
+    await this.client
+      .db(process.env['MONGO_DB_NAME'])
+      .collection(`${modSchema.name} ${modSchema.version}`)
+      .insertMany(processedCombinations)
+    console.log(
+      `Collection '${modSchema.name} ${modSchema.version}' was populated with ${processedCombinations.length} documents.`
+    )
   }
 
   getBodyPart(index: number): string {
@@ -292,8 +300,8 @@ class DatabaseService extends MongoService {
   }
 
   deleteModDirectories() {
-    if (existsSync(`${MOD_DIRECTORY}`)) {
-      rmSync(`${MOD_DIRECTORY}`, { recursive: true })
+    if (existsSync(`${MOD_DIRECTORY_PATH}`)) {
+      rmSync(`${MOD_DIRECTORY_PATH}`, { recursive: true })
     }
   }
 
@@ -312,44 +320,75 @@ class DatabaseService extends MongoService {
   async acquireMissingJSONCombinationFiles() {
     let jsonFilesExist = true
     for (const mod of this.schema) {
-      if (!existsSync(`${COMBINATIONS_DIRECTORY}/${mod.name} ${mod.version}.json`)) {
+      if (!existsSync(`${COMBINATIONS_DIRECTORY_PATH}/${mod.name} ${mod.version}.json`)) {
         jsonFilesExist = false
       }
     }
     if (!jsonFilesExist) {
       console.log(`Combinations files are missing.`)
-      console.log('Running cleanup script...')
-      import(`${COMBINATIONS_DIRECTORY}/cleanup`)
-        .then(module => {
-          module.default
-        })
-        .catch(err => console.error(err))
-      console.log('Extracting combinations from compressed files...')
-      import(`${COMBINATIONS_DIRECTORY}/decompressor`)
-        .then(module => {
-          module.default
-        })
-        .catch(err => console.error(err))
+      try {
+        console.log('Running cleanup script...')
+        const cleanupModule = await import(CLEANUP_SCRIPT_PATH)
+        await cleanupModule.default()
+        console.log('Extracting combinations from compressed files...')
+        const decompressorModule = await import(DECOMPRESSOR_SCRIPT_PATH)
+        await decompressorModule.default()
+      } catch (err) {
+        console.error(err)
+        throw err
+      }
     }
   }
 
   async resetDatabase() {
+    let errors = null
     console.log(`Resetting database '${process.env['MONGO_DB_NAME']}'...`)
-    if (existsSync(`../${MOD_DIRECTORY}`)) {
-      console.log(`Directory '${MOD_DIRECTORY}' exists.`)
-      console.log(`Deleting directory '${MOD_DIRECTORY}'...`)
-      rmSync(`../${MOD_DIRECTORY}`, { recursive: true })
+    if (existsSync(MOD_DIRECTORY_PATH)) {
+      console.log(`Directory '${MOD_DIRECTORY_PATH}' exists.`)
+      console.log(`Deleting directory '${MOD_DIRECTORY_PATH}'...`)
+      rmSync(MOD_DIRECTORY_PATH, { recursive: true })
+    } else {
+      console.log(`Directory '${MOD_DIRECTORY_PATH}' does not already exist.`)
     }
     try {
       await this.deleteDatabase()
-      await this.initialise().then(() => {
-        return { message: 'The Database was reset.' }
-      })
+      await this.initialise()
     } catch (err) {
-      console.error(err)
-      return { message: 'The Database could not be reset.', error: err }
+      errors = err
+      console.error(errors)
     }
-    return { message: 'The Database could not be reset.' }
+    if (errors) {
+      return { message: 'The Database could not be reset.', error: errors }
+    } else {
+      return { message: 'The Database was reset successfully.' }
+    }
+  }
+
+  async databaseIsInitialised() {
+    console.log(`Checking if database '${process.env['MONGO_DB_NAME']}' is initialised...`)
+    let initialised = true
+    for (const mod of this.schema) {
+      const documentCount = await this.client
+        .db(process.env['MONGO_DB_NAME'])
+        .collection(`${mod.name} ${mod.version}`)
+        .countDocuments()
+      const expectedDocumentCount = modCombinationTotals.find(
+        modCombinationTotal => modCombinationTotal.name === mod.name && modCombinationTotal.version === mod.version
+      )?.total
+      const foundMod = await this.client.db(process.env['MONGO_DB_NAME']).collection(MOD_COLLECTION_NAME).findOne({
+        name: mod.name,
+        version: mod.version,
+      })
+      if (documentCount !== expectedDocumentCount || foundMod === null) {
+        initialised = false
+      }
+    }
+    if (initialised) {
+      console.log(`Database '${process.env['MONGO_DB_NAME']}' is initialised.`)
+    } else {
+      console.log(`Database '${process.env['MONGO_DB_NAME']}' is not initialised.`)
+    }
+    return initialised
   }
 }
 

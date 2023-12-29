@@ -1,98 +1,47 @@
 import { ref } from 'vue'
 
 import axios from 'axios'
+import { Data } from 'plotly.js'
 
 const baseURL = 'http://localhost:3000'
 
 export function useVisualisations() {
-  const visualisationsError = ref(null);
+  const visualisationsError = ref(null)
 
-  const getResearchLevelsPerStock = async (body: object) => {
-    let result: never[] = [];
+  const getAttributeChart = async (body: object): Promise<Data[]> => {
+    let result: Data[] = []
     await axios
-      .post(`${baseURL}/visualisations/research-levels-per-stock`, body)
-      .then((response) => {
+      .post(`${baseURL}/visualisations/attribute-chart`, body)
+      .then(response => {
         if (response.data?.error) {
-          visualisationsError.value = response?.data;
+          visualisationsError.value = response?.data
         } else {
-          result = response?.data;
+          result = response?.data
         }
       })
-      .catch((err) => (visualisationsError.value = err));
-    return result;
-  };
-  const getCoalDistribution = async (body: object) => {
-    let result: never[] = [];
-    await axios
-      .post(`${baseURL}/visualisations/coal-distribution`, body)
-      .then((response) => {
-        if (response.data?.error) {
-          visualisationsError.value = response?.data;
-        } else {
-          result = response?.data;
-        }
-      })
-      .catch((err) => (visualisationsError.value = err));
-    return result;
-  };
+      .catch(err => (visualisationsError.value = err))
+    return result
+  }
 
-  const getCoalDistributionPerResearchLevel = async (body: object) => {
-    let result: never[] = [];
+  const getXPerYChart = async (body: object): Promise<Data[]> => {
+    let result: Data[] = []
     await axios
-      .post(
-        `${baseURL}/visualisations/coal-distribution-per-research-level`,
-        body
-      )
-      .then((response) => {
+      .post(`${baseURL}/visualisations/x-per-y-chart`, body)
+      .then(response => {
         if (response.data?.error) {
-          visualisationsError.value = response?.data;
+          visualisationsError.value = response?.data
         } else {
-          result = response?.data;
+          result = response?.data
         }
       })
-      .catch((err) => (visualisationsError.value = err));
-    return result;
-  };
-
-  const getElectricityDistribution = async (body: object) => {
-    let result: never[] = [];
-    await axios
-      .post(`${baseURL}/visualisations/electricity-distribution`, body)
-      .then((response) => {
-        if (response.data?.error) {
-          visualisationsError.value = response?.data;
-        } else {
-          result = response?.data;
-        }
-      })
-      .catch((err) => (visualisationsError.value = err));
-    return result;
-  };
-
-  const getElectricityDistributionPerResearchLevel = async (body: object) => {
-    let result: never[] = [];
-    await axios
-      .post(
-        `${baseURL}/visualisations/electricity-distribution-per-research-level`,
-        body
-      )
-      .then((response) => {
-        if (response.data?.error) {
-          visualisationsError.value = response?.data;
-        } else {
-          result = response?.data;
-        }
-      })
-      .catch((err) => (visualisationsError.value = err));
-    return result;
-  };
+      .catch(err => (visualisationsError.value = err))
+    console.log(result)
+    return result
+  }
 
   return {
     visualisationsError,
-    getResearchLevelsPerStock,
-    getCoalDistribution,
-    getCoalDistributionPerResearchLevel,
-    getElectricityDistribution,
-    getElectricityDistributionPerResearchLevel,
-  };
+    getAttributeChart,
+    getXPerYChart
+  }
 }

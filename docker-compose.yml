@@ -1,34 +1,27 @@
 services:
-  mongodb:
+  combinations-database:
     image: mongo
     ports:
       - '27017:27017'
 
-  init-mongo:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    depends_on:
-      - mongodb
-    command: node ./init-mongo.ts
-
-  express-server:
+  combinations-server:
     build:
       context: ./backend
       dockerfile: Dockerfile
     ports:
       - '3000:3000'
     depends_on:
-      - init-mongo
+      - combinations-database
 
-  quasar-client:
+  combinations-client:
     build:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - '8080:4000'
+      - '8080:80'
     depends_on:
-      - express-server
+      - combinations-database
+      - combinations-server
 
 
 

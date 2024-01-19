@@ -1,0 +1,28 @@
+type CombinationAttributeName =
+    | 'Abilities'
+    | 'Air Speed'
+    | 'Animal 1'
+    | 'Animal 2'
+    | 'Coal'
+    | 'Defence'
+    | 'EHP'
+    | 'Electricity'
+    | 'Front Legs'
+    | 'Head'
+    | 'Health'
+    | 'Land Speed'
+    | 'Melee Damage'
+    | 'Pincers'
+    | 'Population Size'
+    | 'Power'
+    | 'Rear Legs'
+    | 'Research Level'
+    | 'SDT'
+    | 'Sight Radius'
+    | 'Size'
+    | 'Tail'
+    | 'Torso'
+    | 'Water Speed'
+    | 'Wings';
+
+export default CombinationAttributeName;

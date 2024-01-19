@@ -89,7 +89,7 @@
         }
       }
     },
-    "/visualisations/research-levels-per-stock": {
+    "/visualisations/attribute-chart": {
       "post": {
         "description": "",
         "responses": {
@@ -99,37 +99,7 @@
         }
       }
     },
-    "/visualisations/coal-distribution": {
-      "post": {
-        "description": "",
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/visualisations/coal-distribution-per-research-level": {
-      "post": {
-        "description": "",
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/visualisations/electricity-distribution": {
-      "post": {
-        "description": "",
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/visualisations/electricity-distribution-per-research-level": {
+    "/visualisations/x-per-y-chart": {
       "post": {
         "description": "",
         "responses": {

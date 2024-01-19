@@ -1,6 +1,6 @@
 enum SortingType {
-  Ascending = 'ascending',
-  Descending = 'descending',
+    Ascending = 'ascending',
+    Descending = 'descending',
 }
 
-export default SortingType
+export default SortingType;

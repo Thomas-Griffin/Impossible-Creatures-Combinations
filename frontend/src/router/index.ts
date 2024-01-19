@@ -13,7 +13,7 @@ import routes from './routes'
  */
 
 export default route(function (/* { store, ssrContext } */) {
-  const createHistory = createWebHashHistory
+  const createHistory = createWebHashHistory;
 
   return createRouter({
     scrollBehavior: () => ({ left: 0, top: 0 }),

@@ -30,17 +30,17 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, ref, watch } from 'vue'
-import Plotly from 'plotly.js-dist-min'
-import { Config, Data, Layout } from 'plotly.js'
-import { useQuasar } from 'quasar'
-import { useModStore } from '../../stores/modStore'
-import ChartTypes from '../../types/ChartTypes'
-import CombinationAttributes from '../../types/CombinationAttributes'
-import { useVisualisations } from '../../composables/useVisualisations'
+import {computed, onMounted, ref, watch} from 'vue';
+import Plotly from 'plotly.js-dist-min';
+import {Config, Data, Layout} from 'plotly.js';
+import {getCssVar, useQuasar} from 'quasar';
+import {useModStore} from '../../stores/modStore';
+import ChartTypes from '../../types/ChartTypes';
+import CombinationAttributes from '../../types/CombinationAttributes';
+import {useVisualisations} from '../../composables/useVisualisations';
 
-const modStore = useModStore()
-const { getAttributeChart, getXPerYChart } = useVisualisations()
+const modStore = useModStore();
+const {getAttributeChart, getXPerYChart} = useVisualisations();
 const xAttributeOptions = computed(() =>
   Object.values(CombinationAttributes)
     .map(attribute => ({
@@ -48,7 +48,7 @@ const xAttributeOptions = computed(() =>
       value: attribute
     }))
     .filter(attribute => attribute.value !== yAttribute.value)
-)
+);
 const yAttributeOptions = computed(() =>
   Object.values(CombinationAttributes)
     .map(attribute => ({
@@ -56,54 +56,51 @@ const yAttributeOptions = computed(() =>
       value: attribute
     }))
     .filter(attribute => attribute.value !== xAttribute.value)
-)
+);
 
-const xAttribute = ref<CombinationAttributes>(CombinationAttributes.NONE)
-const yAttribute = ref<CombinationAttributes>(CombinationAttributes.NONE)
-const bucketSize = ref(1)
+const xAttribute = ref<CombinationAttributes>(CombinationAttributes.NONE);
+const yAttribute = ref<CombinationAttributes>(CombinationAttributes.NONE);
+const bucketSize = ref(1);
 
-const chartDrawn = ref(false)
+const chartDrawn = ref(false);
 
-const barmode = ref('group')
+const barmode = ref('group');
 
 const props = defineProps({
   id: {
     type: String,
     required: true
   }
-})
+});
 
-const chartData = ref<Data[]>([])
-const chartId = ref(props.id)
+const chartData = ref<Data[]>([]);
+const chartId = ref(props.id);
 
 const chartType = computed(() => {
   if (yAttribute.value === CombinationAttributes.NONE) {
-    return ChartTypes.ATTRIBUTE
+    return ChartTypes.ATTRIBUTE;
   }
-  return ChartTypes.X_PER_Y
-})
+  return ChartTypes.X_PER_Y;
+});
 
 const fetchFunction = computed(() => {
   switch (chartType.value) {
     case ChartTypes.ATTRIBUTE:
-      return getAttributeChart
+      return getAttributeChart;
     case ChartTypes.X_PER_Y:
-      return getXPerYChart
+      return getXPerYChart;
     default:
-      return getAttributeChart
+      return getAttributeChart;
   }
-})
-const qVueGlobals = useQuasar()
-const sorted = ref(false)
+});
+const qVueGlobals = useQuasar();
+const sorted = ref(false);
 
 const layout = computed(
   () =>
     ({
       barmode: barmode.value,
-      title:
-        yAttribute.value === CombinationAttributes.NONE
-          ? xAttribute.value
-          : `${xAttribute.value} by ${yAttribute.value}`,
+      title: yAttribute.value === CombinationAttributes.NONE ? xAttribute.value : `${xAttribute.value} by ${yAttribute.value}`,
       xaxis: {
         title: xAttribute.value,
         automargin: true,
@@ -112,10 +109,10 @@ const layout = computed(
       yaxis: {
         title: 'Combinations'
       },
-      plot_bgcolor: qVueGlobals.dark.isActive ? 'black' : 'white',
-      paper_bgcolor: qVueGlobals.dark.isActive ? 'black' : 'white',
+      plot_bgcolor: getCssVar('primary'),
+      paper_bgcolor: getCssVar('primary'),
       font: {
-        color: qVueGlobals.dark.isActive ? 'white' : 'black',
+        color: getCssVar('primary'),
         size: 14,
         family: 'Futura, sans-serif'
       },
@@ -131,19 +128,19 @@ const layout = computed(
         namelength: -1
       }
     }) as Partial<Layout>
-)
+);
 
 const config = ref<Partial<Config>>({
   displayModeBar: false,
   displaylogo: false,
   responsive: true
-})
+});
 
-const isBarChart = ref(true)
+const isBarChart = ref(true);
 
 async function updateChart() {
   if (bucketSize.value < 1) {
-    bucketSize.value = 1
+    bucketSize.value = 1;
   }
   const response = await fetchFunction.value({
     mod: modStore.getMod,
@@ -156,40 +153,40 @@ async function updateChart() {
       y: yAttribute.value
     },
     bucketSize: bucketSize.value > 0 ? bucketSize.value : 1
-  })
-  chartData.value = response || []
+  });
+  chartData.value = response || [];
   if (chartDrawn.value) {
-    await Plotly.react(chartId.value, chartData.value, layout.value, config.value)
+    await Plotly.react(chartId.value, chartData.value, layout.value, config.value);
   }
 }
 
 watch(
   () => modStore.getMod,
   async () => {
-    await updateChart()
+    await updateChart();
   }
-)
+);
 
 watch(
   () => qVueGlobals.dark.isActive,
   async () => {
-    await updateChart()
+    await updateChart();
   }
-)
+);
 
 onMounted(async () => {
-  await updateChart()
-  await Plotly.newPlot(chartId.value, chartData.value, layout.value, config.value)
-  chartDrawn.value = true
-})
+  await updateChart();
+  await Plotly.newPlot(chartId.value, chartData.value, layout.value, config.value);
+  chartDrawn.value = true;
+});
 
 const setXAttribute = async (attribute: CombinationAttributes) => {
-  xAttribute.value = attribute
-  await updateChart()
-}
+  xAttribute.value = attribute;
+  await updateChart();
+};
 
 const setYAttribute = async (attribute: CombinationAttributes) => {
-  yAttribute.value = attribute
-  await updateChart()
-}
+  yAttribute.value = attribute;
+  await updateChart();
+};
 </script>

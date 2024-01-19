@@ -7,4 +7,4 @@ RUN npm install
 RUN npm install ts-node -g
 EXPOSE 3000
 
-CMD ["npm", "run", "server:production"]
+CMD ["npm", "run", "backend:production"]

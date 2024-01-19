@@ -4,103 +4,114 @@
       v-model.number="lower"
       :error="lowerError !== ''"
       :error-message="lowerError"
-      :input-style="{ textAlign: 'center' }"
-      :label="'Minimum ' + label"
+      :input-style="{textAlign: 'center'}"
+      :label="'Minimum ' + column.label"
       autogrow
       rounded
       standout
-      @update:model-value="value => (lower = onLowerChange(value))"
+      type="number"
+      @update:model-value="value => onLowerChange(value)"
     />
     <q-input
       v-model.number="upper"
       :error="upperError !== ''"
       :error-message="upperError"
-      :input-style="{ textAlign: 'center' }"
-      :label="'Maximum ' + label"
+      :input-style="{textAlign: 'center'}"
+      :label="'Maximum ' + column.label"
       autogrow
       rounded
       standout
-      @update:model-value="value => (upper = onUpperChange(value))"
+      type="number"
+      @update:model-value="value => onUpperChange(value)"
     />
   </div>
 </template>
 
-<script lang='ts' setup>
-import { ref } from 'vue'
-import Joi from 'joi'
+<script lang="ts" setup>
+import {onMounted, ref} from 'vue';
+import Joi from 'joi';
+import CombinationTableColumn from '../../types/CombinationTableColumn';
+import {useCombinationTableControlsStore} from '../../stores/combinationTableControlsStore';
+
+const tableControls = useCombinationTableControlsStore();
 
 const props = defineProps({
-  label: {
-    type: String,
-    required: true,
-  },
-  min: {
-    type: Number,
-    required: true,
-  },
-  max: {
-    type: Number,
-    required: true,
-  },
-})
+  column: {
+    type: Object as () => CombinationTableColumn,
+    required: true
+  }
+});
 
-const lower = ref<number | undefined>(props.min)
-const upper = ref<number | undefined>(props.max)
-const lowerError = ref<string>('')
-const upperError = ref<string>('')
+const lower = ref<number>(props.column.min);
+const upper = ref<number>(props.column.max);
+const lowerError = ref<string>('');
+const upperError = ref<string>('');
+const columnRef = ref<CombinationTableColumn>();
 
-const clamp = (input: number, min: number, max: number) => Math.min(Math.max(input, min), max)
+onMounted(() => {
+  columnRef.value = tableControls.getTableColumns.find(column => column.name === props.column.name);
+  if (!columnRef.value) {
+    return;
+  }
+  if (columnRef.value.filter?.min) {
+    lower.value = columnRef.value.filter.min;
+  }
+  if (columnRef.value.filter?.max) {
+    upper.value = columnRef.value.filter.max;
+  }
+});
+
+const clamp = (input: number, min: number, max: number) => Math.min(Math.max(input, min), max);
 
 const validateLower = (input: number) => {
   let lowerSchema = Joi.number()
     .strict()
-    .min(props.min)
+    .min(props.column.min)
     .max(Number(upper.value))
     .messages({
-      'number.min': `Must be greater than or equal to ${props.min}`,
-      'number.max': `Must be less than or equal to ${upper.value}`,
+      'number.min': `Must be greater than or equal to ${props.column.min}`,
+      'number.max': `Must be less than or equal to ${upper.value}`
     })
-    .label(`Minimum ${props.label}`)
-  let { error } = lowerSchema.validate(input)
-  return error ? error.message : ''
-}
+    .label(`Minimum ${props.column.label}`);
+  let {error} = lowerSchema.validate(input);
+  return error ? error.message : '';
+};
 
 const onLowerChange = (input: string | number | null) => {
-  input = Number(input)
-  lowerError.value = validateLower(input)
-  let returned = clamp(input, props.min, props.max)
-  return isNaN(returned) ? props.min : returned
-}
+  input = Number(input);
+  lowerError.value = validateLower(input);
+  let clampedValue = clamp(input, props.column.min, props.column.max);
+  lower.value = isNaN(clampedValue) ? props.column.min : clampedValue;
+  updateColumnFilter();
+};
 
 const validateUpper = (input: number) => {
   let upperSchema = Joi.number()
     .strict()
     .min(Number(lower.value))
-    .max(props.max)
+    .max(props.column.max)
     .messages({
       'number.min': `Must be greater than or equal to ${lower.value}`,
-      'number.max': `Must be less than or equal to ${props.max}`,
+      'number.max': `Must be less than or equal to ${props.column.max}`
     })
-    .label(`Maximum ${props.label}`)
-  let { error } = upperSchema.validate(input)
-  return error ? error.message : ''
-}
+    .label(`Maximum ${props.column.label}`);
+  let {error} = upperSchema.validate(input);
+  return error ? error.message : '';
+};
 
 const onUpperChange = (input: string | number | null) => {
-  input = Number(input)
-  upperError.value = validateUpper(input)
-  let returned = clamp(input, props.min, props.max)
-  return isNaN(returned) ? props.max : returned
-}
+  input = Number(input);
+  upperError.value = validateUpper(input);
+  let clampedValue = clamp(input, props.column.min, props.column.max);
+  upper.value = isNaN(clampedValue) ? props.column.max : clampedValue;
+  updateColumnFilter();
+};
 
-const getValues = () => ({
-  min: lower.value ? lower.value : null,
-  max: upper.value ? upper.value : null,
-})
-
-defineExpose({
-  getValues,
-})
+const updateColumnFilter = () => {
+  if (!columnRef.value) {
+    return;
+  }
+  columnRef.value.filter = {min: lower.value, max: upper.value};
+  tableControls.updateColumn(columnRef.value);
+};
 </script>
-
-<style></style>

@@ -1,10 +1,7 @@
-export interface Mod {
-  name: string;
-  version: string;
-  columns?: [
-    {
-      label: string;
-      type: string;
-    }
-  ];
+import { ModColumn } from './ModColumn'
+
+export default interface Mod {
+  name: string
+  version: string
+  columns?: ModColumn[]
 }

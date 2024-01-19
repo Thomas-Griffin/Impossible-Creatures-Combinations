@@ -2,49 +2,49 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   version="1.1"
-   id="svg259"
-   width="22"
-   height="20"
-   viewBox="0 0 22 20"
-   sodipodi:docname="rank_2.svg"
-   inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg">
+  xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+  xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  version="1.1"
+  id="svg259"
+  width="22"
+  height="20"
+  viewBox="0 0 22 20"
+  sodipodi:docname="rank_2.svg"
+  inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)"
+  xmlns="http://www.w3.org/2000/svg"
+>
   <defs
-     id="defs263" />
+    id="defs263"/>
   <sodipodi:namedview
-     id="namedview261"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:showpageshadow="2"
-     inkscape:pageopacity="0.0"
-     inkscape:pagecheckerboard="0"
-     inkscape:deskcolor="#d1d1d1"
-     showgrid="false"
-     inkscape:zoom="58.7"
-     inkscape:cx="11.005111"
-     inkscape:cy="10"
-     inkscape:window-width="2560"
-     inkscape:window-height="1377"
-     inkscape:window-x="1912"
-     inkscape:window-y="-8"
-     inkscape:window-maximized="1"
-     inkscape:current-layer="g265" />
+    id="namedview261"
+    pagecolor="#ffffff"
+    bordercolor="#666666"
+    borderopacity="1.0"
+    inkscape:showpageshadow="2"
+    inkscape:pageopacity="0.0"
+    inkscape:pagecheckerboard="0"
+    inkscape:deskcolor="#d1d1d1"
+    showgrid="false"
+    inkscape:zoom="58.7"
+    inkscape:cx="11.005111"
+    inkscape:cy="10"
+    inkscape:window-width="2560"
+    inkscape:window-height="1377"
+    inkscape:window-x="1912"
+    inkscape:window-y="-8"
+    inkscape:window-maximized="1"
+    inkscape:current-layer="g265"/>
   <g
-     inkscape:groupmode="layer"
-     inkscape:label="Image"
-     id="g265">
+    inkscape:groupmode="layer"
+    inkscape:label="Image"
+    id="g265">
     <image
-       width="22"
-       height="20"
-       preserveAspectRatio="none"
-       style="image-rendering:optimizeQuality"
-       xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAUCAYAAACJfM0wAAAABHNCSVQICAgIfAhkiAAAAttJREFU
+      width="22"
+      height="20"
+      preserveAspectRatio="none"
+      style="image-rendering:optimizeQuality"
+      xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAUCAYAAACJfM0wAAAABHNCSVQICAgIfAhkiAAAAttJREFU
 OI21lc+LHFUQxz9V9d6mZ3ayTBJ3hYENCB5kDh7EozfviXjwKuSf8OAhG/Cv8RADgXhRPHmXxJ2D
 KFmTkIVNQnYzk53t6elXHl7Pj16iEcSmG7p41d/61vdbRTMYDAZFUezFGPcB/y9PjHG/3+/v7e7u
 DqQoir3tbrx57aOreFVxZcOYzWtSSriDu/OmS0QQAVVFRDiazvn18BX7T18Su71bIiL7Nz75YHhR
@@ -60,6 +60,6 @@ my53uH3nfl4uccqy5vi0zMAiMrr/8PlwZyuyqQGzbObduw/+FXBQARKTsuLFeMqT8RkxxpEURbF3
 gXTz/UtdNtS5vBkAR2lv4eLNW8BOAua182xScfi64sW0ontx6xb/16/pL2LhHGMTt08IAAAAAElF
 TkSuQmCC
 "
-       id="image267" />
+      id="image267"/>
   </g>
 </svg>

@@ -1,4 +1,4 @@
 export default interface Ability {
-  ability: string
-  source: string
+    ability: string;
+    source: string;
 }

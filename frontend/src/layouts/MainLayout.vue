@@ -2,6 +2,7 @@
   <q-layout view="hHh LpR fFf">
     <q-drawer
       v-model="showDrawer"
+      class=""
       overlay
       side="left"
     >
@@ -11,6 +12,7 @@
             v-for="(page, index) in pages"
             :key="index"
             :active="currentPage === page"
+            active-class="text-info"
             clickable
             @click="navigateTo(page)"
           >
@@ -23,8 +25,7 @@
         </q-list>
       </div>
     </q-drawer>
-
-    <q-header>
+    <q-header class="text-center background-image">
       <q-toolbar>
         <q-btn
           dense
@@ -33,73 +34,50 @@
           style="margin-right: 0.5%; margin-left: 0.15%"
           @click="showDrawer = !showDrawer"
         />
+        <ModSelect />
 
-        <suspense>
-          <mod-select />
-        </suspense>
-
-        <q-space />
-
-        <div class="title-font">
-          Impossible Creatures
-        </div>
-
-        <q-toolbar-title class="cursive-font">
-          {{ currentPage.title }}
-        </q-toolbar-title>
-
-        <q-space />
-
-        <q-toggle
-          v-model="darkModeEnabled"
-          checked-icon="dark_mode"
-          class="text-left"
-          unchecked-icon="light_mode"
-          @update:model-value="toggleDarkMode"
-        />
+        <SortFilterControls v-if="currentPage?.title === 'Combinations'" />
+        <CombinationsTableControls v-if="currentPage?.title === 'Combinations'" />
+        <q-toolbar-title class="q-pa-lg title-font break-word">Impossible Creatures {{ currentPage?.title }} </q-toolbar-title>
+        <TablePaginationControls v-if="currentPage?.title === 'Combinations'" />
+        <DarkModeToggle />
       </q-toolbar>
     </q-header>
-
     <q-page-container>
       <router-view />
     </q-page-container>
   </q-layout>
 </template>
 
-<script setup>
-import { onBeforeMount, ref } from 'vue'
-import { colors, getCssVar, setCssVar, useQuasar } from 'quasar'
-import { useRouter } from 'vue-router'
-import ModSelect from 'components/layouts/main/ModSelect.vue'
-import { useModStore } from 'stores/modStore'
+<script lang="ts" setup>
+import {ref} from 'vue';
+import {useRouter} from 'vue-router';
+import ModSelect from 'components/layouts/main/ModSelect.vue';
+import SortFilterControls from '../components/combinations/SortFilterControls.vue';
+import TablePaginationControls from '../components/combinations/TablePaginationControls.vue';
+import CombinationsTableControls from '../components/combinations/TableDisplayControls.vue';
+import DarkModeToggle from '../components/layouts/main/DarkModeToggle.vue';
 
-const modStore = useModStore()
-const { lighten } = colors
-const router = useRouter()
-const $q = useQuasar()
-const darkModeEnabled = ref(true)
-const showDrawer = ref(false)
-const pages = ref([
-  { title: 'Combinations', path: '/' },
-  { title: 'Visualisations', path: '/visualisations' },
-  { title: 'About', path: '/about' },
-])
-const currentPage = ref(pages.value.find(page => page.path === router.currentRoute.value.path))
+const router = useRouter();
+const showDrawer = ref(false);
+const pages = ref<Page[]>([
+  {title: 'Combinations', path: '/'},
+  {title: 'Visualisations', path: '/visualisations'},
+  {title: 'About', path: '/about'}
+]);
 
-onBeforeMount(async () => {
-  await modStore.getInitialMod()
-})
-
-const toggleDarkMode = () => {
-  $q.dark.toggle()
-  darkModeEnabled.value = $q.dark.isActive
-  let primaryColor = $q.dark.isActive ? lighten(getCssVar('primary'), -50) : lighten(getCssVar('primary'), 50)
-  setCssVar('primary', primaryColor)
+interface Page {
+  title: string;
+  path: string;
 }
 
-const navigateTo = page => {
-  currentPage.value = page
-  showDrawer.value = false
-  router.push(page.path)
-}
+const currentPage = ref<Page | undefined>(pages.value.find(page => page.path === router.currentRoute.value.path));
+
+const navigateTo = (page: Page) => {
+  currentPage.value = page;
+  showDrawer.value = false;
+  router.push(page.path);
+};
 </script>
+
+<style lang="sass" scoped></style>

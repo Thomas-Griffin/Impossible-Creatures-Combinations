@@ -1,28 +1,24 @@
-import { defineStore } from 'pinia'
-import { useMods } from 'src/composables/useMods'
-import { Mod } from 'src/types/Mod'
+import {defineStore} from 'pinia';
+import {useMods} from 'src/composables/useMods';
+import Mod from 'src/types/Mod';
 
-const { getMods } = useMods()
+const {getMods} = useMods();
 
 export const useModStore = defineStore({
   id: 'mod',
   state: () => ({
-    mod: {
-      name: '',
-      version: ''
-    }
+    mod: {name: '', version: ''} as Mod
   }),
   getters: {
-    getMod: (state: { mod: Mod }) => state.mod
+    getMod: state => state.mod
   },
   actions: {
-    setMod: (mod: Mod) => {
-      useModStore().mod = mod
+    async init() {
+      const mods = await getMods();
+      this.mod = mods[0] || {name: '', version: ''};
     },
-
-    async getInitialMod() {
-      const mods: Mod[] = await getMods()
-      this.setMod(mods[0] || { name: '', version: '' })
+    setMod(mod: Mod) {
+      this.mod = mod;
     }
   }
-})
+});

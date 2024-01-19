@@ -2,16 +2,15 @@
   <q-select
     :model-value="selectedMod"
     :options="modsDisplayNames"
+    borderless
     class="cursive-font"
-    dense
     flat
     label="Mod"
-    label-color="grey"
     options-selected-class="text-blue"
     rounded
-    style="width: 250px"
+    style="min-width: 200px"
     @update:model-value="
-      (value) => {
+      value => {
         onModChange(value);
       }
     "
@@ -19,24 +18,25 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onBeforeMount, ref, watch } from 'vue';
-import { useMods } from 'src/composables/useMods';
-import { useModStore } from 'src/stores/modStore';
-import { Mod } from 'src/types/Mod';
+import {computed, onBeforeMount, ref, watch} from 'vue';
+import {useMods} from 'src/composables/useMods';
+import {useModStore} from 'src/stores/modStore';
+import Mod from 'src/types/Mod';
 
-const { getMods, getModDisplayName, getModFromDisplayString } = useMods();
+const {getMods, getModDisplayName, getModFromDisplayString} = useMods();
 const mods = ref<Mod[]>([]);
 const modStore = useModStore();
 const selectedMod = ref('');
 
 onBeforeMount(async () => {
+  await modStore.init();
   mods.value = await getMods();
   selectedMod.value = getModDisplayName(modStore.getMod);
 });
 
 watch(
   () => modStore.getMod,
-  (newValue) => {
+  newValue => {
     selectedMod.value = getModDisplayName(newValue);
   }
 );

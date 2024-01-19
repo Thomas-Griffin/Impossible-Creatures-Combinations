@@ -2,49 +2,49 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   version="1.1"
-   id="svg5534"
-   width="22"
-   height="20"
-   viewBox="0 0 22 20"
-   sodipodi:docname="build-time.svg"
-   inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg">
+  xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+  xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  version="1.1"
+  id="svg5534"
+  width="22"
+  height="20"
+  viewBox="0 0 22 20"
+  sodipodi:docname="build-time.svg"
+  inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)"
+  xmlns="http://www.w3.org/2000/svg"
+>
   <defs
-     id="defs5538" />
+    id="defs5538"/>
   <sodipodi:namedview
-     id="namedview5536"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:showpageshadow="2"
-     inkscape:pageopacity="0.0"
-     inkscape:pagecheckerboard="0"
-     inkscape:deskcolor="#d1d1d1"
-     showgrid="false"
-     inkscape:zoom="50.1"
-     inkscape:cx="10.998004"
-     inkscape:cy="10"
-     inkscape:window-width="2560"
-     inkscape:window-height="1377"
-     inkscape:window-x="1912"
-     inkscape:window-y="-8"
-     inkscape:window-maximized="1"
-     inkscape:current-layer="g5540" />
+    id="namedview5536"
+    pagecolor="#ffffff"
+    bordercolor="#666666"
+    borderopacity="1.0"
+    inkscape:showpageshadow="2"
+    inkscape:pageopacity="0.0"
+    inkscape:pagecheckerboard="0"
+    inkscape:deskcolor="#d1d1d1"
+    showgrid="false"
+    inkscape:zoom="50.1"
+    inkscape:cx="10.998004"
+    inkscape:cy="10"
+    inkscape:window-width="2560"
+    inkscape:window-height="1377"
+    inkscape:window-x="1912"
+    inkscape:window-y="-8"
+    inkscape:window-maximized="1"
+    inkscape:current-layer="g5540"/>
   <g
-     inkscape:groupmode="layer"
-     inkscape:label="Image"
-     id="g5540">
+    inkscape:groupmode="layer"
+    inkscape:label="Image"
+    id="g5540">
     <image
-       width="22"
-       height="20"
-       preserveAspectRatio="none"
-       style="image-rendering:optimizeQuality"
-       xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAUCAYAAACJfM0wAAAABHNCSVQICAgIfAhkiAAABDtJREFU
+      width="22"
+      height="20"
+      preserveAspectRatio="none"
+      style="image-rendering:optimizeQuality"
+      xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAUCAYAAACJfM0wAAAABHNCSVQICAgIfAhkiAAABDtJREFU
 OI2tlU1sVFUYhp/zd++ZmXamU/oDtSUUS2mLaNwQfiOJiWhYEAOJcUmIBt2YuGCpVRcuTIwQNW7c
 qSDGGIwhIZFIZAMxBESLlAqE0hba6dBO53/m3ntc3IqNYadf8p3Fl5w3b57zfjkAPcAoMAa4/9hj
 y1oIYFRK3u4ftAw8aUllJPPFMp1+hiCMCEMAyFeKdCbTRDgAlIJ8rUSrMUjjKBVCbo81mboVEEW8
@@ -66,6 +66,6 @@ HhiFry3ZdMjLh4bjJZip09efpVQvI4gz5cp1fC3xZZOgInFFwZWfiwDXFNA1N9PYPXW9jI407Yks
 MjBIDdVZTVjUBEWFcT5CC6qzkqCoaCxJaCoCAkozgl8v5PjhxCTj1ys4x6d/Ixvlf/6a/gKjGai8
 QTl2bQAAAABJRU5ErkJggg==
 "
-       id="image5542" />
+      id="image5542"/>
   </g>
 </svg>

@@ -9,18 +9,23 @@
 }
 
 .standard-font {
-  font-family: 'Rokkitt', serif;
+  font-family: 'Futura', sans-serif;
 }
 
 .cursive-font {
-  font-family: 'Sigmar One', cursive;
+  font-family: 'Sigmar One', sans-serif;
 }
 
 .title-font {
-  font-family: 'Permanent Marker', cursive;
+  font-family: 'Permanent Marker', sans-serif;
   font-size: 22px;
 }
 
-.mono-font {
-  font-family: 'Courier Prime', monospace;
+.break-word {
+  word-break: break-word;
+  white-space: normal;
+}
+
+.background-image {
+  background-image: var(--background-image) !important;
 }

@@ -9,20 +9,17 @@
     "noImplicitOverride": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
-    "noPropertyAccessFromIndexSignature": true,
     "noUncheckedIndexedAccess": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "removeComments": true,
     "strict": true,
+    "sourceMap": true,
     "target": "es2019",
     "moduleResolution": "node",
     "lib": [
       "es5",
       "dom"
-    ],
-    "types": [
-      "cypress"
     ],
     "baseUrl": ".",
     "paths": {

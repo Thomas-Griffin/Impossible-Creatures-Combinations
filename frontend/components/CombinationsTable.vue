@@ -17,13 +17,17 @@
       @update:rows="(value:number) => pagination.perPage = value"
   >
     <template #header>
+      <label for="columns-select">Columns </label>
       <MultiSelect
+          id="columns-select"
           :modelValue="selectedColumns"
           :options="columns"
           optionLabel="label"
           placeholder="Select Columns"
-          style="max-width: 100%;"
+          filter-placeholder="Search Columns"
+          style="max-width: 10%;"
           @update:modelValue="onColumnToggle"
+          filter
       />
     </template>
 

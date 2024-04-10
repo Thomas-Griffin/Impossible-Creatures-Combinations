@@ -3,7 +3,6 @@
       ref="table"
       v-model:filters="filters"
       v-model:selection="selectedCombinations"
-      :globalFilterFields="['global']"
       :loading="loading"
       :rows="pagination.perPage"
       :rowsPerPageOptions="pagination.rowsPerPageOptions"
@@ -114,7 +113,6 @@ const initialiseColumns = () => {
 };
 
 const filters = ref<DataTableFilterMeta>({
-  'global': {value: null, matchMode: FilterMatchMode.CONTAINS},
   'Animal 1': {value: null, matchMode: FilterMatchMode.CONTAINS},
   'Animal 2': {value: null, matchMode: FilterMatchMode.CONTAINS},
   'Abilities.ability': {value: null, matchMode: FilterMatchMode.CONTAINS},

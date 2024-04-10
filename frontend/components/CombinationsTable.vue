@@ -1,6 +1,8 @@
 <template>
   <DataTable
+      ref="table"
       v-model:filters="filters"
+      v-model:selection="selectedCombinations"
       :globalFilterFields="['global']"
       :loading="loading"
       :rows="pagination.perPage"
@@ -12,6 +14,7 @@
       current-page-report-template="Showing {first} to {last} of {totalRecords} combinations"
       dataKey="_id"
       filter-display="menu"
+      lazy
       paginator
       removable-sort
       reorderable-columns
@@ -19,9 +22,10 @@
       row-hover
       scrollable
       show-gridlines
-      v-model:selection="selectedCombinations"
-      table-style="height: calc(100vh - 200px)"
       sortMode="multiple"
+      table-style="height: calc(100vh - 200px)"
+      @page="(event:any) => pagination.page = event.page + 1"
+      @sort="onSort"
       @update:rows="(value:number) => pagination.perPage = value"
   >
     <template #header>
@@ -29,33 +33,34 @@
           id="columns-select"
           :modelValue="selectedColumns"
           :options="columns"
+          :selected-items-label="'Columns'"
+          filter
+          filter-placeholder="Search Columns"
           optionLabel="label"
           placeholder="Select Columns"
-          filter-placeholder="Search Columns"
           style="max-width: 10%;"
           @update:modelValue="onColumnToggle"
-          filter
-          :selected-items-label="'Columns'"
       >
         <template #value>
           <span>Columns</span>
         </template>
       </MultiSelect>
 
-      <span class="m-4" v-if="selectedCombinations.length > 1">
-        {{selectedCombinations.length}} combinations selected
+      <span v-if="selectedCombinations.length > 1" class="m-4">
+        {{ selectedCombinations.length }} combinations selected
       </span>
-      <span class="m-4" v-else-if="selectedCombinations.length === 1">
-        {{selectedCombinations.length}} combination selected
+      <span v-else-if="selectedCombinations.length === 1" class="m-4">
+        {{ selectedCombinations.length }} combination selected
       </span>
 
+      <Button v-if="selectedCombinations.length > 0" icon="pi pi-external-link" label="Export" @click="exportCSV"/>
     </template>
 
     <template #loading>
       <Card class="flex justify-content-center align-items-center">
         <template #header>
-          <ProgressSpinner class="mt-4" style="width: 50px; height: 50px" strokeWidth="8" fill="var(--surface-ground)"
-                           animationDuration=".5s"/>
+          <ProgressSpinner animationDuration=".5s" class="mt-4" fill="var(--surface-ground)" strokeWidth="8"
+                           style="width: 50px; height: 50px"/>
         </template>
         <template #content>
           Loading combination data. Please wait.
@@ -63,7 +68,7 @@
       </Card>
     </template>
 
-    <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
+    <Column headerStyle="width: 3rem" selectionMode="multiple"></Column>
     <Column v-for="column in selectedColumns"
             :key="column.name"
             :field="column.name"
@@ -79,15 +84,17 @@ import type Combination from "~/types/Combination";
 import type GetCombinationsRequestBody from "~/types/getCombinationsRequestBody";
 import type {CombinationAttributeName} from "~/types/CombinationAttributeName";
 import {FilterMatchMode} from "primevue/api";
-import type {DataTableFilterMeta} from "primevue/datatable";
+import type {DataTableExportCSVOptions, DataTableFilterMeta, DataTableSortEvent} from "primevue/datatable";
 import type CombinationTableColumn from "~/types/CombinationTableColumn";
 import {useCombinations} from "~/composables/useCombinations";
+import type Ability from "~/types/Ability";
 
 const {getCombinations, getTotalCombinations} = useCombinations()
 const modStore = useModStore();
 
 const loading = ref<boolean>(false);
 const columns = ref<CombinationTableColumn[]>([])
+const table = ref()
 
 const initialiseColumns = () => {
   columns.value = modStore.getMod.columns?.map((column: ModColumn) => ({
@@ -154,6 +161,27 @@ const onColumnToggle = (modColumns: CombinationTableColumn[]) => {
   selectedColumns.value = modColumns;
 };
 
+const onSort = (event: DataTableSortEvent) => {
+  if (!event.multiSortMeta || event.multiSortMeta.length === 0) return;
+  sorting.value = {
+    column: event.multiSortMeta[0].field as CombinationAttributeName,
+    order: event.multiSortMeta[0].order === 1 ? 'ascending' : 'descending'
+  }
+}
+
+const transformDataForExport = (combinations: Combination[]) => {
+  return combinations.map(combination => {
+    let newCombination = {...combination} as any;
+    if (Array.isArray(newCombination.Abilities)) {
+      newCombination.Abilities = newCombination.Abilities.map((ability: Ability) => ability.ability).join(', ');
+    }
+    return newCombination;
+  });
+};
+
+const exportCSV = () => {
+  table.value.exportCSV({selectionOnly: true} as DataTableExportCSVOptions, transformDataForExport(selectedCombinations.value));
+};
 
 watch(() => modStore.getMod, async () => {
   initialiseColumns();

@@ -1,11 +1,15 @@
-<script lang="ts" setup>
-
-</script>
-
 <template>
-
+  <VisualisationSelect/>
 </template>
 
-<style scoped>
-
-</style>
+<script lang="ts" setup>
+useHead({
+  title: 'IC Visualisations',
+  meta: [
+    {
+      name: 'description',
+      content: 'Visualisations of IC combinations'
+    }
+  ]
+})
+</script>

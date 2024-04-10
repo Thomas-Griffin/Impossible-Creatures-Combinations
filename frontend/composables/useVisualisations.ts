@@ -1,15 +1,16 @@
 import {ref} from 'vue';
 
 import axios from 'axios';
-import type {Data} from 'plotly.js-dist-min';
+import type {NuxtPlotlyData} from "nuxt-plotly";
+
 
 const baseURL = 'http://localhost:3000';
 
 export function useVisualisations() {
     const visualisationsError = ref(null);
 
-    const getAttributeChart = async (body: object): Promise<Data[]> => {
-        let result: Data[] = [];
+    const getAttributeChart = async (body: object): Promise<NuxtPlotlyData[]> => {
+        let result: NuxtPlotlyData[] = [];
         await axios
             .post(`${baseURL}/visualisations/attribute-chart`, body)
             .then(response => {
@@ -23,8 +24,8 @@ export function useVisualisations() {
         return result;
     };
 
-    const getXPerYChart = async (body: object): Promise<Data[]> => {
-        let result: Data[] = [];
+    const getXPerYChart = async (body: object): Promise<NuxtPlotlyData[]> => {
+        let result: NuxtPlotlyData[] = [];
         await axios
             .post(`${baseURL}/visualisations/x-per-y-chart`, body)
             .then(response => {
@@ -35,7 +36,6 @@ export function useVisualisations() {
                 }
             })
             .catch(err => (visualisationsError.value = err));
-        console.log(result);
         return result;
     };
 

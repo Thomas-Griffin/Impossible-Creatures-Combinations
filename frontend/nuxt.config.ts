@@ -6,7 +6,12 @@ dotenv.config()
 export default defineNuxtConfig({
     devServer: {port: 8080},
     devtools: {enabled: true},
-    modules: ['nuxt-primevue', "@pinia/nuxt"],
+    modules: ['nuxt-primevue', "@pinia/nuxt", "nuxt-plotly"],
+    vite: {
+        optimizeDeps: {
+            include: ["plotly.js-dist-min"],
+        },
+    },
     primevue: {
         cssLayerOrder: 'primevue'
     },

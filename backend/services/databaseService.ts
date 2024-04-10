@@ -179,29 +179,29 @@ class DatabaseService extends MongoService {
         for (const combination of combinations) {
             let processedCombination: ProcessedCombination = {
                 Abilities: [] as Ability[],
-                'Air Speed': this.roundToDecimal(combination.attributes.airspeed_val?.[1] || -1, 1),
+                'Air Speed': this.roundToDecimal(combination.attributes.airspeed_val?.[1] || 0, 1),
                 'Animal 1': this.snakeCaseToTitleCase(combination.stock_1),
                 'Animal 2': this.snakeCaseToTitleCase(combination.stock_2),
                 Coal: this.roundToDecimal(combination.attributes.cost?.[1] || 0, 1),
                 Defence: this.roundToDecimal((combination.attributes.armour?.[1] || 0) * 100, 1),
-                EHP: -1,
-                Electricity: this.roundToDecimal(combination.attributes.costrenew?.[1] || -1, 1),
+                EHP: 0,
+                Electricity: this.roundToDecimal(combination.attributes.costrenew?.[1] || 0, 1),
                 'Front Legs': this.getAnimalNameLimbBelongsTo(combination, combination.composition?.[0] || 0),
                 Head: this.getAnimalNameLimbBelongsTo(combination, combination.composition?.[2] || 0),
-                Health: this.roundToDecimal(combination.attributes.health_val?.[1] || -1, 1),
-                'Land Speed': this.roundToDecimal(combination.attributes.landspeed_val?.[1] || -1, 1),
-                'Melee Damage': this.roundToDecimal(combination.attributes.damage_val?.[1] || -1, 1),
+                Health: this.roundToDecimal(combination.attributes.health_val?.[1] || 0, 1),
+                'Land Speed': this.roundToDecimal(combination.attributes.landspeed_val?.[1] || 0, 1),
+                'Melee Damage': this.roundToDecimal(combination.attributes.damage_val?.[1] || 0, 1),
                 Pincers: this.getAnimalNameLimbBelongsTo(combination, combination.composition?.[5] || 0),
-                'Population Size': combination.attributes.popsize?.[1] || -1,
-                Power: this.roundToDecimal(combination.attributes?.Power?.[1] || -1, 1),
+                'Population Size': combination.attributes.popsize?.[1] || 0,
+                Power: this.roundToDecimal(combination.attributes?.Power?.[1] || 0, 1),
                 'Rear Legs': this.getAnimalNameLimbBelongsTo(combination, combination.composition?.[1] || 0),
-                'Research Level': combination.attributes.creature_rank?.[1] || -1,
-                SDT: -1,
-                'Sight Radius': this.roundToDecimal(combination.attributes.sight_radius1?.[1] || -1, 1),
-                Size: this.roundToDecimal(combination.attributes.size?.[1] || -1, 1),
+                'Research Level': combination.attributes.creature_rank?.[1] || 0,
+                SDT: 0,
+                'Sight Radius': this.roundToDecimal(combination.attributes.sight_radius1?.[1] || 0, 1),
+                Size: this.roundToDecimal(combination.attributes.size?.[1] || 0, 1),
                 Tail: this.getAnimalNameLimbBelongsTo(combination, combination.composition?.[3] || 0),
                 Torso: this.getAnimalNameLimbBelongsTo(combination, combination.composition?.[4] || 0),
-                'Water Speed': this.roundToDecimal(combination.attributes.waterspeed_val?.[1] || -1, 1),
+                'Water Speed': this.roundToDecimal(combination.attributes.waterspeed_val?.[1] || 0, 1),
                 Wings: this.getAnimalNameLimbBelongsTo(combination, combination.composition?.[6] || 0),
             };
             processedCombination.EHP = this.calculateEHP(processedCombination);
@@ -263,13 +263,13 @@ class DatabaseService extends MongoService {
         if (combination?.Health && combination?.Defence) {
             return this.roundToDecimal(combination.Health / (1 - combination.Defence / 100), 1);
         } else {
-            return -1;
+            return -0;
         }
     }
 
     calculateSelfDestructionTime(processedCombination: ProcessedCombination) {
         if (processedCombination?.['Melee Damage'] === undefined || processedCombination?.EHP === undefined) {
-            return -1;
+            return 0;
         }
         return this.roundToDecimal(processedCombination.EHP / processedCombination['Melee Damage'], 1);
     }

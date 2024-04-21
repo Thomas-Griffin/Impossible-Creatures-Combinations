@@ -1,16 +1,15 @@
 <template>
-  <CombinationsTable/>
+  <CombinationsTable />
 </template>
 
 <script lang="ts" setup>
 useHead({
-  title: 'IC Combinations',
+  title: "IC Combinations",
   meta: [
     {
-      name: 'description',
-      content: 'A database of IC combinations'
-    }
-  ]
-})
-
+      name: "description",
+      content: "A database of IC combinations",
+    },
+  ],
+});
 </script>

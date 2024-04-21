@@ -2,74 +2,73 @@
   <div class="h-full w-full justify-content-center align-items-center">
     <div class="row">
       <Dropdown
-          v-model="xAttribute"
-          :max-selected-labels="1"
-          :option-disabled="(option:any) => option === yAttribute"
-          :options="axisOptions"
+        v-model="xAttribute"
+        :max-selected-labels="1"
+        :option-disabled="(option: any) => option === yAttribute"
+        :options="axisOptions"
       >
-        <template #value>
-          X: {{ xAttribute }}
-        </template>
+        <template #value> X: {{ xAttribute }}</template>
       </Dropdown>
       <Dropdown
-          v-model="yAttribute"
-          :max-selected-labels="1"
-          :option-disabled="(option:any) => option === xAttribute"
-          :options="axisOptions"
+        v-model="yAttribute"
+        :max-selected-labels="1"
+        :option-disabled="(option: any) => option === xAttribute"
+        :options="axisOptions"
       >
-        <template #value>
-          Y: {{ yAttribute }}
-        </template>
+        <template #value> Y: {{ yAttribute }}</template>
       </Dropdown>
       <span>Bucket Size</span>
       <InputNumber
-          v-model="bucketSize"
-          :min="1"
-          @update:model-value="updateChart"
+        v-model="bucketSize"
+        :min="1"
+        @update:model-value="updateChart"
       />
     </div>
     <div :id="chartId">
       <NuxtPlotly
-          :config="config"
-          :data="chartData"
-          :layout="layout"
-          style="width: 100%"
+        :config="config"
+        :data="chartData"
+        :layout="layout"
+        style="width: 100%"
       />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import {useModStore} from "~/store/modStore";
-import CombinationAttributes from "~/types/CombinationAttributes";
-import ChartTypes from "~/types/ChartTypes";
-import {useDisplayStore} from "~/store/displayStore";
-import type {NuxtPlotlyConfig, NuxtPlotlyData, NuxtPlotlyLayout} from "nuxt-plotly";
+import { useModStore } from "~/store/modStore";
+import CombinationAttributes from "~/types/enums/CombinationAttributes";
+import ChartTypes from "~/types/enums/ChartTypes";
+import { useDisplayStore } from "~/store/displayStore";
+import type {
+  NuxtPlotlyConfig,
+  NuxtPlotlyData,
+  NuxtPlotlyLayout,
+} from "nuxt-plotly";
 
-const displayStore = useDisplayStore()
+const displayStore = useDisplayStore();
 
 const getBackgroundColour = () => {
-  return displayStore.getDarkMode ? '#000000' : '#ffffff';
+  return displayStore.getDarkMode ? "#000000" : "#ffffff";
 };
 
 const modStore = useModStore();
 
-const {getAttributeChart, getXPerYChart} = useVisualisations();
+const { getAttributeChart, getXPerYChart } = useVisualisations();
 
-const axisOptions = ref(Object.values(CombinationAttributes))
+const axisOptions = ref(Object.values(CombinationAttributes));
 
 const xAttribute = ref<CombinationAttributes>(CombinationAttributes.NONE);
 const yAttribute = ref<CombinationAttributes>(CombinationAttributes.NONE);
 const bucketSize = ref(1);
 
-
-const barmode = ref('group');
+const barmode = ref("group");
 
 const props = defineProps({
   id: {
     type: String,
-    required: true
-  }
+    required: true,
+  },
 });
 
 const chartData = ref<NuxtPlotlyData[]>([]);
@@ -96,43 +95,46 @@ const fetchFunction = computed(() => {
 const sorted = ref(false);
 
 const layout = computed(
-    () =>
-        ({
-          barmode: barmode.value,
-          title: yAttribute.value === CombinationAttributes.NONE ? xAttribute.value : `${xAttribute.value} by ${yAttribute.value}`,
-          xaxis: {
-            title: xAttribute.value,
-            automargin: true,
-            tickangle: -45
-          },
-          yaxis: {
-            title: 'Combinations'
-          },
-          plot_bgcolor: getBackgroundColour(),
-          paper_bgcolor: getBackgroundColour(),
-          font: {
-            color: displayStore.getDarkMode ? '#ffffff' : '#000000',
-            size: 14,
-            family: 'Futura, sans-serif'
-          },
-          legend: {
-            orientation: 'h',
-            yanchor: 'bottom',
-            y: 1,
-            xanchor: 'right',
-            x: 0.8
-          },
-          hoverlabel: {
-            align: 'left',
-            namelength: -1
-          }
-        }) as Partial<NuxtPlotlyLayout>
+  () =>
+    ({
+      barmode: barmode.value,
+      title:
+        yAttribute.value === CombinationAttributes.NONE
+          ? xAttribute.value
+          : `${xAttribute.value} by ${yAttribute.value}`,
+      xaxis: {
+        title: xAttribute.value,
+        automargin: true,
+        tickangle: -45,
+      },
+      yaxis: {
+        title: "Combinations",
+      },
+      plot_bgcolor: getBackgroundColour(),
+      paper_bgcolor: getBackgroundColour(),
+      font: {
+        color: displayStore.getDarkMode ? "#ffffff" : "#000000",
+        size: 14,
+        family: "Futura, sans-serif",
+      },
+      legend: {
+        orientation: "h",
+        yanchor: "bottom",
+        y: 1,
+        xanchor: "right",
+        x: 0.8,
+      },
+      hoverlabel: {
+        align: "left",
+        namelength: -1,
+      },
+    }) as Partial<NuxtPlotlyLayout>,
 );
 
 const config = ref<Partial<NuxtPlotlyConfig>>({
   displayModeBar: false,
   displaylogo: false,
-  responsive: true
+  responsive: true,
 });
 
 const isBarChart = ref(true);
@@ -145,44 +147,42 @@ async function updateChart() {
     mod: modStore.getMod,
     chartOptions: {
       sort: sorted.value,
-      chartType: isBarChart.value ? 'bar' : 'line'
+      chartType: isBarChart.value ? "bar" : "line",
     },
     attributes: {
       x: xAttribute.value,
-      y: yAttribute.value
+      y: yAttribute.value,
     },
-    bucketSize: bucketSize.value > 0 ? bucketSize.value : 1
+    bucketSize: bucketSize.value > 0 ? bucketSize.value : 1,
   });
   chartData.value = response || [];
 }
 
 watch(
-    () => modStore.getMod,
-    async () => {
-      await updateChart();
-    }
+  () => modStore.getMod,
+  async () => {
+    await updateChart();
+  },
 );
 
 watch(
-    () => displayStore.darkMode,
-    async () => {
-      await updateChart();
-    }
+  () => displayStore.darkMode,
+  async () => {
+    await updateChart();
+  },
 );
 
 watch(
-    () => xAttribute.value,
-    async () => {
-      await updateChart();
-    }
+  () => xAttribute.value,
+  async () => {
+    await updateChart();
+  },
 );
 
 watch(
-    () => yAttribute.value,
-    async () => {
-      await updateChart();
-    }
+  () => yAttribute.value,
+  async () => {
+    await updateChart();
+  },
 );
-
-
 </script>

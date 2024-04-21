@@ -1,9 +1,9 @@
-import type {CombinationAttributeName} from './CombinationAttributeName'
-import type {ColumnType} from './ColumnType'
+import type { CombinationAttributeName } from "./CombinationAttributeName";
+import type { ColumnType } from "./ColumnType";
 
 export interface ModColumn {
-    label: CombinationAttributeName
-    type: ColumnType
-    min?: number
-    max?: number
+  label: CombinationAttributeName;
+  type: ColumnType;
+  min?: number;
+  max?: number;
 }

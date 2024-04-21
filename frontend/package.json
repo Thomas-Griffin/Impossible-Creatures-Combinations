@@ -24,6 +24,7 @@
     "nuxt": "^3.11.1",
     "nuxt-plotly": "^1.0.13",
     "nuxt-primevue": "^0.3.1",
+    "prettier": "^3.2.5",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0"
   }

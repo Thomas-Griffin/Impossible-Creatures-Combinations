@@ -1,2 +1,1 @@
-export type ColumnType = 'number' | 'string' | 'array'
-
+export type ColumnType = "number" | "string" | "array";

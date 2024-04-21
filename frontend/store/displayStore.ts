@@ -1,17 +1,17 @@
-import {defineStore} from 'pinia';
+import { defineStore } from "pinia";
 
-export const useDisplayStore = defineStore('display', {
-    state: () => ({
-        darkMode: true
-    }),
-    getters: {
-        getDarkMode(state) {
-            return state.darkMode;
-        },
+export const useDisplayStore = defineStore("display", {
+  state: () => ({
+    darkMode: true,
+  }),
+  getters: {
+    getDarkMode(state) {
+      return state.darkMode;
     },
-    actions: {
-        setDarkMode(darkMode: boolean) {
-            this.$state.darkMode = darkMode;
-        },
+  },
+  actions: {
+    setDarkMode(darkMode: boolean) {
+      this.$state.darkMode = darkMode;
     },
+  },
 });

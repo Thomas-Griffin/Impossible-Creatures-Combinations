@@ -1,0 +1,15 @@
+{
+  "vue": {
+    "bracketSpacing": false,
+    "html": {
+      "void": "always",
+      "normal": "always",
+      "component": "always",
+      "closingBracket": false
+    },
+    "htmlWhitespaceSensitivity": "all",
+    "semi": false,
+    "singleAttributePerLine": true,
+    "singleQuote": true
+  }
+}

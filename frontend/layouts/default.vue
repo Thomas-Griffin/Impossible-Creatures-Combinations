@@ -1,11 +1,5 @@
 <template>
-  <AppHeader/>
-  <slot/>
-  <AppFooter/>
+  <AppHeader />
+  <slot />
+  <AppFooter />
 </template>
-<script lang="ts" setup>
-
-</script>
-<style scoped>
-
-</style>

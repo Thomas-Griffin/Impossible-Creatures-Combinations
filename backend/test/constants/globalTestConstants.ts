@@ -556,4 +556,5 @@ export const modCombinationTotals = [
     {name: 'Tellurian', version: '2.0', total: 128328},
     {name: 'Tellurian', version: '2.9.1.4', total: 159448},
     {name: 'Tellurian', version: '2.10', total: 171952},
+    {name: 'Tellurian', version: '2.10.0.3', total: 171952},
 ];

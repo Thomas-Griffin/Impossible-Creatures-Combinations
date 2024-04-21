@@ -12,7 +12,8 @@
     "backend:production": "ENVIRONMENT=production node dist/start.js",
     "backend:test": "npm run backend:build && cross-env ENVIRONMENT=test jest --runInBand --detectOpenHandles --forceExit",
     "backend:test:coverage": "npm run backend:build && cross-env ENVIRONMENT=test jest --coverage --runInBand --detectOpenHandles --forceExit",
-    "backend:docs": "npm run backend:build && node dist/swagger.js"
+    "backend:docs": "npm run backend:build && node dist/swagger.js",
+    "backend:mod-compressor": "npm run backend:build && cross-env ENVIRONMENT=development node dist/database/compressor.js"
   },
   "dependencies": {
     "axios": "^1.6.8",

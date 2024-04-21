@@ -3,11 +3,12 @@ import readline from 'readline';
 import messagePack from 'msgpack-lite';
 import {deflateSync} from 'zlib';
 import schemas from './modSchemas';
+import path from 'path';
 
 function compress() {
     for (let mod of schemas) {
         const modFileName = `${mod.name} ${mod.version}.json`;
-        const readStream = fs.createReadStream(modFileName);
+        const readStream = fs.createReadStream(path.resolve(__dirname, modFileName));
         const rl = readline.createInterface({
             input: readStream,
             crlfDelay: Infinity,
@@ -35,13 +36,15 @@ function compress() {
         });
 
         rl.on('close', () => {
-            console.log('Finished reading JSON file.');
+            console.log(`Finished reading JSON file. ${mod.name} ${mod.version}.msgpack created.`);
             let compressedData = deflateSync(fs.readFileSync(`${mod.name} ${mod.version}.msgpack`));
             fs.writeFileSync(`${mod.name} ${mod.version}.msgpack.gz`, compressedData);
-            console.log('Data compressed and saved.');
+            console.log(`Data compressed and saved. ${mod.name} ${mod.version}.msgpack.gz created.`);
             fs.rmSync(`${mod.name} ${mod.version}.msgpack`);
         });
     }
 }
 
 export default compress;
+
+compress();

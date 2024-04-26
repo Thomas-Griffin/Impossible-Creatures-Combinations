@@ -435,7 +435,7 @@ export const testProcessedCombinations: ProcessedCombination[] = [
                 source: 'Innate',
             },
         ],
-        'Air Speed': -1,
+        'Air Speed': 0,
         'Animal 1': 'Ant',
         'Animal 2': 'Archerfish',
         Coal: 78.7,
@@ -449,7 +449,7 @@ export const testProcessedCombinations: ProcessedCombination[] = [
         'Melee Damage': 10,
         Pincers: 'Ant',
         'Population Size': 1,
-        Power: -1,
+        Power: 0,
         'Rear Legs': 'Ant',
         'Research Level': 1,
         SDT: 5,
@@ -457,7 +457,7 @@ export const testProcessedCombinations: ProcessedCombination[] = [
         Size: 1,
         Tail: 'Ant',
         Torso: 'Ant',
-        'Water Speed': -1,
+        'Water Speed': 0,
         Wings: 'Ant',
     },
     {
@@ -467,7 +467,7 @@ export const testProcessedCombinations: ProcessedCombination[] = [
                 source: 'Innate',
             },
         ],
-        'Air Speed': -1,
+        'Air Speed': 0,
         'Animal 1': 'Ant',
         'Animal 2': 'Archerfish',
         Coal: 66.8,
@@ -477,11 +477,11 @@ export const testProcessedCombinations: ProcessedCombination[] = [
         'Front Legs': 'Archerfish',
         Head: 'Archerfish',
         Health: 18,
-        'Land Speed': -1,
+        'Land Speed': 0,
         'Melee Damage': 2,
         Pincers: 'Archerfish',
         'Population Size': 1,
-        Power: -1,
+        Power: 0,
         'Rear Legs': 'Archerfish',
         'Research Level': 2,
         SDT: 9.6,
@@ -503,7 +503,7 @@ export const testProcessedCombinations: ProcessedCombination[] = [
                 source: 'Innate',
             },
         ],
-        'Air Speed': -1,
+        'Air Speed': 0,
         'Animal 1': 'Ant',
         'Animal 2': 'Archerfish',
         Coal: 64.6,
@@ -517,7 +517,7 @@ export const testProcessedCombinations: ProcessedCombination[] = [
         'Melee Damage': 10,
         Pincers: 'Archerfish',
         'Population Size': 1,
-        Power: -1,
+        Power: 0,
         'Rear Legs': 'Ant',
         'Research Level': 2,
         SDT: 4,
@@ -531,7 +531,7 @@ export const testProcessedCombinations: ProcessedCombination[] = [
 ];
 
 export const testModName = `${testMod.name} ${testMod.version}`;
-export const totalNumberOfMods = 6;
+
 export const testModsCollectionName = 'mods';
 
 export const testMods: Mod[] = [
@@ -556,5 +556,7 @@ export const modCombinationTotals = [
     {name: 'Tellurian', version: '2.0', total: 128328},
     {name: 'Tellurian', version: '2.9.1.4', total: 159448},
     {name: 'Tellurian', version: '2.10', total: 171952},
-    {name: 'Tellurian', version: '2.10.0.3', total: 171952},
+    {name: 'Tellurian', version: '2.10.0.3', total: 173224},
 ];
+
+export const totalNumberOfMods = modCombinationTotals.length;

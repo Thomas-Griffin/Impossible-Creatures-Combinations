@@ -188,4 +188,39 @@ describe('Database service tests', () => {
             expect(modDirectories).toEqual(false);
         });
     });
+
+    describe('getBodyPart', () => {
+        it('should return the correct body part given index 0', async () => {
+            const bodyPart = databaseService.getBodyPart(0);
+            expect(bodyPart).toEqual('Innate');
+        });
+        it('should return the correct body part given index 1', async () => {
+            const bodyPart = databaseService.getBodyPart(1);
+            expect(bodyPart).toEqual('Innate');
+        });
+        it('should return the correct body part given index 2', async () => {
+            const bodyPart = databaseService.getBodyPart(2);
+            expect(bodyPart).toEqual('Head');
+        });
+        it('should return the correct body part given index 3', async () => {
+            const bodyPart = databaseService.getBodyPart(3);
+            expect(bodyPart).toEqual('Tail');
+        });
+        it('should return the correct body part given index 4', async () => {
+            const bodyPart = databaseService.getBodyPart(4);
+            expect(bodyPart).toEqual('Torso');
+        });
+        it('should return the correct body part given index 5', async () => {
+            const bodyPart = databaseService.getBodyPart(5);
+            expect(bodyPart).toEqual('Pincers');
+        });
+        it('should return the correct body part given index 6', async () => {
+            const bodyPart = databaseService.getBodyPart(6);
+            expect(bodyPart).toEqual('Wings');
+        });
+        it('should return the correct body part given index 7', async () => {
+            const bodyPart = databaseService.getBodyPart(7);
+            expect(bodyPart).toEqual('None');
+        });
+    });
 });

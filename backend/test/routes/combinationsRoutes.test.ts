@@ -100,4 +100,13 @@ describe('Combinations routes', () => {
             expect(response.body.length).toEqual(3);
         });
     });
+
+    describe('Post /combinations/total', () => {
+        it('should return total number of combinations', async () => {
+            await testCombinationsService.client.connect();
+            const response = await request(app).post('/combinations/total').send({mod: testMod, page: 1, perPage: 10});
+            expect(response.status).toEqual(200);
+            expect(response.body).toEqual(3);
+        });
+    });
 });

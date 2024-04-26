@@ -1,0 +1,14 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Backend Tests" type="JavaScriptTestRunnerJest">
+    <node-interpreter value="project" />
+    <jest-package value="$PROJECT_DIR$/backend/node_modules/jest" />
+    <working-dir value="$PROJECT_DIR$/backend" />
+    <jest-options value="--coverage --runInBand --detectOpenHandles --forceExit" />
+    <envs>
+      <env name="ENVIRONMENT" value="test" />
+    </envs>
+    <scope-kind value="DIRECTORY" />
+    <test-directory value="$PROJECT_DIR$/backend/test" />
+    <method v="2" />
+  </configuration>
+</component>

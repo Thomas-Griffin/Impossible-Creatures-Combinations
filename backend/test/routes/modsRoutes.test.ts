@@ -5,9 +5,8 @@ import {testModsCollectionName} from '../constants/globalTestConstants';
 
 const testModService = new modService();
 describe('Mods routes', () => {
-    beforeEach(async () => {
+    beforeAll(async () => {
         await testModService.client.connect();
-        await testModService.client.db(process.env['MONGO_DB_NAME']).collection(testModsCollectionName).drop();
         await testModService.client
             .db(process.env['MONGO_DB_NAME'])
             .collection(testModsCollectionName)
@@ -25,16 +24,6 @@ describe('Mods routes', () => {
                     version: '1.0.3',
                 },
             ]);
-        return await testModService.client.close();
-    });
-    afterEach(async () => {
-        await testModService.client.connect();
-        await testModService.client.db(process.env['MONGO_DB_NAME']).collection(testModsCollectionName).drop();
-        return await testModService.client.close();
-    });
-    afterAll(async () => {
-        await testModService.client.connect();
-        await testModService.client.db(process.env['MONGO_DB_NAME']).collection(testModsCollectionName).drop();
         return await testModService.client.close();
     });
 

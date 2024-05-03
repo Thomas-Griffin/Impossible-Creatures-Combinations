@@ -6,16 +6,22 @@ class MongoService {
 
     constructor() {
         if (!process.env['ENVIRONMENT']) {
+            console.debug(process.env);
             console.error('Environment not set');
             process.exit(1);
         }
+        if (!process.env['MONGO_URL']) {
+            console.debug(process.env);
+            console.error('Mongo URL not set');
+            process.exit(1);
+        }
+        if (!process.env['MONGO_DB_NAME']) {
+            console.debug(process.env);
+            console.error('Mongo DB name not set');
+            process.exit(1);
+        }
 
-        process.env.MONGO_URI =
-            process.env.ENVIRONMENT === 'production'
-                ? 'mongodb://combinations-database:27017'
-                : 'mongodb://localhost:27017';
-        process.env.MONGO_DB_NAME = `combinations-${process.env.ENVIRONMENT}`;
-        this.mongoUrl = process.env['MONGO_URI'] || 'mongodb://localhost:27017';
+        this.mongoUrl = process.env['MONGO_URL'];
         this.client = new MongoClient(this.mongoUrl);
         this.client.db(process.env['MONGO_DB_NAME']);
     }

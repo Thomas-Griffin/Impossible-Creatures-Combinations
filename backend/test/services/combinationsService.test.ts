@@ -7,9 +7,8 @@ import {MinMaxRequestBody} from '../../types/MinMaxRequestBody';
 const combinationsService = new CombinationService();
 
 describe('CombinationsService', () => {
-    beforeEach(async () => {
+    beforeAll(async () => {
         await combinationsService.client.connect();
-        await combinationsService.client.db(process.env['MONGO_DB_NAME']).collection(testModName).drop();
         await combinationsService.client
             .db(process.env['MONGO_DB_NAME'])
             .collection(testModName)
@@ -88,18 +87,6 @@ describe('CombinationsService', () => {
             columns: testMod.columns,
         });
 
-        return await combinationsService.client.close();
-    });
-    afterEach(async () => {
-        await combinationsService.client.connect();
-        await combinationsService.client.db(process.env['MONGO_DB_NAME']).collection(testModName).drop();
-        await combinationsService.client.db(process.env['MONGO_DB_NAME']).collection(testModsCollectionName).drop();
-        return await combinationsService.client.close();
-    });
-    afterAll(async () => {
-        await combinationsService.client.connect();
-        await combinationsService.client.db(process.env['MONGO_DB_NAME']).collection(testModName).drop();
-        await combinationsService.client.db(process.env['MONGO_DB_NAME']).collection(testModsCollectionName).drop();
         return await combinationsService.client.close();
     });
 

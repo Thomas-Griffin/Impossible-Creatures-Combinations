@@ -1,6 +1,8 @@
 Combinations App
 ================
 
+[![Node.js CI](https://github.com/Thomas-Griffin/Impossible-Creatures-Combinations-Web-App/actions/workflows/master.yml/badge.svg)](https://github.com/Thomas-Griffin/Impossible-Creatures-Combinations-Web-App/actions/workflows/master.yml)
+
 Getting Started
 ---------------
 

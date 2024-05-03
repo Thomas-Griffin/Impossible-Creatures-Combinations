@@ -5,9 +5,8 @@ import {testMod, testModName} from '../constants/globalTestConstants';
 
 const testCombinationsService = new CombinationsService();
 describe('Combinations routes', () => {
-    beforeEach(async () => {
+    beforeAll(async () => {
         await testCombinationsService.client.connect();
-        await testCombinationsService.client.db(process.env['MONGO_DB_NAME']).collection(testModName).drop();
         await testCombinationsService.client
             .db(process.env['MONGO_DB_NAME'])
             .collection(testModName)
@@ -79,16 +78,6 @@ describe('Combinations routes', () => {
                     Wings: 'testAnimal5',
                 },
             ]);
-        return await testCombinationsService.client.close();
-    });
-    afterEach(async () => {
-        await testCombinationsService.client.connect();
-        await testCombinationsService.client.db(process.env['MONGO_DB_NAME']).collection(testModName).drop();
-        return await testCombinationsService.client.close();
-    });
-    afterAll(async () => {
-        await testCombinationsService.client.connect();
-        await testCombinationsService.client.db(process.env['MONGO_DB_NAME']).collection(testModName).drop();
         return await testCombinationsService.client.close();
     });
 

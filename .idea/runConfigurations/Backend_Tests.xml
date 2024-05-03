@@ -3,7 +3,7 @@
     <node-interpreter value="project" />
     <jest-package value="$PROJECT_DIR$/backend/node_modules/jest" />
     <working-dir value="$PROJECT_DIR$/backend" />
-    <jest-options value="--coverage --runInBand --detectOpenHandles --forceExit" />
+    <jest-options value="--verbose --expand --coverage --detectOpenHandles --forceExit" />
     <envs>
       <env name="ENVIRONMENT" value="test" />
     </envs>

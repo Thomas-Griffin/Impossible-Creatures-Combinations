@@ -12,10 +12,15 @@ export class MongoQueryPipeline {
     bodySchema: Joi.ObjectSchema;
     queryResult: Document[];
 
-    constructor(body: MongoRequestBody, bodySchema: Joi.ObjectSchema, query: AggregationStage[]) {
+    constructor(
+        mongoService: MongoService,
+        body: MongoRequestBody,
+        bodySchema: Joi.ObjectSchema,
+        query: AggregationStage[]
+    ) {
         this.body = body;
         this.bodySchema = bodySchema || JOI_MOD_SCHEMA;
-        this.service = new MongoService();
+        this.service = mongoService;
         this.query = query;
         this.queryResult = [] as Document[];
     }

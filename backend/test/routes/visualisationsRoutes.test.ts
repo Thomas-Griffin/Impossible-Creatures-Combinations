@@ -1,8 +1,9 @@
 import app from '../../app';
 import request from 'supertest';
 import VisualisationsService from '../../services/visualisationsService';
+import MongoService from '../../services/mongoService';
 
-const testVisualisationsService = new VisualisationsService();
+const testVisualisationsService = new VisualisationsService(MongoService.getInstance());
 describe('Visualisations routes', () => {
     beforeAll(async () => {
         await testVisualisationsService.client.connect();

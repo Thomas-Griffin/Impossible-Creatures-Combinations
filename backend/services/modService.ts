@@ -1,12 +1,13 @@
 import MongoService from './mongoService';
 import Mod from '../types/Mod';
-import {Document} from 'mongodb';
+import {Document, MongoClient} from 'mongodb';
 
-class ModService extends MongoService {
+class ModService {
     collectionName: string;
+    client: MongoClient;
 
-    constructor() {
-        super();
+    constructor(mongoService: MongoService) {
+        this.client = mongoService.client;
         this.collectionName = 'mods';
     }
 

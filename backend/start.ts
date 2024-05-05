@@ -1,28 +1,39 @@
 import app from './app';
+
 import {CLEANUP_SCRIPT_PATH, RESET_SCRIPT_PATH} from './globalConstants';
+
+import MongoService from './services/mongoService';
 import DatabaseService from './services/databaseService';
 
-const databaseService = new DatabaseService();
-const PORT = 3000;
-
-const initialiseDatabase = async () => {
+const runDatabaseScripts = async () => {
     try {
-        const reset = await import(RESET_SCRIPT_PATH);
-        const cleanup = await import(CLEANUP_SCRIPT_PATH);
-        reset.default();
-        cleanup.default();
+        const resetScript = await import(RESET_SCRIPT_PATH);
+        const cleanupScript = await import(CLEANUP_SCRIPT_PATH);
+        resetScript.default();
+        cleanupScript.default();
     } catch (err) {
         console.error(err);
         process.exit(1);
     }
 };
-databaseService.databaseIsInitialised().then(initialised => {
-    if (!initialised) {
-        initialiseDatabase().then(_ => console.log('Database initialised'));
-    }
-});
 
-app.listen(PORT, () => {
-    console.log(`Server is running at http://localhost:${PORT}`);
+const checkDatabaseInitialisation = async () => {
+    const databaseService = new DatabaseService(MongoService.getInstance());
+    console.log(`Checking if database for environment '${process.env['ENVIRONMENT']}' is initialised...`);
+    const initialised = await databaseService.databaseIsInitialised();
+    if (!initialised) {
+        await runDatabaseScripts();
+        console.log('Database initialised');
+    }
+};
+
+const startServer = () => {
+    app.listen(process.env['PORT'], () => {
+        console.log(`Server is running at http://localhost:${process.env['PORT']}`);
+    });
+    app.on('error', err => console.error(`Server error: ${err}`));
+};
+
+checkDatabaseInitialisation().then(() => {
+    startServer();
 });
-app.on('error', err => console.error(`Server error: ${err}`));

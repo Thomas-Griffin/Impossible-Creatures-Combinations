@@ -16,14 +16,16 @@ import {
 } from '../globalConstants';
 import {modCombinationTotals} from '../test/constants/globalTestConstants';
 import schemas from '../database/modSchemas';
+import {MongoClient} from 'mongodb';
 
 const abilitiesMap: Record<string, string> = JSON.parse(readFileSync(ABILITIES_FILE_PATH, 'utf8'));
 
-class DatabaseService extends MongoService {
+class DatabaseService {
     schema: ModSchema[] = [];
+    client: MongoClient;
 
-    constructor() {
-        super();
+    constructor(mongoService: MongoService) {
+        this.client = mongoService.client;
         this.getSchema();
     }
 

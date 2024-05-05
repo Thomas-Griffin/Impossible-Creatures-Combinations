@@ -1,7 +1,8 @@
 import VisualisationsService from '../../services/visualisationsService';
 import ChartRequestBody from '../../types/ChartRequestBody';
+import MongoService from '../../services/mongoService';
 
-const visualisationsService = new VisualisationsService();
+const visualisationsService = new VisualisationsService(MongoService.getInstance());
 
 beforeEach(async () => {
     await visualisationsService.client.connect();

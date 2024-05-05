@@ -1,11 +1,14 @@
-import MongoService from './mongoService';
 import {Data} from 'plotly.js';
 import ChartRequestBody from '../types/ChartRequestBody';
 import {ChartQueryPipeline} from '../types/ChartQueryPipeline';
+import {MongoClient} from 'mongodb';
+import MongoService from './mongoService';
 
-class VisualisationsService extends MongoService {
-    constructor() {
-        super();
+class VisualisationsService {
+    client: MongoClient;
+
+    constructor(mongoService: MongoService) {
+        this.client = mongoService.client;
     }
 
     async getAttributeChart(body: ChartRequestBody): Promise<Partial<Data>[]> {
@@ -101,8 +104,9 @@ class VisualisationsService extends MongoService {
                         text:
                             xSorted.length === 1
                                 ? `${body?.attributes?.x} ${xSorted[0]} ${body?.attributes?.y}: ${obj?.['_id']}`
-                                : `${body?.attributes?.x} ${xSorted[0]} - ${xSorted[dataLength - 1]} ${body?.attributes
-                                      ?.y}: ${obj?.['_id']}`,
+                                : `${body?.attributes?.x} ${xSorted[0]} - ${xSorted[dataLength - 1]} ${
+                                      body?.attributes?.y
+                                  }: ${obj?.['_id']}`,
                         name: `${body?.attributes?.y}: ${obj?.['_id']}`,
                         type: body?.chartOptions?.chartType || 'bar',
                     } as Partial<Data>;

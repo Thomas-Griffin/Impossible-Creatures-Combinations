@@ -1,29 +1,34 @@
 import {MongoClient} from 'mongodb';
+import ServerConfig from '../serverConfig';
+
+const serverConfig = ServerConfig.getInstance();
+serverConfig.initialise();
 
 class MongoService {
-    mongoUrl: string;
+    private static instance: MongoService;
     client: MongoClient;
 
-    constructor() {
-        if (!process.env['ENVIRONMENT']) {
-            console.debug(process.env);
-            console.error('Environment not set');
-            process.exit(1);
-        }
-        if (!process.env['MONGO_URL']) {
-            console.debug(process.env);
-            console.error('Mongo URL not set');
-            process.exit(1);
-        }
-        if (!process.env['MONGO_DB_NAME']) {
-            console.debug(process.env);
-            console.error('Mongo DB name not set');
-            process.exit(1);
-        }
+    private constructor() {
+        this.checkEnvironmentVariable('ENVIRONMENT');
+        this.checkEnvironmentVariable('MONGO_URL');
+        this.checkEnvironmentVariable('MONGO_DB_NAME');
 
-        this.mongoUrl = process.env['MONGO_URL'];
-        this.client = new MongoClient(this.mongoUrl);
+        this.client = new MongoClient(process.env['MONGO_URL'] || 'mongodb://localhost:27017');
         this.client.db(process.env['MONGO_DB_NAME']);
+    }
+
+    public static getInstance(): MongoService {
+        if (!MongoService.instance) {
+            MongoService.instance = new MongoService();
+        }
+        return MongoService.instance;
+    }
+
+    private checkEnvironmentVariable(variable: string) {
+        if (!process.env[variable]) {
+            console.error(`Environment variable '${variable}' is not set`);
+            process.exit(1);
+        }
     }
 }
 

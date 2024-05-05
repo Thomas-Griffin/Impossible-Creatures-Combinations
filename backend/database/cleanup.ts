@@ -6,7 +6,7 @@ import schemas from './modSchemas';
 async function removeModuleAndHandleError(mod: ModSchema) {
     const filePath = `${ROOT_DIRECTORY}/${mod.name} ${mod.version}.json`;
     try {
-        if (!fs.existsSync(filePath)) {
+        if (fs.existsSync(filePath)) {
             console.log(`Removing ${filePath}...`);
             await fs.promises.rm(filePath);
         }

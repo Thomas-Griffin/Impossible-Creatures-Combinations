@@ -11,18 +11,20 @@ import CombinationTableColumn from '../types/CombinationTableColumn';
 import {FilterQuery} from '../types/FilterQuery';
 import {MinMaxRequestBody} from '../types/MinMaxRequestBody';
 import schemas from '../database/modSchemas';
+import {MongoClient} from 'mongodb';
 
 let mods = schemas;
 const testMods = JSON.parse(readFileSync(TEST_SCHEMA_FILE_PATH, 'utf8'));
 mods = mods.concat(testMods);
 
-class CombinationsService extends MongoService {
+class CombinationsService {
     combinationRequestSchema: Joi.ObjectSchema;
     minMaxSchema: Joi.ObjectSchema;
     abilitiesRequestSchema: Joi.ObjectSchema;
+    client: MongoClient;
 
-    constructor() {
-        super();
+    constructor(mongoService: MongoService) {
+        this.client = mongoService.client;
         this.combinationRequestSchema = Joi.object({
             mod: JOI_MOD_SCHEMA.required(),
             filters: Joi.array().optional(),

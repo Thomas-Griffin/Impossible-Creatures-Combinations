@@ -15,8 +15,9 @@ import {MOD_COLLECTION_NAME, MOD_DIRECTORY_PATH} from '../../globalConstants';
 import * as process from 'process';
 
 import fs from 'fs';
+import MongoService from '../../services/mongoService';
 
-let databaseService = new DatabaseService();
+let databaseService = new DatabaseService(MongoService.getInstance());
 describe('Database service tests', () => {
     beforeEach(async () => {
         await databaseService.client.connect();

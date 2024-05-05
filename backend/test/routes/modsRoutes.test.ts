@@ -2,8 +2,9 @@ import modService from '../../services/modService';
 import app from '../../app';
 import request from 'supertest';
 import {testModsCollectionName} from '../constants/globalTestConstants';
+import MongoService from '../../services/mongoService';
 
-const testModService = new modService();
+const testModService = new modService(MongoService.getInstance());
 describe('Mods routes', () => {
     beforeAll(async () => {
         await testModService.client.connect();

@@ -1,10 +1,11 @@
 import {Router} from 'express';
 import CombinationService from '../services/combinationsService';
 import cache from '../app';
+import MongoService from '../services/mongoService';
 
 const router = Router();
 
-const combinationsService = new CombinationService();
+const combinationsService = new CombinationService(MongoService.getInstance());
 
 router.post('/', async function (request, response) {
     const data = await combinationsService.getCombinations(request.body);

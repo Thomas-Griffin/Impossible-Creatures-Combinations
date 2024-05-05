@@ -1,13 +1,14 @@
 import {Router} from 'express';
-import DatabaseInitializer from '../services/databaseService';
+import DatabaseService from '../services/databaseService';
+import MongoService from '../services/mongoService';
 
 const router = Router();
 
-const databaseInitializerService = new DatabaseInitializer();
+const databaseService = new DatabaseService(MongoService.getInstance());
 
 router.get('/reset', async function (_request, response) {
     response.setHeader('Cache-Control', 'no-cache');
-    await databaseInitializerService.resetDatabase().then(result => {
+    await databaseService.resetDatabase().then(result => {
         response.json(result);
     });
 });

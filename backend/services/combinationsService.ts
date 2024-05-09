@@ -12,6 +12,9 @@ import {FilterQuery} from '../types/FilterQuery';
 import {MinMaxRequestBody} from '../types/MinMaxRequestBody';
 import schemas from '../database/modSchemas';
 import {MongoClient} from 'mongodb';
+import Logger from '../utility/logger';
+
+const logger = Logger.getInstance();
 
 let mods = schemas;
 const testMods = JSON.parse(readFileSync(TEST_SCHEMA_FILE_PATH, 'utf8'));
@@ -49,7 +52,7 @@ class CombinationsService {
     async getTotalCombinations(body: GetCombinationsRequestBody): Promise<number> {
         const {error} = this.combinationRequestSchema.validate(body, {abortEarly: false});
         if (error) {
-            console.error(error);
+            logger.error(error);
             return 0;
         }
         try {
@@ -60,7 +63,7 @@ class CombinationsService {
                 .collection(this.toCollectionName(body.mod))
                 .countDocuments(query);
         } catch (err) {
-            console.error(err);
+            logger.error(err);
             return 0;
         }
     }
@@ -68,7 +71,7 @@ class CombinationsService {
     async getCombinations(body: GetCombinationsRequestBody): Promise<ProcessedCombination[]> {
         const {error} = this.combinationRequestSchema.validate(body);
         if (error) {
-            console.error(error);
+            logger.error(error);
             return [];
         }
         try {
@@ -83,7 +86,7 @@ class CombinationsService {
                 .limit(body.perPage)
                 .toArray()) as unknown as ProcessedCombination[];
         } catch (err) {
-            console.error(err);
+            logger.error(err);
             return [];
         }
     }
@@ -108,7 +111,7 @@ class CombinationsService {
 
             return minMax?.[0] || {min: 0, max: Number.MAX_SAFE_INTEGER};
         } catch (err) {
-            console.error(err);
+            logger.error(err);
             return {min: 0, max: Number.MAX_SAFE_INTEGER, error: err};
         }
     }
@@ -116,7 +119,7 @@ class CombinationsService {
     async getAbilities(body: {mod: Mod}): Promise<Ability[]> {
         const {error} = this.abilitiesRequestSchema.validate(body);
         if (error) {
-            console.error(error);
+            logger.error(error);
             return [];
         }
         try {
@@ -132,7 +135,7 @@ class CombinationsService {
                 .toArray();
             return abilities.flatMap(ability => ability['ability']);
         } catch (err) {
-            console.error(err);
+            logger.error(err);
             return [];
         }
     }

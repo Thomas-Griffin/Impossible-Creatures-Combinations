@@ -15,7 +15,7 @@ export class EnvironmentVariablesVerifier {
 
     handleLocalDockerEnvironment(): void {
         if (
-            process.env[`${ENVIRONMENT_SPECIFIER_FLAG_NAME}`] === ServerEnvironment.PRODUCTION &&
+            process.env[ENVIRONMENT_SPECIFIER_FLAG_NAME] === ServerEnvironment.PRODUCTION &&
             (!process.env.MONGO_URL || !process.env.MONGO_DB_NAME)
         ) {
             process.env.MONGO_URL = `mongodb://${MONGO_DOCKER_SERVICE_NAME}:${MONGO_DOCKER_SERVICE_PORT}`;

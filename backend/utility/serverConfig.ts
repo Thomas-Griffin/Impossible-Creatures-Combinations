@@ -22,14 +22,12 @@ class ServerConfig {
 
     public loadEnvironmentConfig(): void {
         if (
-            Object.values(ServerEnvironment).includes(
-                process.env[`${ENVIRONMENT_SPECIFIER_FLAG_NAME}`] as ServerEnvironment
-            )
+            Object.values(ServerEnvironment).includes(process.env[ENVIRONMENT_SPECIFIER_FLAG_NAME] as ServerEnvironment)
         ) {
-            if (process.env[`${ENVIRONMENT_SPECIFIER_FLAG_NAME}`] != ServerEnvironment.PRODUCTION)
+            if (process.env[ENVIRONMENT_SPECIFIER_FLAG_NAME] != ServerEnvironment.PRODUCTION)
                 dotenv.config({path: `./${process.env[`${ENVIRONMENT_SPECIFIER_FLAG_NAME}`]}.env`});
             else if (
-                process.env[`${ENVIRONMENT_SPECIFIER_FLAG_NAME}`] == ServerEnvironment.PRODUCTION &&
+                process.env[ENVIRONMENT_SPECIFIER_FLAG_NAME] == ServerEnvironment.PRODUCTION &&
                 (!process.env['MONGO_URL'] || !process.env['MONGO_DB_NAME'])
             ) {
                 dotenv.config({path: './production.local.env'});
@@ -37,7 +35,7 @@ class ServerConfig {
         } else {
             throw new Error(
                 `Environment variable ${ENVIRONMENT_SPECIFIER_FLAG_NAME} is not set. Please set it to any of ${Object.values(ServerEnvironment)}. Current value: ${
-                    process.env[`${ENVIRONMENT_SPECIFIER_FLAG_NAME}`]
+                    process.env[ENVIRONMENT_SPECIFIER_FLAG_NAME]
                 }`
             );
         }

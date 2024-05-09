@@ -5,7 +5,7 @@ import ServerEnvironment from '../../types/ServerEnvironment';
 describe('MongoService', () => {
     it('should throw an error if the environment specifier is not set', () => {
         expect(() => {
-            process.env[`${ENVIRONMENT_SPECIFIER_FLAG_NAME}`] = undefined;
+            process.env[ENVIRONMENT_SPECIFIER_FLAG_NAME] = undefined;
             MongoService.getInstance();
         }).toThrow(
             Error(

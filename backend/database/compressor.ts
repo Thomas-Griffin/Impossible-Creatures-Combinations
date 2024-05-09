@@ -5,6 +5,10 @@ import {deflateSync} from 'zlib';
 import schemas from './modSchemas';
 import path from 'path';
 
+import Logger from '../utility/logger';
+
+const logger = Logger.getInstance();
+
 function compress() {
     for (let mod of schemas) {
         const modFileName = `${mod.name} ${mod.version}.json`;
@@ -22,7 +26,7 @@ function compress() {
                 fs.open(`${mod.name} ${mod.version}.msgpack`, 'w', err => {
                     if (err) {
                         if (err.code === 'EEXIST') {
-                            console.error('file already exists');
+                            logger.error('file already exists');
                             return;
                         }
                         throw err;
@@ -31,15 +35,15 @@ function compress() {
 
                 fs.appendFileSync(`${mod.name} ${mod.version}.msgpack`, compressedObject);
             } catch (error) {
-                console.error('Error parsing JSON:', error);
+                logger.error('Error parsing JSON:', error);
             }
         });
 
         rl.on('close', () => {
-            console.log(`Finished reading JSON file. ${mod.name} ${mod.version}.msgpack created.`);
+            logger.info(`Finished reading JSON file. ${mod.name} ${mod.version}.msgpack created.`);
             let compressedData = deflateSync(fs.readFileSync(`${mod.name} ${mod.version}.msgpack`));
             fs.writeFileSync(`${mod.name} ${mod.version}.msgpack.gz`, compressedData);
-            console.log(`Data compressed and saved. ${mod.name} ${mod.version}.msgpack.gz created.`);
+            logger.info(`Data compressed and saved. ${mod.name} ${mod.version}.msgpack.gz created.`);
             fs.rmSync(`${mod.name} ${mod.version}.msgpack`);
         });
     }

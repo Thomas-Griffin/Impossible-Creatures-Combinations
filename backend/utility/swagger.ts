@@ -1,5 +1,8 @@
 import swagger_autogen from 'swagger-autogen';
 import {ROOT_DIRECTORY} from '../globalConstants';
+import Logger from '../utility/logger';
+
+const logger = Logger.getInstance();
 
 const doc = {
     info: {
@@ -17,5 +20,5 @@ const outputFile = `${ROOT_DIRECTORY}/swagger.json`;
 const endpointsFiles = ['./app.ts'];
 
 swaggerAutogen(outputFile, endpointsFiles, doc).then(_ => {
-    console.log('Swagger JSON file created');
+    logger.info('Swagger JSON file created');
 });

@@ -2,21 +2,24 @@ import fs from 'fs';
 import {ModSchema} from '../types/ModSchema';
 import {ROOT_DIRECTORY} from '../globalConstants';
 import schemas from './modSchemas';
+import Logger from '../utility/logger';
+
+const logger = Logger.getInstance();
 
 async function removeModuleAndHandleError(mod: ModSchema) {
     const filePath = `${ROOT_DIRECTORY}/${mod.name} ${mod.version}.json`;
     try {
         if (fs.existsSync(filePath)) {
-            console.log(`Removing ${filePath}...`);
+            logger.info(`Removing ${filePath}...`);
             await fs.promises.rm(filePath);
         }
     } catch (err) {
-        console.error(err);
+        logger.error(err);
     }
 }
 
 async function cleanup() {
-    console.log('Cleaning up residual database files...');
+    logger.info('Cleaning up residual database files...');
     for (let module of schemas) {
         await removeModuleAndHandleError(module);
     }

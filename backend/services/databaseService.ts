@@ -5,7 +5,7 @@ import UnprocessedCombination from '../types/UnprocessedCombination';
 import ProcessedCombination from '../types/ProcessedCombination';
 import {ModSchema} from '../types/ModSchema';
 import Ability from '../types/Ability';
-
+import Logger from '../utility/logger';
 import {
     ABILITIES_FILE_PATH,
     CLEANUP_SCRIPT_PATH,
@@ -17,6 +17,8 @@ import {
 import {modCombinationTotals} from '../test/constants/globalTestConstants';
 import schemas from '../database/modSchemas';
 import {MongoClient} from 'mongodb';
+
+const logger = Logger.getInstance();
 
 const abilitiesMap: Record<string, string> = JSON.parse(readFileSync(ABILITIES_FILE_PATH, 'utf8'));
 
@@ -33,9 +35,9 @@ class DatabaseService {
         try {
             await this.client.connect();
             this.client.db(process.env['MONGO_DB_NAME']);
-            console.log(`Database '${process.env['MONGO_DB_NAME']}' was created.`);
+            logger.info(`Database '${process.env['MONGO_DB_NAME']}' was created.`);
         } catch (err) {
-            console.error(err);
+            logger.error(err);
         }
     }
 
@@ -43,9 +45,9 @@ class DatabaseService {
         try {
             await this.client.connect();
             await this.client.db(process.env['MONGO_DB_NAME']).createCollection(MOD_COLLECTION_NAME);
-            console.log(`Mod collection '${MOD_COLLECTION_NAME}' was created.`);
+            logger.info(`Mod collection '${MOD_COLLECTION_NAME}' was created.`);
         } catch (err) {
-            console.error(err);
+            logger.error(err);
         }
     }
 
@@ -54,11 +56,11 @@ class DatabaseService {
             await this.client.connect();
             for (const mod of this.schema) {
                 await this.client.db(process.env['MONGO_DB_NAME']).createCollection(`${mod.name} ${mod.version}`);
-                console.log(`Mod collection '${mod.name} ${mod.version}' was created.`);
+                logger.info(`Mod collection '${mod.name} ${mod.version}' was created.`);
             }
-            console.log(`All mod collections were created.`);
+            logger.info(`All mod collections were created.`);
         } catch (err) {
-            console.error(err);
+            logger.error(err);
         }
     }
 
@@ -78,20 +80,20 @@ class DatabaseService {
     }
 
     async deleteDatabase() {
-        console.log(`Deleting database '${process.env['MONGO_DB_NAME']}'...`);
+        logger.info(`Deleting database '${process.env['MONGO_DB_NAME']}'...`);
         try {
             await this.client.connect();
             if (await this.databaseExists(process.env['MONGO_DB_NAME'] ?? '')) {
                 await this.client.connect();
                 await this.client.db(process.env['MONGO_DB_NAME']).dropDatabase();
-                console.log(
+                logger.info(
                     `All collections and indexes in ${process.env['MONGO_DB_NAME']} database have been deleted.`
                 );
             } else {
-                console.log(`Database '${process.env['MONGO_DB_NAME']}' does not exist.`);
+                logger.info(`Database '${process.env['MONGO_DB_NAME']}' does not exist.`);
             }
         } catch (error) {
-            console.error('Error deleting database contents', error);
+            logger.error('Error deleting database contents', error);
         }
     }
 
@@ -119,7 +121,7 @@ class DatabaseService {
                 constants.R_OK | constants.W_OK,
                 err => {
                     if (err) {
-                        console.error(
+                        logger.error(
                             `no access to mod file: ${MOD_DIRECTORY_PATH}/${mod.name}/${mod.version}/combinations.json`
                         );
                     } else {
@@ -137,11 +139,11 @@ class DatabaseService {
     }
 
     fetchUnprocessedCombinations(mod: Mod) {
-        console.log(`fetching all combinations for mod: ${mod.name} ${mod.version}`);
+        logger.info(`fetching all combinations for mod: ${mod.name} ${mod.version}`);
         try {
             return JSON.parse(readFileSync(`${COMBINATIONS_DIRECTORY_PATH}/${mod.name} ${mod.version}.json`, 'utf8'));
         } catch (err) {
-            console.error(err);
+            logger.error(err);
         }
     }
 
@@ -151,7 +153,7 @@ class DatabaseService {
                 readFileSync(`${MOD_DIRECTORY_PATH}/${mod.name}/${mod.version}/combinations.json`, 'utf8')
             );
         } catch (err) {
-            console.error(err);
+            logger.error(err);
         }
     }
 
@@ -174,7 +176,7 @@ class DatabaseService {
             combinations = this.loadCombinations(modSchema as Mod);
         }
         if (combinations === null) {
-            console.error('No combinations were found for mod: ' + modSchema.name + ' ' + modSchema.version);
+            logger.error('No combinations were found for mod: ' + modSchema.name + ' ' + modSchema.version);
             return;
         }
         let processedCombinations: ProcessedCombination[] = [];
@@ -215,7 +217,7 @@ class DatabaseService {
             .db(process.env['MONGO_DB_NAME'])
             .collection(`${modSchema.name} ${modSchema.version}`)
             .insertMany(processedCombinations);
-        console.log(
+        logger.info(
             `Collection '${modSchema.name} ${modSchema.version}' was populated with ${processedCombinations.length} documents.`
         );
     }
@@ -292,7 +294,7 @@ class DatabaseService {
 
     async populateModCollectionWithModData() {
         for (const mod of this.schema) {
-            console.log(`populating collection for mod: ${mod.name} ${mod.version} with mod data`);
+            logger.info(`Populating collection for mod: ${mod.name} ${mod.version} with mod data`);
             let modData = {
                 name: mod.name,
                 version: mod.version,
@@ -306,7 +308,7 @@ class DatabaseService {
 
     async populateModCollectionsWithCombinations() {
         for (const mod of this.schema) {
-            console.log(`populating collection for mod: ${mod.name} ${mod.version} with combinations`);
+            logger.info(`Populating collection for mod: ${mod.name} ${mod.version} with combinations`);
             await this.populateModCollection(mod);
         }
     }
@@ -338,16 +340,16 @@ class DatabaseService {
             }
         }
         if (!jsonFilesExist) {
-            console.log(`Combinations files are missing.`);
+            logger.info(`Combinations files are missing.`);
             try {
-                console.log('Running cleanup script...');
+                logger.info('Running cleanup script...');
                 const cleanupModule = await import(CLEANUP_SCRIPT_PATH);
                 await cleanupModule.default();
-                console.log('Extracting combinations from compressed files...');
+                logger.info('Extracting combinations from compressed files...');
                 const decompressorModule = await import(DECOMPRESSOR_SCRIPT_PATH);
                 await decompressorModule.default();
             } catch (err) {
-                console.error(err);
+                logger.error(err);
                 throw err;
             }
         }
@@ -355,20 +357,20 @@ class DatabaseService {
 
     async resetDatabase() {
         let errors = null;
-        console.log(`Resetting database '${process.env['MONGO_DB_NAME']}'...`);
+        logger.info(`Resetting database '${process.env['MONGO_DB_NAME']}'...`);
         if (existsSync(MOD_DIRECTORY_PATH)) {
-            console.log(`Directory '${MOD_DIRECTORY_PATH}' exists.`);
-            console.log(`Deleting directory '${MOD_DIRECTORY_PATH}'...`);
+            logger.info(`Directory '${MOD_DIRECTORY_PATH}' exists.`);
+            logger.info(`Deleting directory '${MOD_DIRECTORY_PATH}'...`);
             rmSync(MOD_DIRECTORY_PATH, {recursive: true});
         } else {
-            console.log(`Directory '${MOD_DIRECTORY_PATH}' does not already exist.`);
+            logger.info(`Directory '${MOD_DIRECTORY_PATH}' does not already exist.`);
         }
         try {
             await this.deleteDatabase();
             await this.initialise();
         } catch (err) {
             errors = err;
-            console.error(errors);
+            logger.error(errors);
         }
         if (errors) {
             return {message: 'The Database could not be reset.', error: errors};
@@ -378,7 +380,7 @@ class DatabaseService {
     }
 
     async databaseIsInitialised() {
-        console.log(`Checking if database '${process.env['MONGO_DB_NAME']}' is initialised...`);
+        logger.info(`Checking if database '${process.env['MONGO_DB_NAME']}' is initialised...`);
         let initialised = true;
         for (const mod of this.schema) {
             const documentCount = await this.client
@@ -401,18 +403,18 @@ class DatabaseService {
             }
         }
         if (initialised) {
-            console.log(`Database '${process.env['MONGO_DB_NAME']}' is initialised.`);
+            logger.info(`Database '${process.env['MONGO_DB_NAME']}' is initialised.`);
         } else {
-            console.log(`Database '${process.env['MONGO_DB_NAME']}' is not initialised.`);
+            logger.info(`Database '${process.env['MONGO_DB_NAME']}' is not initialised.`);
         }
         return initialised;
     }
 
     async setModColumnMinMaxes() {
-        console.log(`Setting min and max values for columns in mod collection...`);
+        logger.info(`Setting min and max values for columns in mod collection...`);
         let minMaxes: Record<string, {min: number; max: number}> = {};
         for (const mod of this.schema) {
-            console.log(`Setting min and max values for columns in mod: ${mod.name} ${mod.version}`);
+            logger.info(`Setting min and max values for columns in mod: ${mod.name} ${mod.version}`);
             for (const column of mod.columns) {
                 let minMaxResponse = await this.client
                     .db(process.env['MONGO_DB_NAME'])

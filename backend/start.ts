@@ -1,6 +1,6 @@
 import app from './app';
 
-import {CLEANUP_SCRIPT_PATH, RESET_SCRIPT_PATH} from './globalConstants';
+import {CLEANUP_SCRIPT_PATH, ENVIRONMENT_SPECIFIER_FLAG_NAME, RESET_SCRIPT_PATH} from './globalConstants';
 
 import MongoService from './services/mongoService';
 import DatabaseService from './services/databaseService';
@@ -19,7 +19,9 @@ const runDatabaseScripts = async () => {
 
 const checkDatabaseInitialisation = async () => {
     const databaseService = new DatabaseService(MongoService.getInstance());
-    console.log(`Checking if database for environment '${process.env['ENVIRONMENT']}' is initialised...`);
+    console.log(
+        `Checking if database for environment '${process.env[`${ENVIRONMENT_SPECIFIER_FLAG_NAME}`]}' is initialised...`
+    );
     const initialised = await databaseService.databaseIsInitialised();
     if (!initialised) {
         await runDatabaseScripts();

@@ -1,5 +1,5 @@
 import swagger_autogen from 'swagger-autogen';
-import {ROOT_DIRECTORY} from './globalConstants';
+import {ROOT_DIRECTORY} from '../globalConstants';
 
 const doc = {
     info: {

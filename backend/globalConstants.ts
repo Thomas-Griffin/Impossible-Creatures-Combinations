@@ -20,6 +20,15 @@ export const RESET_SCRIPT_PATH = resolve(ROOT_DIRECTORY, './database/reset');
 export const COMPRESSOR_SCRIPT_PATH = resolve(ROOT_DIRECTORY, './database/compressor');
 export const COMPRESSED_DATA_FILE_EXTENSION = '.msgpack.gz';
 
+export const ENVIRONMENT_SPECIFIER_FLAG_NAME = 'ENVIRONMENT';
+
+export const MONGO_DOCKER_SERVICE_NAME = 'combinations-database';
+export const MONGO_DOCKER_SERVICE_PORT = 27017;
+export const MONGO_DB_NAME_PREFIX = 'combinations';
+
+export const SERVER_DOCKER_SERVICE_NAME = 'combinations-server';
+export const SERVER_DOCKER_SERVICE_PORT = 3000;
+
 let mods: Mod[] = schemas;
 const testMods: Mod[] = JSON.parse(readFileSync(TEST_SCHEMA_FILE_PATH, 'utf8'));
 mods = mods.concat(testMods);

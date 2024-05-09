@@ -1,6 +1,6 @@
 const dotenv = require('dotenv');
 
-dotenv.config({path: './test.env'});
+dotenv.config({path: './env/test.env'});
 
 if (!global.__MONGO_URI__) {
     console.error('ERROR: global.__MONGO_URI__ is not defined');

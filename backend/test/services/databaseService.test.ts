@@ -12,7 +12,6 @@ import {
 } from '../constants/globalTestConstants';
 import {CollectionInfo} from 'mongodb';
 import {MOD_COLLECTION_NAME, MOD_DIRECTORY_PATH} from '../../globalConstants';
-import * as process from 'process';
 
 import fs from 'fs';
 import MongoService from '../../services/mongoService';

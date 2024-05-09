@@ -7,8 +7,6 @@ describe('MongoService', () => {
         expect(() => {
             process.env[`${ENVIRONMENT_SPECIFIER_FLAG_NAME}`] = undefined;
             MongoService.getInstance();
-            process.env[`${ENVIRONMENT_SPECIFIER_FLAG_NAME}`] = undefined;
-            console.log(process.env[`${ENVIRONMENT_SPECIFIER_FLAG_NAME}`]);
         }).toThrow(
             Error(
                 `Environment variable ${ENVIRONMENT_SPECIFIER_FLAG_NAME} is not set. Please set it to any of ${Object.values(ServerEnvironment)}. Current value: undefined`

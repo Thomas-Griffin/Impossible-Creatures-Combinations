@@ -12,9 +12,9 @@ import {
     COMBINATIONS_DIRECTORY_PATH,
     DECOMPRESSOR_SCRIPT_PATH,
     MOD_COLLECTION_NAME,
+    MOD_COMBINATION_TOTALS,
     MOD_DIRECTORY_PATH,
-} from '../globalConstants';
-import {modCombinationTotals} from '../test/constants/globalTestConstants';
+} from '../../globalConstants';
 import schemas from '../database/modSchemas';
 import {MongoClient} from 'mongodb';
 
@@ -387,8 +387,8 @@ class DatabaseService {
                 .db(process.env['MONGO_DB_NAME'])
                 .collection(`${mod.name} ${mod.version}`)
                 .countDocuments();
-            const expectedDocumentCount = modCombinationTotals.find(
-                modCombinationTotal =>
+            const expectedDocumentCount = MOD_COMBINATION_TOTALS.find(
+                (modCombinationTotal: {name: string; version: string; total: number}) =>
                     modCombinationTotal.name === mod.name && modCombinationTotal.version === mod.version
             )?.total;
             const foundMod = await this.client

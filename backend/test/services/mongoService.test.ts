@@ -1,6 +1,6 @@
-import MongoService from '../../services/mongoService';
+import MongoService from '../../src/services/mongoService';
 import {ENVIRONMENT_SPECIFIER_FLAG_NAME} from '../../globalConstants';
-import ServerEnvironment from '../../types/ServerEnvironment';
+import ServerEnvironment from '../../src/types/ServerEnvironment';
 
 describe('MongoService', () => {
     it('should throw an error if the environment specifier is not set', () => {

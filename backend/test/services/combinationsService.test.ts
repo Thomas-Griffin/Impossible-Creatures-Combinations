@@ -1,9 +1,9 @@
-import CombinationService from '../../services/combinationsService';
+import CombinationService from '../../src/services/combinationsService';
 import {testMod, testModName, testModsCollectionName} from '../constants/globalTestConstants';
-import SortingType from '../../types/SortingType';
-import GetCombinationsRequestBody from '../../types/GetCombinationsRequestBody';
-import {MinMaxRequestBody} from '../../types/MinMaxRequestBody';
-import MongoService from '../../services/mongoService';
+import SortingType from '../../src/types/SortingType';
+import GetCombinationsRequestBody from '../../src/types/GetCombinationsRequestBody';
+import {MinMaxRequestBody} from '../../src/types/MinMaxRequestBody';
+import MongoService from '../../src/services/mongoService';
 
 const combinationsService = new CombinationService(MongoService.getInstance());
 

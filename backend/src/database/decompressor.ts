@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import messagePack from 'msgpack-lite';
 import {unzipSync} from 'zlib';
-import {COMPRESSED_DATA_FILE_EXTENSION, ROOT_DIRECTORY} from '../globalConstants';
+import {COMPRESSED_DATA_FILE_EXTENSION, ROOT_DIRECTORY} from '../../globalConstants';
 import schemas from './modSchemas';
 import Logger from '../utility/logger';
 

@@ -1,5 +1,5 @@
 import {MongoClient} from 'mongodb';
-import {MONGO_DOCKER_SERVICE_PORT} from '../globalConstants';
+import {MONGO_DOCKER_SERVICE_PORT} from '../../globalConstants';
 import ServerConfig from '../utility/serverConfig';
 
 const serverConfig = ServerConfig.getInstance();

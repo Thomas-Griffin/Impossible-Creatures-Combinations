@@ -1,6 +1,6 @@
 import ModService from '../services/modService';
 import {Router} from 'express';
-import {cache} from '../app';
+import {cache} from '../../app';
 import MongoService from '../services/mongoService';
 
 const router = Router();

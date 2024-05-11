@@ -1,8 +1,8 @@
 import app from '../../app';
 import request from 'supertest';
-import CombinationsService from '../../services/combinationsService';
+import CombinationsService from '../../src/services/combinationsService';
 import {testMod, testModName} from '../constants/globalTestConstants';
-import MongoService from '../../services/mongoService';
+import MongoService from '../../src/services/mongoService';
 
 const testCombinationsService = new CombinationsService(MongoService.getInstance());
 describe('Combinations routes', () => {

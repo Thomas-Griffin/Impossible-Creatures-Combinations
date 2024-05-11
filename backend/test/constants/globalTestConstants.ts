@@ -1,7 +1,8 @@
-import Mod from '../../types/Mod';
-import {ModSchema} from '../../types/ModSchema';
-import UnprocessedCombination from '../../types/UnprocessedCombination';
-import ProcessedCombination from '../../types/ProcessedCombination.js';
+import Mod from 'src/types/Mod';
+import {ModSchema} from 'src/types/ModSchema';
+import UnprocessedCombination from 'src/types/UnprocessedCombination';
+import ProcessedCombination from 'src/types/ProcessedCombination.js';
+import {MOD_COMBINATION_TOTALS} from '../../globalConstants';
 
 export const testMod: Mod = {
     name: 'testMod',
@@ -549,14 +550,4 @@ export const testMods: Mod[] = [
     },
 ];
 
-export const modCombinationTotals = [
-    {name: 'Impossible Creatures', version: '1.1', total: 52760},
-    {name: 'Insect Invasion', version: '1.4', total: 85980},
-    {name: 'Smod', version: '9.25', total: 120000},
-    {name: 'Tellurian', version: '2.0', total: 128328},
-    {name: 'Tellurian', version: '2.9.1.4', total: 159448},
-    {name: 'Tellurian', version: '2.10', total: 171952},
-    {name: 'Tellurian', version: '2.10.0.3', total: 173224},
-];
-
-export const totalNumberOfMods = modCombinationTotals.length;
+export const totalNumberOfMods = MOD_COMBINATION_TOTALS.length;

@@ -3,7 +3,7 @@ import {
     ENVIRONMENT_SPECIFIER_FLAG_NAME,
     SERVER_DOCKER_SERVICE_NAME,
     SERVER_DOCKER_SERVICE_PORT,
-} from '../globalConstants';
+} from '../../globalConstants';
 import ServerEnvironment from '../types/ServerEnvironment';
 import Logger from '../utility/logger';
 

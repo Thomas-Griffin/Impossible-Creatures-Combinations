@@ -1,4 +1,3 @@
 /node_modules
 /database/combinations/*.json
 /test
-/combiner/node_modules

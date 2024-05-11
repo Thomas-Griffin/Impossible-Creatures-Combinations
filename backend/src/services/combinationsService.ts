@@ -3,7 +3,7 @@ import {readFileSync} from 'fs';
 import Mod from '../types/Mod';
 import SortingType from '../types/SortingType';
 import Joi from 'joi';
-import {JOI_MOD_SCHEMA, MOD_COLLECTION_NAME, TEST_SCHEMA_FILE_PATH} from '../globalConstants';
+import {JOI_MOD_SCHEMA, MOD_COLLECTION_NAME, TEST_SCHEMA_FILE_PATH} from '../../globalConstants';
 import ProcessedCombination from '../types/ProcessedCombination';
 import Ability from '../types/Ability';
 import GetCombinationsRequestBody from '../types/GetCombinationsRequestBody';

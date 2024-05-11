@@ -5,7 +5,7 @@ import {
     MONGO_DB_NAME_PREFIX,
     MONGO_DOCKER_SERVICE_NAME,
     MONGO_DOCKER_SERVICE_PORT,
-} from '../globalConstants';
+} from '../../globalConstants';
 
 export class EnvironmentVariablesVerifier {
     ensureValidServerEnvironment(): void {

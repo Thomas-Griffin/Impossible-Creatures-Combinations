@@ -1,6 +1,6 @@
 import fs from 'fs';
 import {ModSchema} from '../types/ModSchema';
-import {ROOT_DIRECTORY} from '../globalConstants';
+import {ROOT_DIRECTORY} from '../../globalConstants';
 import schemas from './modSchemas';
 import Logger from '../utility/logger';
 

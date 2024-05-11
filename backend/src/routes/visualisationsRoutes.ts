@@ -1,6 +1,6 @@
 import {Router} from 'express';
 import VisualisationsService from '../services/visualisationsService';
-import {cache} from '../app';
+import {cache} from '../../app';
 import MongoService from '../services/mongoService';
 
 const router = Router();

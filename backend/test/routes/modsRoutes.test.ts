@@ -1,8 +1,8 @@
-import modService from '../../services/modService';
+import modService from '../../src/services/modService';
 import app from '../../app';
 import request from 'supertest';
 import {testModsCollectionName} from '../constants/globalTestConstants';
-import MongoService from '../../services/mongoService';
+import MongoService from '../../src/services/mongoService';
 
 const testModService = new modService(MongoService.getInstance());
 describe('Mods routes', () => {

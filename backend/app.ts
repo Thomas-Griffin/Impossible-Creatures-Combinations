@@ -1,8 +1,8 @@
 import express, {NextFunction, Request, Response} from 'express';
-import modsRouter from './routes/modsRoutes';
-import combinationsRouter from './routes/combinationsRoutes';
-import databaseInitializerRouter from './routes/databaseRoutes';
-import visualisationsRouter from './routes/visualisationsRoutes';
+import modsRouter from './src/routes/modsRoutes';
+import combinationsRouter from './src/routes/combinationsRoutes';
+import databaseInitializerRouter from './src/routes/databaseRoutes';
+import visualisationsRouter from './src/routes/visualisationsRoutes';
 import morgan from 'morgan';
 import swaggerUi from 'swagger-ui-express';
 import fs from 'fs';

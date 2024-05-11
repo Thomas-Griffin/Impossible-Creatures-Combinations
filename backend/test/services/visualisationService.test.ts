@@ -1,6 +1,6 @@
-import VisualisationsService from '../../services/visualisationsService';
-import ChartRequestBody from '../../types/ChartRequestBody';
-import MongoService from '../../services/mongoService';
+import VisualisationsService from '../../src/services/visualisationsService';
+import ChartRequestBody from '../../src/types/ChartRequestBody';
+import MongoService from '../../src/services/mongoService';
 
 const visualisationsService = new VisualisationsService(MongoService.getInstance());
 

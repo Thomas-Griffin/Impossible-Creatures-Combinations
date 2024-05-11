@@ -1,7 +1,7 @@
 import app from '../../app';
 import request from 'supertest';
-import VisualisationsService from '../../services/visualisationsService';
-import MongoService from '../../services/mongoService';
+import VisualisationsService from '../../src/services/visualisationsService';
+import MongoService from '../../src/services/mongoService';
 
 const testVisualisationsService = new VisualisationsService(MongoService.getInstance());
 describe('Visualisations routes', () => {

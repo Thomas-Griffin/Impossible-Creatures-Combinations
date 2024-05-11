@@ -1,7 +1,7 @@
 import {MongoRequestBody} from './MongoRequestBody';
 import MongoService from '../services/mongoService';
 import Joi from 'joi';
-import {JOI_MOD_SCHEMA} from '../globalConstants';
+import {JOI_MOD_SCHEMA} from '../../globalConstants';
 import Mod from './Mod';
 import AggregationStage from './AggregationStage';
 

@@ -1,7 +1,6 @@
-import DatabaseService from '../../services/databaseService';
+import DatabaseService from '../../src/services/databaseService';
 
 import {
-    modCombinationTotals,
     testMod,
     testModName,
     testModSchema,
@@ -11,10 +10,10 @@ import {
     totalNumberOfMods,
 } from '../constants/globalTestConstants';
 import {CollectionInfo} from 'mongodb';
-import {MOD_COLLECTION_NAME, MOD_DIRECTORY_PATH} from '../../globalConstants';
+import {MOD_COLLECTION_NAME, MOD_COMBINATION_TOTALS, MOD_DIRECTORY_PATH} from '../../globalConstants';
 
 import fs from 'fs';
-import MongoService from '../../services/mongoService';
+import MongoService from '../../src/services/mongoService';
 
 let databaseService = new DatabaseService(MongoService.getInstance());
 describe('Database service tests', () => {
@@ -174,7 +173,7 @@ describe('Database service tests', () => {
     describe('createModDirectories', () => {
         it('should create the mod directories', async () => {
             databaseService.createModDirectories();
-            for (const mod of modCombinationTotals) {
+            for (const mod of MOD_COMBINATION_TOTALS) {
                 expect(fs.existsSync(`${MOD_DIRECTORY_PATH}/${mod.name}/${mod.version}`)).toEqual(true);
             }
             fs.rmSync(MOD_DIRECTORY_PATH, {force: true, recursive: true});

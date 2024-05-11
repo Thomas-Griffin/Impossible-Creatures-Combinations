@@ -7,7 +7,7 @@
     "./swagger.json"
   ],
   "scripts": {
-    "backend:build": "tsc && cp -R ../backend/*.json dist/ && cp -R ../backend/*.msgpack.gz dist/",
+    "backend:build": "tsc && cp -R ./*.json dist/ && cp -R ./*.msgpack.gz dist/ && cp -R ./src/env dist/src/",
     "backend:development": "npm run backend:build && cross-env ENVIRONMENT=development node dist/start.js",
     "backend:production": "ENVIRONMENT=production node dist/start.js",
     "backend:test": "npm run backend:build && cross-env ENVIRONMENT=test jest --detectOpenHandles --forceExit",

@@ -1,5 +1,5 @@
 import pino from 'pino';
-import {ENVIRONMENT_SPECIFIER_FLAG_NAME, ROOT_DIRECTORY} from '../globalConstants';
+import {ENVIRONMENT_SPECIFIER_FLAG_NAME, ROOT_DIRECTORY} from '../../globalConstants';
 import ServerEnvironment from '../types/ServerEnvironment';
 import pinoCaller from 'pino-caller';
 

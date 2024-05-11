@@ -25,8 +25,6 @@ describe('serverConfig', () => {
         process.env['ENVIRONMENT'] = ServerEnvironment.PRODUCTION;
         process.env['MONGO_URL'] = undefined;
         process.env['MONGO_DB_NAME'] = undefined;
-        console.log(process.env['MONGO_URL']);
-        console.log(process.env['MONGO_DB_NAME']);
         const serverConfig = ServerConfig.getInstance();
         serverConfig.loadEnvironmentConfig();
         expect(process.env['ENVIRONMENT']).toBe(ServerEnvironment.PRODUCTION);

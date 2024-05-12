@@ -1,15 +1,7 @@
-import CombinationAttributeName from './CombinationAttributeName';
-import ColumnType from './ColumnType';
+import {ModSchemaColumn} from './ModSchemaColumn';
 
 export interface ModSchema {
     name: string;
     version: string;
-    columns: {
-        label: CombinationAttributeName;
-        type: ColumnType;
-        format?: boolean;
-        path?: any[];
-        description?: string;
-        decimal_places?: number;
-    }[];
+    columns: ModSchemaColumn[];
 }

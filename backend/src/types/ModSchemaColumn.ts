@@ -1,9 +1,9 @@
 import CombinationAttributeName from './CombinationAttributeName';
-import ColumnType from './ColumnType';
+import {ModColumnType} from './ModColumnType';
 
 export type ModSchemaColumn = {
     label: CombinationAttributeName;
-    type: ColumnType;
+    type: ModColumnType;
     format?: boolean;
     path?: any[];
     description?: string;

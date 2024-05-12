@@ -1,10 +1,10 @@
 import CombinationAttributeName from './CombinationAttributeName';
-import ColumnType from './ColumnType';
+import {ModColumnType} from './ModColumnType';
 
 export default interface CombinationTableColumn {
     name: CombinationAttributeName;
     label: CombinationAttributeName;
-    type: ColumnType;
+    type: ModColumnType;
     isSorted: {
         ascending: boolean;
         descending: boolean;

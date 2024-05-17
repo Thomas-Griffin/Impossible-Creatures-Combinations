@@ -449,6 +449,10 @@ export const testProcessedCombinations: ProcessedCombination[] = [
         Health: 30,
         'Land Speed': 26,
         'Melee Damage': 10,
+        Mod: {
+            name: 'testMod',
+            version: '1.0.0',
+        },
         Pincers: 'Ant',
         'Population Size': 1,
         Power: 0,
@@ -481,6 +485,10 @@ export const testProcessedCombinations: ProcessedCombination[] = [
         Health: 18,
         'Land Speed': 0,
         'Melee Damage': 2,
+        Mod: {
+            name: 'testMod',
+            version: '1.0.0',
+        },
         Pincers: 'Archerfish',
         'Population Size': 1,
         Power: 0,
@@ -517,6 +525,10 @@ export const testProcessedCombinations: ProcessedCombination[] = [
         Health: 30,
         'Land Speed': 20.8,
         'Melee Damage': 10,
+        Mod: {
+            name: 'testMod',
+            version: '1.0.0',
+        },
         Pincers: 'Archerfish',
         'Population Size': 1,
         Power: 0,

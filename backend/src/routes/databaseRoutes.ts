@@ -1,10 +1,9 @@
 import {Router} from 'express';
 import DatabaseService from '../services/databaseService';
-import MongoService from '../services/mongoService';
 
 const router = Router();
 
-const databaseService = new DatabaseService(MongoService.getInstance());
+const databaseService = new DatabaseService();
 
 router.get('/reset', async function (_request, response) {
     response.setHeader('Cache-Control', 'no-cache');

@@ -1,7 +1,7 @@
-enum ServerEnvironment {
+enum ServerEnvironments {
     DEVELOPMENT = 'development',
     TEST = 'test',
     PRODUCTION = 'production',
 }
 
-export default ServerEnvironment;
+export default ServerEnvironments;

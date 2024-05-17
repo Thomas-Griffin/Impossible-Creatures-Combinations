@@ -10,12 +10,16 @@ import {
     totalNumberOfMods,
 } from '../constants/globalTestConstants';
 import {CollectionInfo} from 'mongodb';
-import {MOD_COLLECTION_NAME, MOD_COMBINATION_TOTALS, MOD_DIRECTORY_PATH} from '../../globalConstants';
+import {
+    COMBINATIONS_COLLECTION_NAME,
+    MOD_COLLECTION_NAME,
+    MOD_COMBINATION_TOTALS,
+    MOD_DIRECTORY_PATH,
+} from '../../globalConstants';
 
 import fs from 'fs';
-import MongoService from '../../src/services/mongoService';
 
-let databaseService = new DatabaseService(MongoService.getInstance());
+let databaseService = new DatabaseService();
 describe('Database service tests', () => {
     beforeEach(async () => {
         await databaseService.client.connect();
@@ -75,16 +79,17 @@ describe('Database service tests', () => {
             expect(collectionNames).toContain(MOD_COLLECTION_NAME);
         });
     });
-    describe('create mod collections', () => {
-        it('should create every required mod collection', async () => {
+    describe('create combinations collection', () => {
+        it('should create the combinations collection', async () => {
             await databaseService.client.connect();
             await databaseService.createDatabase();
-            await databaseService.createModCollections();
+            await databaseService.createCombinationsCollection();
             const db = databaseService.client.db(process.env['MONGO_DB_NAME']);
             const collections = db.listCollections();
             const collectionsResult = await collections.toArray();
             const collectionNames = collectionsResult.map((collection: CollectionInfo) => collection.name);
-            expect(collectionNames).toHaveLength(totalNumberOfMods);
+            expect(collectionNames).toContain(COMBINATIONS_COLLECTION_NAME);
+            expect(collectionNames).toHaveLength(1);
         });
     });
     describe('populate mod collection with mod data', () => {
@@ -108,10 +113,14 @@ describe('Database service tests', () => {
             await databaseService.createDatabase();
             await databaseService.createModsCollection();
             await databaseService.populateModCollectionWithModData();
-            await databaseService.createModCollections();
-            await databaseService.populateModCollection(testModSchema, testUnprocessedCombinations);
+            await databaseService.createCombinationsCollection();
+            await databaseService.processAndSaveCombinations(testModSchema, testUnprocessedCombinations);
             expect(
-                await databaseService.client.db(process.env['MONGO_DB_NAME']).collection(testModName).find().toArray()
+                await databaseService.client
+                    .db(process.env['MONGO_DB_NAME'])
+                    .collection(COMBINATIONS_COLLECTION_NAME)
+                    .find()
+                    .toArray()
             ).toHaveLength(testUnprocessedCombinations.length);
         });
         it('should populate with combinations that match the desired output', async () => {
@@ -119,11 +128,11 @@ describe('Database service tests', () => {
             await databaseService.createDatabase();
             await databaseService.createModsCollection();
             await databaseService.populateModCollectionWithModData();
-            await databaseService.createModCollections();
-            await databaseService.populateModCollection(testModSchema, testUnprocessedCombinations);
+            await databaseService.createCombinationsCollection();
+            await databaseService.processAndSaveCombinations(testModSchema, testUnprocessedCombinations);
             const combinations = await databaseService.client
                 .db(process.env['MONGO_DB_NAME'])
-                .collection(testModName)
+                .collection(COMBINATIONS_COLLECTION_NAME)
                 .find()
                 .project({_id: 0})
                 .toArray();

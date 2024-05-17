@@ -1,9 +1,9 @@
 import {MongoRequestBody} from './MongoRequestBody';
 import MongoService from '../services/mongoService';
 import Joi from 'joi';
-import {JOI_MOD_SCHEMA} from '../../globalConstants';
-import Mod from './Mod';
+import {COMBINATIONS_COLLECTION_NAME, JOI_MOD_SCHEMA} from '../../globalConstants';
 import AggregationStage from './AggregationStage';
+import {container} from 'tsyringe';
 
 export class MongoQueryPipeline {
     body: MongoRequestBody;
@@ -12,15 +12,11 @@ export class MongoQueryPipeline {
     bodySchema: Joi.ObjectSchema;
     queryResult: Document[];
 
-    constructor(
-        mongoService: MongoService,
-        body: MongoRequestBody,
-        bodySchema: Joi.ObjectSchema,
-        query: AggregationStage[]
-    ) {
+    constructor(body: MongoRequestBody, bodySchema: Joi.ObjectSchema, query: AggregationStage[]) {
+        this.service = container.resolve(MongoService);
+
         this.body = body;
         this.bodySchema = bodySchema || JOI_MOD_SCHEMA;
-        this.service = mongoService;
         this.query = query;
         this.queryResult = [] as Document[];
     }
@@ -40,10 +36,6 @@ export class MongoQueryPipeline {
         }
     }
 
-    private toCollectionName(mod: Mod) {
-        return `${mod?.name} ${mod?.version}`;
-    }
-
     private validateBody(body: MongoRequestBody) {
         const {error} = this.bodySchema.validate(body);
         return error;
@@ -54,7 +46,7 @@ export class MongoQueryPipeline {
             await this.service.client.connect();
             const response = await this.service.client
                 .db(process.env['MONGO_DB_NAME'])
-                .collection(this.toCollectionName(this.body.mod))
+                .collection(COMBINATIONS_COLLECTION_NAME)
                 .aggregate(this.query)
                 .toArray();
             await this.service.client.close();

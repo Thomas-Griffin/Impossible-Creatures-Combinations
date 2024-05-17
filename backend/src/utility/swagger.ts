@@ -1,8 +1,6 @@
 import swagger_autogen from 'swagger-autogen';
 import {ROOT_DIRECTORY} from '../../globalConstants';
-import Logger from '../utility/logger';
-
-const logger = Logger.getInstance();
+import {logger} from './logger';
 
 const doc = {
     info: {

@@ -1,13 +1,14 @@
 import MongoService from './mongoService';
 import Mod from '../types/Mod';
 import {Document, MongoClient} from 'mongodb';
+import {container} from 'tsyringe';
 
 class ModService {
     collectionName: string;
     client: MongoClient;
 
-    constructor(mongoService: MongoService) {
-        this.client = mongoService.client;
+    constructor() {
+        this.client = container.resolve(MongoService).client;
         this.collectionName = 'mods';
     }
 

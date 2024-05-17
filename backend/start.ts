@@ -1,17 +1,11 @@
+import 'reflect-metadata';
 import app from './app';
-
 import {CLEANUP_SCRIPT_PATH, ENVIRONMENT_SPECIFIER_FLAG_NAME, RESET_SCRIPT_PATH} from './globalConstants';
-
-import MongoService from './src/services/mongoService';
 import DatabaseService from './src/services/databaseService';
+import {logger} from './src/utility/logger';
+import {serverEnvironment} from './src/utility/serverEnvironment';
 
-import Logger from './src/utility/logger';
-import ServerConfig from './src/utility/serverConfig';
-
-const logger = Logger.getInstance();
-
-const serverConfig = ServerConfig.getInstance();
-serverConfig.loadEnvironmentConfig();
+serverEnvironment.load();
 
 const runDatabaseScripts = async () => {
     try {
@@ -26,7 +20,7 @@ const runDatabaseScripts = async () => {
 };
 
 const checkDatabaseInitialisation = async () => {
-    const databaseService = new DatabaseService(MongoService.getInstance());
+    const databaseService = new DatabaseService();
     logger.info(
         `Checking if database for environment '${process.env[ENVIRONMENT_SPECIFIER_FLAG_NAME]}' is initialised...`
     );

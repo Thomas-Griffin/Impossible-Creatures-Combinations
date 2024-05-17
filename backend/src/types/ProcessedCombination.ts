@@ -1,4 +1,7 @@
+import Mod from './Mod';
+
 export default interface ProcessedCombination {
+    Mod: Mod;
     Abilities: {
         ability: string;
         source: string;

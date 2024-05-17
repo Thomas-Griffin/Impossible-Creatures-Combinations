@@ -14,6 +14,12 @@ export const ABILITIES_FILE_NAME = 'abilities.json';
 export const TEST_SCHEMA_FILE_PATH = resolve(ROOT_DIRECTORY, `${TEST_SCHEMA_FILE_NAME}`);
 export const ABILITIES_FILE_PATH = resolve(ROOT_DIRECTORY, `${ABILITIES_FILE_NAME}`);
 export const COMBINATIONS_DIRECTORY_PATH = resolve(ROOT_DIRECTORY);
+export const COMBINATIONS_COLLECTION_NAME = 'combinations';
+export const ENV_DIRECTORY = resolve(SRC_DIRECTORY, 'env');
+
+export const LOGGER_TOKEN = 'Logger';
+export const MONGO_CLIENT_TOKEN = 'MongoClient';
+export const SERVER_ENVIRONMENT_TOKEN = 'ServerEnvironment';
 
 export const CLEANUP_SCRIPT_PATH = resolve(ROOT_DIRECTORY, './src/database/cleanup');
 export const DECOMPRESSOR_SCRIPT_PATH = resolve(ROOT_DIRECTORY, './src/database/decompressor');

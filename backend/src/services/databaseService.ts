@@ -1,14 +1,14 @@
 import {access, constants, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync} from 'fs';
-import MongoService from './mongoService';
 import Mod from '../types/Mod';
 import UnprocessedCombination from '../types/UnprocessedCombination';
 import ProcessedCombination from '../types/ProcessedCombination';
 import {ModSchema} from '../types/ModSchema';
 import Ability from '../types/Ability';
-import Logger from '../utility/logger';
+import {logger} from '../utility/logger';
 import {
     ABILITIES_FILE_PATH,
     CLEANUP_SCRIPT_PATH,
+    COMBINATIONS_COLLECTION_NAME,
     COMBINATIONS_DIRECTORY_PATH,
     DECOMPRESSOR_SCRIPT_PATH,
     MOD_COLLECTION_NAME,
@@ -17,8 +17,9 @@ import {
 } from '../../globalConstants';
 import schemas from '../database/modSchemas';
 import {MongoClient} from 'mongodb';
-
-const logger = Logger.getInstance();
+import {ModSchemaColumn} from '../types/ModSchemaColumn';
+import {container} from 'tsyringe';
+import MongoService from './mongoService';
 
 const abilitiesMap: Record<string, string> = JSON.parse(readFileSync(ABILITIES_FILE_PATH, 'utf8'));
 
@@ -26,8 +27,8 @@ class DatabaseService {
     schema: ModSchema[] = [];
     client: MongoClient;
 
-    constructor(mongoService: MongoService) {
-        this.client = mongoService.client;
+    constructor() {
+        this.client = container.resolve(MongoService).client;
         this.getSchema();
     }
 
@@ -44,6 +45,7 @@ class DatabaseService {
     async createModsCollection() {
         try {
             await this.client.connect();
+            logger.info(`Creating collection '${MOD_COLLECTION_NAME}'...`);
             await this.client.db(process.env['MONGO_DB_NAME']).createCollection(MOD_COLLECTION_NAME);
             logger.info(`Mod collection '${MOD_COLLECTION_NAME}' was created.`);
         } catch (err) {
@@ -51,14 +53,12 @@ class DatabaseService {
         }
     }
 
-    async createModCollections() {
+    async createCombinationsCollection() {
         try {
             await this.client.connect();
-            for (const mod of this.schema) {
-                await this.client.db(process.env['MONGO_DB_NAME']).createCollection(`${mod.name} ${mod.version}`);
-                logger.info(`Mod collection '${mod.name} ${mod.version}' was created.`);
-            }
-            logger.info(`All mod collections were created.`);
+            logger.info(`Creating collection '${COMBINATIONS_COLLECTION_NAME}'...`);
+            await this.client.db(process.env['MONGO_DB_NAME']).createCollection(COMBINATIONS_COLLECTION_NAME);
+            logger.info(`Combinations collection '${COMBINATIONS_COLLECTION_NAME}' was created.`);
         } catch (err) {
             logger.error(err);
         }
@@ -171,7 +171,7 @@ class DatabaseService {
                 : 'None';
     }
 
-    async populateModCollection(modSchema: ModSchema, combinations: UnprocessedCombination[] | null = null) {
+    async processAndSaveCombinations(modSchema: Mod, combinations: UnprocessedCombination[] | null = null) {
         if (!combinations) {
             combinations = this.loadCombinations(modSchema as Mod);
         }
@@ -182,6 +182,7 @@ class DatabaseService {
         let processedCombinations: ProcessedCombination[] = [];
         for (const combination of combinations) {
             let processedCombination: ProcessedCombination = {
+                Mod: {name: modSchema.name, version: modSchema.version} as Mod,
                 Abilities: [] as Ability[],
                 'Air Speed': this.roundToDecimal(combination.attributes.airspeed_val?.[1] || 0, 1),
                 'Animal 1': this.snakeCaseToTitleCase(combination.stock_1),
@@ -215,10 +216,10 @@ class DatabaseService {
         }
         await this.client
             .db(process.env['MONGO_DB_NAME'])
-            .collection(`${modSchema.name} ${modSchema.version}`)
+            .collection(COMBINATIONS_COLLECTION_NAME)
             .insertMany(processedCombinations);
         logger.info(
-            `Collection '${modSchema.name} ${modSchema.version}' was populated with ${processedCombinations.length} documents.`
+            `Collection '${COMBINATIONS_COLLECTION_NAME}' was populated with ${processedCombinations.length} documents.`
         );
     }
 
@@ -308,8 +309,10 @@ class DatabaseService {
 
     async populateModCollectionsWithCombinations() {
         for (const mod of this.schema) {
-            logger.info(`Populating collection for mod: ${mod.name} ${mod.version} with combinations`);
-            await this.populateModCollection(mod);
+            logger.info(
+                `Populating collection ${COMBINATIONS_COLLECTION_NAME} with combinations from mod: ${mod.name} ${mod.version}`
+            );
+            await this.processAndSaveCombinations(mod as Mod);
         }
     }
 
@@ -325,7 +328,7 @@ class DatabaseService {
         this.createModFiles();
         await this.createDatabase();
         await this.createModsCollection();
-        await this.createModCollections();
+        await this.createCombinationsCollection();
         await this.populateModCollectionWithModData();
         await this.populateModCollectionsWithCombinations();
         await this.setModColumnMinMaxes();
@@ -381,27 +384,7 @@ class DatabaseService {
 
     async databaseIsInitialised() {
         logger.info(`Checking if database '${process.env['MONGO_DB_NAME']}' is initialised...`);
-        let initialised = true;
-        for (const mod of this.schema) {
-            const documentCount = await this.client
-                .db(process.env['MONGO_DB_NAME'])
-                .collection(`${mod.name} ${mod.version}`)
-                .countDocuments();
-            const expectedDocumentCount = MOD_COMBINATION_TOTALS.find(
-                (modCombinationTotal: {name: string; version: string; total: number}) =>
-                    modCombinationTotal.name === mod.name && modCombinationTotal.version === mod.version
-            )?.total;
-            const foundMod = await this.client
-                .db(process.env['MONGO_DB_NAME'])
-                .collection(MOD_COLLECTION_NAME)
-                .findOne({
-                    name: mod.name,
-                    version: mod.version,
-                });
-            if (documentCount !== expectedDocumentCount || foundMod === null) {
-                initialised = false;
-            }
-        }
+        let initialised = (await this.totalDocumentsMatchExpected()) && (await this.modsAreInitialised());
         if (initialised) {
             logger.info(`Database '${process.env['MONGO_DB_NAME']}' is initialised.`);
         } else {
@@ -412,51 +395,84 @@ class DatabaseService {
 
     async setModColumnMinMaxes() {
         logger.info(`Setting min and max values for columns in mod collection...`);
-        let minMaxes: Record<string, {min: number; max: number}> = {};
         for (const mod of this.schema) {
-            logger.info(`Setting min and max values for columns in mod: ${mod.name} ${mod.version}`);
-            for (const column of mod.columns) {
-                let minMaxResponse = await this.client
-                    .db(process.env['MONGO_DB_NAME'])
-                    .collection(`${mod.name} ${mod.version}`)
-                    .aggregate([
-                        {
-                            $group: {
-                                _id: null,
-                                min: {$min: `$${column.label}`},
-                                max: {$max: `$${column.label}`},
-                            },
-                        },
-                    ])
-                    .toArray();
-                let minMax = minMaxResponse[0];
-                let min = minMax?.['min'];
-                let max = minMax?.['max'];
-                if (min === undefined) {
-                    min = 0;
-                }
-                if (max === undefined) {
-                    max = Number.MAX_SAFE_INTEGER;
-                }
-                minMaxes[column.label] = {min: min, max: max};
-            }
-            await this.client
-                .db(process.env['MONGO_DB_NAME'])
-                .collection(MOD_COLLECTION_NAME)
-                .updateMany(
-                    {name: mod.name, version: mod.version},
-                    {
-                        $set: {
-                            columns: mod.columns.map(column => ({
-                                label: column.label,
-                                type: column.type,
-                                min: minMaxes[column.label]?.min || 0,
-                                max: minMaxes[column.label]?.max || Number.MAX_SAFE_INTEGER,
-                            })),
-                        },
-                    }
-                );
+            let minMaxes = await this.calculateModMinMaxValues(mod);
+            await this.updateModMinMaxes(mod, minMaxes);
         }
+    }
+
+    private async updateModMinMaxes(mod: ModSchema, minMaxes: Record<string, {min: number; max: number}>) {
+        await this.client
+            .db(process.env['MONGO_DB_NAME'])
+            .collection(MOD_COLLECTION_NAME)
+            .updateMany(
+                {name: mod.name, version: mod.version},
+                {
+                    $set: {
+                        columns: mod.columns.map(column => ({
+                            label: column.label,
+                            type: column.type,
+                            min: minMaxes[column.label]?.min || 0,
+                            max: minMaxes[column.label]?.max || Number.MAX_SAFE_INTEGER,
+                        })),
+                    },
+                }
+            );
+    }
+
+    private async calculateModMinMaxValues(mod: ModSchema): Promise<Record<string, {min: number; max: number}>> {
+        logger.info(`Setting min and max values for columns in mod: ${mod.name} ${mod.version}`);
+        let minMaxes: Record<string, {min: number; max: number}> = {};
+        for (const column of mod.columns) {
+            let {min, max} = await this.getMinMaxValues(mod, column);
+            minMaxes[column.label] = {min: min, max: max};
+        }
+        return minMaxes;
+    }
+
+    private async getMinMaxValues(mod: ModSchema, column: ModSchemaColumn) {
+        const values = await this.client
+            .db(process.env['MONGO_DB_NAME'])
+            .collection(COMBINATIONS_COLLECTION_NAME)
+            .aggregate([
+                {$match: {Mod: {name: mod.name, version: mod.version}}},
+                {
+                    $group: {
+                        _id: null,
+                        min: {$min: `$${column.label}`},
+                        max: {$max: `$${column.label}`},
+                    },
+                },
+            ])
+            .toArray()
+            .then(result => result?.[0]);
+        return {min: values?.min || 0, max: values?.max || Number.MAX_SAFE_INTEGER};
+    }
+
+    private async modsAreInitialised() {
+        const collectionMods = await this.client
+            .db(process.env['MONGO_DB_NAME'])
+            .collection(MOD_COLLECTION_NAME)
+            .find()
+            .toArray();
+        return this.schema.every(schemaMod =>
+            collectionMods.find(mod => schemaMod.name === mod.name && schemaMod.version === mod.version)
+        );
+    }
+
+    private async totalDocumentsMatchExpected() {
+        const documentCount = await this.client
+            .db(process.env['MONGO_DB_NAME'])
+            .collection(COMBINATIONS_COLLECTION_NAME)
+            .countDocuments();
+        const expectedDocumentCount = MOD_COMBINATION_TOTALS.reduce(
+            (total, modTotal) =>
+                modTotal.name === modTotal.name && modTotal.version === modTotal.version
+                    ? total + modTotal.total
+                    : total,
+            0
+        );
+        return documentCount === expectedDocumentCount;
     }
 }
 

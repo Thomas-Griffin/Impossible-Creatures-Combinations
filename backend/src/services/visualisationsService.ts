@@ -3,12 +3,13 @@ import ChartRequestBody from '../types/ChartRequestBody';
 import {ChartQueryPipeline} from '../types/ChartQueryPipeline';
 import {MongoClient} from 'mongodb';
 import MongoService from './mongoService';
+import {container} from 'tsyringe';
 
 class VisualisationsService {
     client: MongoClient;
 
-    constructor(mongoService: MongoService) {
-        this.client = mongoService.client;
+    constructor() {
+        this.client = container.resolve(MongoService).client;
     }
 
     async getAttributeChart(body: ChartRequestBody): Promise<Partial<Data>[]> {
@@ -25,6 +26,7 @@ class VisualisationsService {
             ),
         ];
         return new ChartQueryPipeline(body, [
+            {$match: {Mod: body.mod}},
             {
                 $bucket: {
                     groupBy: `$${body.attributes.x}`,
@@ -74,6 +76,7 @@ class VisualisationsService {
             }) || Number.MAX_SAFE_INTEGER),
         ];
         return new ChartQueryPipeline(body, [
+            {$match: {Mod: body.mod}},
             {
                 $bucket: {
                     groupBy: `$${body.attributes.y}`,
@@ -116,6 +119,7 @@ class VisualisationsService {
 
     private async getMaximumXAttributeValue(body: ChartRequestBody) {
         return await new ChartQueryPipeline(body, [
+            {$match: {Mod: body.mod}},
             {
                 $group: {
                     _id: null,

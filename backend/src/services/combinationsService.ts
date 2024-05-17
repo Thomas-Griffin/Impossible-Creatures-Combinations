@@ -12,9 +12,8 @@ import {FilterQuery} from '../types/FilterQuery';
 import {MinMaxRequestBody} from '../types/MinMaxRequestBody';
 import schemas from '../database/modSchemas';
 import {MongoClient} from 'mongodb';
-import Logger from '../utility/logger';
-
-const logger = Logger.getInstance();
+import {logger} from '../utility/logger';
+import {container} from 'tsyringe';
 
 let mods = schemas;
 const testMods = JSON.parse(readFileSync(TEST_SCHEMA_FILE_PATH, 'utf8'));
@@ -26,8 +25,8 @@ class CombinationsService {
     abilitiesRequestSchema: Joi.ObjectSchema;
     client: MongoClient;
 
-    constructor(mongoService: MongoService) {
-        this.client = mongoService.client;
+    constructor() {
+        this.client = container.resolve(MongoService).client;
         this.combinationRequestSchema = Joi.object({
             mod: JOI_MOD_SCHEMA.required(),
             filters: Joi.array().optional(),

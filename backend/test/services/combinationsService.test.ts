@@ -3,9 +3,8 @@ import {testMod, testModName, testModsCollectionName} from '../constants/globalT
 import SortingType from '../../src/types/SortingType';
 import GetCombinationsRequestBody from '../../src/types/GetCombinationsRequestBody';
 import {MinMaxRequestBody} from '../../src/types/MinMaxRequestBody';
-import MongoService from '../../src/services/mongoService';
 
-const combinationsService = new CombinationService(MongoService.getInstance());
+const combinationsService = new CombinationService();
 
 describe('CombinationsService', () => {
     beforeAll(async () => {

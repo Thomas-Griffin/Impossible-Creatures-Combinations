@@ -3,4 +3,7 @@ module.exports = {
     setupFilesAfterEnv: ['./setupTests.js'],
     watchPathIgnorePatterns: ['globalConfig'],
     testPathIgnorePatterns: ['/node_modules/', '/dist/'],
+    transform: {
+        '^.+\\.tsx?$': 'babel-jest',
+    },
 };

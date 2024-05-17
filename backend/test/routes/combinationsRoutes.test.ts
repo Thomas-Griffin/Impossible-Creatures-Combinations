@@ -2,9 +2,8 @@ import app from '../../app';
 import request from 'supertest';
 import CombinationsService from '../../src/services/combinationsService';
 import {testMod, testModName} from '../constants/globalTestConstants';
-import MongoService from '../../src/services/mongoService';
 
-const testCombinationsService = new CombinationsService(MongoService.getInstance());
+const testCombinationsService = new CombinationsService();
 describe('Combinations routes', () => {
     beforeAll(async () => {
         await testCombinationsService.client.connect();

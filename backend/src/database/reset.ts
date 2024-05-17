@@ -4,23 +4,24 @@ import {
     SERVER_DOCKER_SERVICE_NAME,
     SERVER_DOCKER_SERVICE_PORT,
 } from '../../globalConstants';
-import ServerEnvironment from '../types/ServerEnvironment';
-import Logger from '../utility/logger';
-
-const logger = Logger.getInstance();
+import ServerEnvironment from '../types/ServerEnvironments';
+import {logger} from '../utility/logger';
+import {serverEnvironment} from '../utility/serverEnvironment';
 
 function reset() {
     logger.info('Resetting database...');
+    let url: string =
+        process.env[ENVIRONMENT_SPECIFIER_FLAG_NAME] === ServerEnvironment.PRODUCTION &&
+        serverEnvironment.isInDockerContainer()
+            ? `${`http://${SERVER_DOCKER_SERVICE_NAME}:${SERVER_DOCKER_SERVICE_PORT}`}/database/reset`
+            : `${`http://localhost:${SERVER_DOCKER_SERVICE_PORT}`}/database/reset`;
     axios
-        .get(
-            `${process.env[ENVIRONMENT_SPECIFIER_FLAG_NAME] === ServerEnvironment.PRODUCTION ? `http://${SERVER_DOCKER_SERVICE_NAME}:${SERVER_DOCKER_SERVICE_PORT}` : `http://localhost:${SERVER_DOCKER_SERVICE_PORT}`}/database/reset`,
-            {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                timeout: 2147483647,
-            }
-        )
+        .get(url, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            timeout: 2147483647,
+        })
         .then(response => {
             logger.info(response.data);
         })

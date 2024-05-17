@@ -1,4 +1,5 @@
 const dotenv = require('dotenv');
+require('reflect-metadata');
 
 dotenv.config({path: './env/test.env'});
 

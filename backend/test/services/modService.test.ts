@@ -1,9 +1,8 @@
 import ModService from '../../src/services/modService';
 import {testMods, testModsCollectionName} from '../constants/globalTestConstants';
 import Mod from '../../src/types/Mod';
-import MongoService from '../../src/services/mongoService';
 
-const testModService: ModService = new ModService(MongoService.getInstance());
+const testModService: ModService = new ModService();
 
 describe('ModService', () => {
     beforeEach(async () => {

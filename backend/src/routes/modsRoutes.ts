@@ -1,10 +1,9 @@
 import ModService from '../services/modService';
 import {Router} from 'express';
 import {cache} from '../../app';
-import MongoService from '../services/mongoService';
 
 const router = Router();
-const modService = new ModService(MongoService.getInstance());
+const modService = new ModService();
 
 router.get('/', async function (request, response) {
     const data = await modService.getMods();

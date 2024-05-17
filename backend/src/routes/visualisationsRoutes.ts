@@ -1,11 +1,10 @@
 import {Router} from 'express';
 import VisualisationsService from '../services/visualisationsService';
 import {cache} from '../../app';
-import MongoService from '../services/mongoService';
 
 const router = Router();
 
-const visualisationsService = new VisualisationsService(MongoService.getInstance());
+const visualisationsService = new VisualisationsService();
 router.post('/attribute-chart', async function (request, response) {
     const data = await visualisationsService.getAttributeChart(request.body);
     cache.set(request.originalUrl + request.body, data);

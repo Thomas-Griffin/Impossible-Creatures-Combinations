@@ -1,20 +1,9 @@
 import VisualisationsService from '../../src/services/visualisationsService';
 import ChartRequestBody from '../../src/types/ChartRequestBody';
-import MongoService from '../../src/services/mongoService';
+import {testMod} from '../constants/globalTestConstants';
+import {COMBINATIONS_COLLECTION_NAME} from '../../globalConstants';
 
-const visualisationsService = new VisualisationsService(MongoService.getInstance());
-
-beforeEach(async () => {
-    await visualisationsService.client.connect();
-    await visualisationsService.client.db(process.env['MONGO_DB_NAME']).dropDatabase();
-    return await visualisationsService.client.close();
-});
-
-afterAll(async () => {
-    await visualisationsService.client.connect();
-    await visualisationsService.client.db(process.env['MONGO_DB_NAME']).dropDatabase();
-    return await visualisationsService.client.close();
-});
+const visualisationsService = new VisualisationsService();
 
 describe('Visualisation Service', () => {
     describe('getAttributeChart', () => {
@@ -22,36 +11,41 @@ describe('Visualisation Service', () => {
             await visualisationsService.client.connect();
             await visualisationsService.client
                 .db(process.env['MONGO_DB_NAME'])
-                .collection('Impossible Creatures 1.1')
+                .collection(COMBINATIONS_COLLECTION_NAME)
                 .insertMany([
                     {
+                        Mod: testMod,
                         'Research Level': 1,
                         'Animal 1': 'testAnimal1',
                         'Animal 2': 'testAnimal2',
                     },
                     {
+                        Mod: testMod,
                         'Research Level': 2,
                         'Animal 1': 'testAnimal3',
                         'Animal 2': 'testAnimal4',
                     },
                     {
+                        Mod: testMod,
                         'Research Level': 3,
                         'Animal 1': 'testAnimal5',
                         'Animal 2': 'testAnimal6',
                     },
                     {
+                        Mod: testMod,
                         'Research Level': 4,
                         'Animal 1': 'testAnimal7',
                         'Animal 2': 'testAnimal8',
                     },
                     {
+                        Mod: testMod,
                         'Research Level': 5,
                         'Animal 1': 'testAnimal9',
                         'Animal 2': 'testAnimal10',
                     },
                 ]);
             const result = await visualisationsService.getAttributeChart({
-                mod: {name: 'Impossible Creatures', version: '1.1'},
+                mod: testMod,
                 attributes: {x: 'Research Level', y: 'None'},
             } as ChartRequestBody);
             expect(result).toEqual([
@@ -76,39 +70,46 @@ describe('Visualisation Service', () => {
             await visualisationsService.client.connect();
             await visualisationsService.client
                 .db(process.env['MONGO_DB_NAME'])
-                .collection('Impossible Creatures 1.1')
+                .collection(COMBINATIONS_COLLECTION_NAME)
                 .insertMany([
                     {
+                        Mod: testMod,
                         'Research Level': 1,
                         Coal: 11,
                     },
                     {
+                        Mod: testMod,
                         'Research Level': 2,
                         Coal: 22,
                     },
                     {
+                        Mod: testMod,
                         'Research Level': 3,
                         Coal: 33,
                     },
                     {
+                        Mod: testMod,
                         'Research Level': 4,
                         Coal: 44,
                     },
                     {
+                        Mod: testMod,
                         'Research Level': 5,
                         Coal: 55,
                     },
                     {
+                        Mod: testMod,
                         'Research Level': 5,
                         Coal: 56,
                     },
                     {
+                        Mod: testMod,
                         'Research Level': 5,
                         Coal: 57,
                     },
                 ]);
             const result = await visualisationsService.getXPerYChart({
-                mod: {name: 'Impossible Creatures', version: '1.1'},
+                mod: testMod,
                 attributes: {x: 'Coal', y: 'Research Level'},
             } as ChartRequestBody);
             expect(result).toEqual([

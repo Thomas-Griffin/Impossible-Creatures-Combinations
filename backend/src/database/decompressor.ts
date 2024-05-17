@@ -4,9 +4,7 @@ import messagePack from 'msgpack-lite';
 import {unzipSync} from 'zlib';
 import {COMPRESSED_DATA_FILE_EXTENSION, ROOT_DIRECTORY} from '../../globalConstants';
 import schemas from './modSchemas';
-import Logger from '../utility/logger';
-
-const logger = Logger.getInstance();
+import {logger} from '../utility/logger';
 
 function decompress() {
     for (let mod of schemas) {

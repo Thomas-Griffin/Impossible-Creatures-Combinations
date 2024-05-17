@@ -5,9 +5,7 @@ import {deflateSync} from 'zlib';
 import schemas from './modSchemas';
 import path from 'path';
 
-import Logger from '../utility/logger';
-
-const logger = Logger.getInstance();
+import {logger} from '../utility/logger';
 
 function compress() {
     for (let mod of schemas) {

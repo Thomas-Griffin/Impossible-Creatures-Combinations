@@ -3,7 +3,12 @@ import {readFileSync} from 'fs';
 import Mod from '../types/Mod';
 import SortingType from '../types/SortingType';
 import Joi from 'joi';
-import {JOI_MOD_SCHEMA, MOD_COLLECTION_NAME, TEST_SCHEMA_FILE_PATH} from '../../globalConstants';
+import {
+    COMBINATIONS_COLLECTION_NAME,
+    JOI_MOD_SCHEMA,
+    MOD_COLLECTION_NAME,
+    TEST_SCHEMA_FILE_PATH,
+} from '../../globalConstants';
 import ProcessedCombination from '../types/ProcessedCombination';
 import Ability from '../types/Ability';
 import GetCombinationsRequestBody from '../types/GetCombinationsRequestBody';
@@ -11,9 +16,10 @@ import CombinationTableColumn from '../types/CombinationTableColumn';
 import {FilterQuery} from '../types/FilterQuery';
 import {MinMaxRequestBody} from '../types/MinMaxRequestBody';
 import schemas from '../database/modSchemas';
-import {MongoClient} from 'mongodb';
+import {MongoClient, SortDirection, WithId} from 'mongodb';
 import {logger} from '../utility/logger';
 import {container} from 'tsyringe';
+import CombinationAttributeName from '../types/CombinationAttributeName';
 
 let mods = schemas;
 const testMods = JSON.parse(readFileSync(TEST_SCHEMA_FILE_PATH, 'utf8'));
@@ -57,13 +63,16 @@ class CombinationsService {
         try {
             await this.client.connect();
             const query = this.buildFiltersQuery(body);
+
             return await this.client
                 .db(process.env['MONGO_DB_NAME'])
-                .collection(this.toCollectionName(body.mod))
+                .collection(COMBINATIONS_COLLECTION_NAME)
                 .countDocuments(query);
         } catch (err) {
             logger.error(err);
             return 0;
+        } finally {
+            await this.client.close();
         }
     }
 
@@ -76,17 +85,25 @@ class CombinationsService {
         try {
             await this.client.connect();
             const query = this.buildFiltersQuery(body);
+            const sort = {
+                [body?.sorting?.column ?? 'Animal 1']:
+                    body?.sorting?.order === SortingType.Descending ? (-1 as SortDirection) : (1 as SortDirection),
+            };
+            const skip = (body.page - 1) * body.perPage;
+            const limit = body.perPage;
             return (await this.client
                 .db(process.env['MONGO_DB_NAME'])
-                .collection(this.toCollectionName(body.mod))
+                .collection(COMBINATIONS_COLLECTION_NAME)
                 .find(query)
-                .sort({[body?.sorting?.column ?? 'Animal 1']: body?.sorting?.order === SortingType.Descending ? -1 : 1})
-                .skip((body.page - 1) * body.perPage)
-                .limit(body.perPage)
-                .toArray()) as unknown as ProcessedCombination[];
-        } catch (err) {
+                .sort(sort)
+                .skip(skip)
+                .limit(limit)
+                .toArray()) as WithId<[]> as ProcessedCombination[];
+        } catch (err: any) {
             logger.error(err);
             return [];
+        } finally {
+            await this.client.close();
         }
     }
 
@@ -112,6 +129,8 @@ class CombinationsService {
         } catch (err) {
             logger.error(err);
             return {min: 0, max: Number.MAX_SAFE_INTEGER, error: err};
+        } finally {
+            await this.client.close();
         }
     }
 
@@ -136,6 +155,8 @@ class CombinationsService {
         } catch (err) {
             logger.error(err);
             return [];
+        } finally {
+            await this.client.close();
         }
     }
 
@@ -147,7 +168,7 @@ class CombinationsService {
     }
 
     buildFiltersQuery(body: GetCombinationsRequestBody) {
-        const defaultSorting = {column: 'Animal 1', order: SortingType.Descending};
+        const defaultSorting = {column: 'Animal 1' as CombinationAttributeName, order: SortingType.Descending};
         if (body === null) {
             body = {
                 mod: mods[0] || {name: '', version: ''},
@@ -156,7 +177,10 @@ class CombinationsService {
                 perPage: 1,
             };
         }
-        let query: FilterQuery = {} as FilterQuery;
+        let query: FilterQuery = {
+            'Mod.name': body.mod.name,
+            'Mod.version': body.mod.version,
+        } as FilterQuery;
         if (body?.filters !== null && body?.filters !== undefined) {
             body.filters.forEach((column: CombinationTableColumn) => {
                 if (

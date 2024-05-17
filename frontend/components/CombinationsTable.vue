@@ -1176,7 +1176,7 @@ const tableRequest = async () => {
   if (loading.value) return;
   loading.value = true;
   let combinationsRequestBody: GetCombinationsRequestBody = {
-    mod: modStore.getMod,
+    mod: { name: modStore.getMod.name, version: modStore.getMod.version },
     sorting: sorting.value,
     filters: [],
     perPage: pagination.value.perPage,

@@ -35,8 +35,12 @@ export function useCombinations() {
   const getCombinations = async (
     body: GetCombinationsRequestBody,
   ): Promise<Combination[]> => {
-    const response = await axios.post(`${baseURL}/combinations`, body);
-    return response.data as Combination[];
+    try {
+      const response = await axios.post(`${baseURL}/combinations`, body);
+      return response.data as Combination[];
+    } catch (err) {
+      return [] as Combination[];
+    }
   };
 
   const getMinMax = async (

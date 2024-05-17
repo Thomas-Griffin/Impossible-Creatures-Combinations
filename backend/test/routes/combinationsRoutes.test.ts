@@ -1,17 +1,18 @@
 import app from '../../app';
 import request from 'supertest';
 import CombinationsService from '../../src/services/combinationsService';
-import {testMod, testModName} from '../constants/globalTestConstants';
+import {testMod} from '../constants/globalTestConstants';
+import {COMBINATIONS_COLLECTION_NAME} from '../../globalConstants';
 
 const testCombinationsService = new CombinationsService();
 describe('Combinations routes', () => {
     beforeAll(async () => {
-        await testCombinationsService.client.connect();
         await testCombinationsService.client
             .db(process.env['MONGO_DB_NAME'])
-            .collection(testModName)
+            .collection(COMBINATIONS_COLLECTION_NAME)
             .insertMany([
                 {
+                    Mod: testMod,
                     'Animal 1': 'testAnimal1',
                     'Animal 2': 'testAnimal2',
                     'Research Level': 1,
@@ -34,6 +35,7 @@ describe('Combinations routes', () => {
                     Wings: 'testAnimal1',
                 },
                 {
+                    Mod: testMod,
                     'Animal 1': 'testAnimal3',
                     'Animal 2': 'testAnimal4',
                     'Research Level': 2,
@@ -56,6 +58,7 @@ describe('Combinations routes', () => {
                     Wings: 'testAnimal4',
                 },
                 {
+                    Mod: testMod,
                     'Animal 1': 'testAnimal5',
                     'Animal 2': 'testAnimal6',
                     'Research Level': 3,
@@ -78,12 +81,10 @@ describe('Combinations routes', () => {
                     Wings: 'testAnimal5',
                 },
             ]);
-        return await testCombinationsService.client.close();
     });
 
     describe('Post /combinations', () => {
         it('should return all combinations', async () => {
-            await testCombinationsService.client.connect();
             const response = await request(app).post('/combinations').send({mod: testMod, page: 1, perPage: 10});
             expect(response.status).toEqual(200);
             expect(response.body.length).toEqual(3);
@@ -92,7 +93,6 @@ describe('Combinations routes', () => {
 
     describe('Post /combinations/total', () => {
         it('should return total number of combinations', async () => {
-            await testCombinationsService.client.connect();
             const response = await request(app).post('/combinations/total').send({mod: testMod, page: 1, perPage: 10});
             expect(response.status).toEqual(200);
             expect(response.body).toEqual(3);

@@ -1,8 +1,10 @@
 import type Ability from "./Ability";
 import type { ResearchLevel } from "./ResearchLevel";
+import type Mod from "~/types/Mod";
 
 export default interface Combination {
   _id: string;
+  Mod: Mod;
   Abilities?: Ability[];
   "Air Speed"?: number;
   "Animal 1"?: string;

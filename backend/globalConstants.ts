@@ -48,7 +48,7 @@ export const JOI_MOD_SCHEMA = Joi.object({
         .valid(...mods.map(mod => mod.version))
         .required(),
     columns: Joi.array().optional(),
-});
+}).unknown();
 
 export const JOI_CHART_REQUEST_BODY_SCHEMA = Joi.object({
     mod: JOI_MOD_SCHEMA.required(),

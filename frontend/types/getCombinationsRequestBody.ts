@@ -1,9 +1,8 @@
-import type Mod from "./Mod";
 import type { CombinationAttributeName } from "./CombinationAttributeName";
 import type CombinationTableColumn from "./CombinationTableColumn";
 
 export default interface GetCombinationsRequestBody {
-  mod: Mod;
+  mod: { name: string; version: string };
   sorting: {
     column: CombinationAttributeName;
     order: "ascending" | "descending";

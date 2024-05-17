@@ -1,19 +1,20 @@
 import CombinationService from '../../src/services/combinationsService';
-import {testMod, testModName, testModsCollectionName} from '../constants/globalTestConstants';
+import {testMod, testModsCollectionName} from '../constants/globalTestConstants';
 import SortingType from '../../src/types/SortingType';
 import GetCombinationsRequestBody from '../../src/types/GetCombinationsRequestBody';
 import {MinMaxRequestBody} from '../../src/types/MinMaxRequestBody';
+import {COMBINATIONS_COLLECTION_NAME} from '../../globalConstants';
 
 const combinationsService = new CombinationService();
 
 describe('CombinationsService', () => {
     beforeAll(async () => {
-        await combinationsService.client.connect();
         await combinationsService.client
             .db(process.env['MONGO_DB_NAME'])
-            .collection(testModName)
+            .collection(COMBINATIONS_COLLECTION_NAME)
             .insertMany([
                 {
+                    Mod: testMod,
                     'Animal 1': 'testAnimal1',
                     'Animal 2': 'testAnimal2',
                     'Research Level': 1,
@@ -36,6 +37,7 @@ describe('CombinationsService', () => {
                     Wings: 'testAnimal1',
                 },
                 {
+                    Mod: testMod,
                     'Animal 1': 'testAnimal3',
                     'Animal 2': 'testAnimal4',
                     'Research Level': 2,
@@ -58,6 +60,7 @@ describe('CombinationsService', () => {
                     Wings: 'testAnimal4',
                 },
                 {
+                    Mod: testMod,
                     'Animal 1': 'testAnimal5',
                     'Animal 2': 'testAnimal6',
                     'Research Level': 3,
@@ -80,14 +83,11 @@ describe('CombinationsService', () => {
                     Wings: 'testAnimal5',
                 },
             ]);
-
         await combinationsService.client.db(process.env['MONGO_DB_NAME']).collection(testModsCollectionName).insertOne({
             name: testMod.name,
             version: testMod.version,
             columns: testMod.columns,
         });
-
-        return await combinationsService.client.close();
     });
 
     describe('getCombinations', () => {
@@ -97,7 +97,6 @@ describe('CombinationsService', () => {
                 page: 1,
                 perPage: 10,
             } as GetCombinationsRequestBody;
-            await combinationsService.client.connect();
             const combinations = await combinationsService.getCombinations(body);
             expect(combinations).toHaveLength(3);
         });
@@ -112,7 +111,6 @@ describe('CombinationsService', () => {
                 page: 1,
                 perPage: 10,
             } as GetCombinationsRequestBody;
-            await combinationsService.client.connect();
             const combinations = await combinationsService.getCombinations(body);
             expect(combinations).toEqual([]);
         });
@@ -122,7 +120,6 @@ describe('CombinationsService', () => {
                 page: 0,
                 perPage: 10,
             } as GetCombinationsRequestBody;
-            await combinationsService.client.connect();
             const combinations = await combinationsService.getCombinations(body);
             expect(combinations).toEqual([]);
         });
@@ -132,7 +129,6 @@ describe('CombinationsService', () => {
                 page: 1,
                 perPage: 0,
             } as GetCombinationsRequestBody;
-            await combinationsService.client.connect();
             const combinations = await combinationsService.getCombinations(body);
             expect(combinations).toEqual([]);
         });
@@ -149,7 +145,6 @@ describe('CombinationsService', () => {
                 page: 1,
                 perPage: 10,
             } as GetCombinationsRequestBody;
-            await combinationsService.client.connect();
             const combinations = await combinationsService.getTotalCombinations(body);
             expect(combinations).toBe(3);
         });
@@ -168,7 +163,6 @@ describe('CombinationsService', () => {
                 page: 1,
                 perPage: 10,
             } as GetCombinationsRequestBody;
-            await combinationsService.client.connect();
             const combinations = await combinationsService.getTotalCombinations(body);
             expect(combinations).toEqual(0);
         });
@@ -180,7 +174,6 @@ describe('CombinationsService', () => {
                 page: 1,
                 perPage: 10,
             } as GetCombinationsRequestBody;
-            await combinationsService.client.connect();
             const combinations = await combinationsService.getTotalCombinations(body);
             expect(combinations).toEqual(3);
         });
@@ -191,7 +184,6 @@ describe('CombinationsService', () => {
                 mod: testMod,
                 attribute: 'Research Level',
             } as MinMaxRequestBody;
-            await combinationsService.client.connect();
             const combinations = await combinationsService.getAttributeMinMax(body);
             expect(combinations).toEqual({min: 1, max: 3});
         });
@@ -204,7 +196,6 @@ describe('CombinationsService', () => {
                 },
                 attribute: 'Research Level',
             } as MinMaxRequestBody;
-            await combinationsService.client.connect();
             const combinations = await combinationsService.getAttributeMinMax(body);
             expect(combinations).toHaveProperty('error');
         });

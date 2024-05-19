@@ -13,4 +13,8 @@
 <script lang="ts" setup>
 import "primeicons/primeicons.css";
 import "primeflex/primeflex.css";
+import { useModStore } from "~/store/modStore";
+
+const modStore = useModStore();
+await modStore.fetchMods();
 </script>

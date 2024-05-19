@@ -27,7 +27,8 @@
     "pino-caller": "^3.4.0",
     "plotly.js-dist-min": "^2.32.0",
     "reflect-metadata": "^0.2.2",
-    "tsyringe": "^4.8.0"
+    "tsyringe": "^4.8.0",
+    "primevue": "^3.52.0"
   },
   "devDependencies": {
     "@babel/plugin-proposal-decorators": "^7.24.1",

@@ -1,7 +1,7 @@
 import Mod from './Mod';
-import CombinationTableColumn from './CombinationTableColumn';
 import CombinationAttributeName from './CombinationAttributeName';
 import SortingType from './SortingType';
+import {DataTableFilterMeta} from 'primevue/datatable';
 
 interface GetCombinationsRequestBody {
     mod: Mod;
@@ -9,7 +9,7 @@ interface GetCombinationsRequestBody {
         column: CombinationAttributeName;
         order: SortingType;
     };
-    filters?: CombinationTableColumn[];
+    filters?: DataTableFilterMeta;
     perPage: number;
     page: number;
 }

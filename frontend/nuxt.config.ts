@@ -5,7 +5,12 @@ dotenv.config();
 
 export default defineNuxtConfig({
   devServer: { port: 8080 },
-  devtools: { enabled: true },
+  devtools: {
+    enabled: true,
+    timeline: {
+      enabled: true,
+    },
+  },
   modules: ["nuxt-primevue", "@pinia/nuxt", "nuxt-plotly"],
   vite: {
     optimizeDeps: {

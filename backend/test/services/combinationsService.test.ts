@@ -4,6 +4,7 @@ import SortingType from '../../src/types/SortingType';
 import GetCombinationsRequestBody from '../../src/types/GetCombinationsRequestBody';
 import {MinMaxRequestBody} from '../../src/types/MinMaxRequestBody';
 import {COMBINATIONS_COLLECTION_NAME} from '../../globalConstants';
+import {DataTableFilterMetaData, DataTableOperatorFilterMetaData} from 'primevue/datatable';
 
 const combinationsService = new CombinationService();
 
@@ -107,7 +108,7 @@ describe('CombinationsService', () => {
                     version: '1.0.0',
                     columns: [],
                 },
-                filters: [],
+                filters: {},
                 page: 1,
                 perPage: 10,
             } as GetCombinationsRequestBody;
@@ -137,7 +138,7 @@ describe('CombinationsService', () => {
         it('should return the total number of combinations', async () => {
             let body = {
                 mod: testMod,
-                filters: [],
+                filters: {},
                 sorting: {
                     column: 'Research Level',
                     order: SortingType.Ascending,
@@ -155,7 +156,7 @@ describe('CombinationsService', () => {
                     version: '1.0.0',
                     columns: [],
                 },
-                filters: [],
+                filters: {},
                 sorting: {
                     column: 'Research Level',
                     order: SortingType.Ascending,
@@ -169,7 +170,7 @@ describe('CombinationsService', () => {
         it('should still return a result if sorting is undefined', async () => {
             let body = {
                 mod: testMod,
-                filters: [],
+                filters: {},
                 sorting: undefined,
                 page: 1,
                 perPage: 10,
@@ -198,6 +199,175 @@ describe('CombinationsService', () => {
             } as MinMaxRequestBody;
             const combinations = await combinationsService.getAttributeMinMax(body);
             expect(combinations).toHaveProperty('error');
+        });
+    });
+    describe('mapFiltersToQuery', () => {
+        it('should return an empty filter query if no filters are passed', () => {
+            expect(combinationsService.mapFiltersToQuery({})).toEqual({});
+        });
+        it('should map correctly a string `startsWith` filter', () => {
+            expect(
+                combinationsService.mapFiltersToQuery({
+                    'Animal 1': {
+                        matchMode: 'startsWith',
+                        value: 'test',
+                    } as DataTableFilterMetaData,
+                })
+            ).toEqual({
+                'Animal 1': {$regex: new RegExp('^test', 'i')},
+            });
+        });
+        it('should map correctly a string `endsWith` filter', () => {
+            expect(
+                combinationsService.mapFiltersToQuery({
+                    'Animal 1': {
+                        matchMode: 'endsWith',
+                        value: 'test',
+                    } as DataTableFilterMetaData,
+                })
+            ).toEqual({
+                'Animal 1': {$regex: new RegExp('test$', 'i')},
+            });
+        });
+        it('should map correctly a `between` filter', () => {
+            expect(
+                combinationsService.mapFiltersToQuery({
+                    'Research Level': {
+                        matchMode: 'between',
+                        value: [1, 3],
+                    } as DataTableFilterMetaData,
+                })
+            ).toEqual({
+                'Research Level': {$gte: 1, $lte: 3},
+            });
+        });
+        it('should map correctly an contains filter', () => {
+            expect(
+                combinationsService.mapFiltersToQuery({
+                    'Animal 1': {
+                        matchMode: 'contains',
+                        value: 'test',
+                    } as DataTableFilterMetaData,
+                })
+            ).toEqual({
+                'Animal 1': {$regex: new RegExp('test', 'i')},
+            });
+        });
+        it('should map correctly an `equals` filter', () => {
+            expect(
+                combinationsService.mapFiltersToQuery({
+                    'Animal 1': {
+                        matchMode: 'equals',
+                        value: 'test',
+                    } as DataTableFilterMetaData,
+                })
+            ).toEqual({
+                'Animal 1': 'test',
+            });
+        });
+        it('should map correctly a `in` filter', () => {
+            expect(
+                combinationsService.mapFiltersToQuery({
+                    'Animal 1': {
+                        matchMode: 'in',
+                        value: ['test1', 'test2'],
+                    } as DataTableFilterMetaData,
+                })
+            ).toEqual({
+                'Animal 1': {$in: ['test1', 'test2']},
+            });
+        });
+        it('should map correctly a DataTableOperatorFilterMetaData filter', () => {
+            expect(
+                combinationsService.mapFiltersToQuery({
+                    'Animal 1': {
+                        operator: 'AND',
+                        constraints: [
+                            {
+                                matchMode: 'startsWith',
+                                value: 'test',
+                            },
+                        ],
+                    } as DataTableOperatorFilterMetaData,
+                })
+            ).toEqual({
+                'Animal 1': {$regex: new RegExp('^test', 'i')},
+            });
+        });
+        it('should map correctly a DataTableOperatorFilterMetaData filter with multiple constraints', () => {
+            expect(
+                combinationsService.mapFiltersToQuery({
+                    'Animal 1': {
+                        operator: 'AND',
+                        constraints: [
+                            {
+                                matchMode: 'startsWith',
+                                value: 'test',
+                            },
+                            {
+                                matchMode: 'endsWith',
+                                value: 'Animal1',
+                            },
+                        ],
+                    } as DataTableOperatorFilterMetaData,
+                })
+            ).toEqual({
+                $and: [
+                    {
+                        'Animal 1': {
+                            $regex: RegExp('^test', 'i'),
+                        },
+                    },
+                    {
+                        'Animal 1': {
+                            $regex: RegExp('Animal1$', 'i'),
+                        },
+                    },
+                ],
+            });
+        });
+        it('should handle multiple `AND` filters', () => {
+            expect(
+                combinationsService.mapFiltersToQuery({
+                    'Animal 1': {
+                        operator: 'AND',
+                        constraints: [
+                            {
+                                matchMode: 'startsWith',
+                                value: 'test',
+                            },
+                            {
+                                matchMode: 'endsWith',
+                                value: 'Animal1',
+                            },
+                            {
+                                matchMode: 'notContains',
+                                value: '!',
+                            },
+                        ],
+                    } as DataTableOperatorFilterMetaData,
+                })
+            ).toEqual({
+                $and: [
+                    {
+                        'Animal 1': {
+                            $regex: RegExp('^test', 'i'),
+                        },
+                    },
+                    {
+                        'Animal 1': {
+                            $regex: RegExp('Animal1$', 'i'),
+                        },
+                    },
+                    {
+                        'Animal 1': {
+                            $not: {
+                                $regex: new RegExp('!', 'i'),
+                            },
+                        },
+                    },
+                ],
+            });
         });
     });
 });

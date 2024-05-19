@@ -14,18 +14,12 @@ import type Mod from "../types/Mod";
 
 const modStore = useModStore();
 
-const { data } = await useAsyncData("mods", () =>
-  $fetch(`${process.env.API_URL ?? "http://localhost:3000"}/mods`),
-);
-const mods = ref<Mod[]>((data.value as Mod[]) || []);
-modStore.setMod(mods.value[0]);
-
-onBeforeMount(() => {
+onBeforeMount(async () => {
   onModChange(getModDisplayName(modStore.getMod));
 });
 
 const getModFromDisplayString = (modName: string): Mod | undefined =>
-  mods.value.find((mod: Mod) => `${mod.name} ${mod?.version}` === modName);
+  modStore.mods.find((mod: Mod) => `${mod.name} ${mod?.version}` === modName);
 
 const getModDisplayName = (mod: Mod) => {
   return `${mod.name} ${mod.version}`;
@@ -42,6 +36,6 @@ const onModChange = (modName: string) => {
 };
 
 const modsDisplayNames = computed(() => {
-  return mods.value.map((mod: Mod) => `${mod?.name} ${mod?.version}`);
+  return modStore.mods.map((mod: Mod) => `${mod?.name} ${mod?.version}`);
 });
 </script>

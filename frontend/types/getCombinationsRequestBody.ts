@@ -1,5 +1,5 @@
 import type { CombinationAttributeName } from "./CombinationAttributeName";
-import type CombinationTableColumn from "./CombinationTableColumn";
+import type { DataTableFilterMeta } from "primevue/datatable";
 
 export default interface GetCombinationsRequestBody {
   mod: { name: string; version: string };
@@ -7,7 +7,7 @@ export default interface GetCombinationsRequestBody {
     column: CombinationAttributeName;
     order: "ascending" | "descending";
   };
-  filters: CombinationTableColumn[];
+  filters: DataTableFilterMeta;
   perPage: number;
   page: number;
 }

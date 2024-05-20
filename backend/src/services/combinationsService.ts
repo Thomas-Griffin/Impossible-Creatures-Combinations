@@ -229,7 +229,7 @@ class CombinationsService {
         }
     }
 
-    mergeFilterQueries(filterQueries: FilterQuery[], operator: FilterOperators): FilterQuery {
+    mergeFilterQueries(filterQueries: FilterQuery[], operator?: FilterOperators): FilterQuery {
         switch (operator) {
             case 'AND':
                 return {
@@ -238,10 +238,6 @@ class CombinationsService {
             case 'OR':
                 return {
                     $or: filterQueries,
-                } as FilterQuery;
-            case 'NOT':
-                return {
-                    $not: filterQueries,
                 } as FilterQuery;
             default:
                 return {
@@ -252,10 +248,9 @@ class CombinationsService {
 
     createFilterQuery(
         attributeName: CombinationAttributeName,
-        dataTableFilterMetaData: DataTableFilterMetaData,
-        query: FilterQuery,
-        operator?: FilterOperators
+        dataTableFilterMetaData: DataTableFilterMetaData
     ): FilterQuery {
+        let filterQuery: FilterQuery = {} as FilterQuery;
         if (
             dataTableFilterMetaData.value !== null &&
             dataTableFilterMetaData.value !== undefined &&
@@ -264,78 +259,74 @@ class CombinationsService {
             attributeName !== null &&
             attributeName !== undefined
         ) {
-            let filterQuery = this.getFilterQueryFromFilterMetaData(dataTableFilterMetaData, attributeName);
-            if (query?.[attributeName] !== null && query?.[attributeName] !== undefined) {
-                // let operatorFilterQuery: FilterQuery | null = this.castAsOperatorFilterQuery(
-                //     query[attributeName]
-                // );
-                // if (operatorFilterQuery?.$and && operator === FilterOperators.AND) {
-                //     operatorFilterQuery.$and.push(
-                //         this.createFilterQuery(attributeName, dataTableFilterMetaData, query, operator)
-                //     );
-                // } else if (operatorFilterQuery?.$or && operator === FilterOperators.OR) {
-                //     operatorFilterQuery.$or.push(
-                //         this.createFilterQuery(attributeName, dataTableFilterMetaData, query, operator)
-                //     );
-                // } else if (operatorFilterQuery?.$not && operator === FilterOperators.NOT) {
-                //     operatorFilterQuery.$not.push(
-                //         this.createFilterQuery(attributeName, dataTableFilterMetaData, query, operator)
-                //     );
-                // } else {
-                //     query = {...query, ...filterQuery};
-                // }
-            } else {
-                let existingFilterQuery = this.castAsFilterQuery(query[attributeName]);
-                if (existingFilterQuery !== null) {
-                    query = {
-                        ...query,
-                        ...this.mergeFilterQueries([existingFilterQuery, filterQuery], operator ?? FilterOperators.AND),
-                    };
-                } else {
-                    query = {...query, ...filterQuery};
-                }
-            }
+            filterQuery = this.getFilterQueryFromFilterMetaData(dataTableFilterMetaData, attributeName);
         }
-        return query;
+        return filterQuery;
     }
 
     mapFiltersToQuery(filters: DataTableFilterMeta): FilterQuery {
         let query: FilterQuery = {} as FilterQuery;
         for (let field in filters) {
+            let attribute: CombinationAttributeName = field as CombinationAttributeName;
             if (
-                filters.hasOwnProperty(field) &&
-                Object.values(CombinationAttributeNames).includes(field as CombinationAttributeNames)
+                filters.hasOwnProperty(attribute) &&
+                Object.values(CombinationAttributeNames).includes(attribute as CombinationAttributeNames)
             ) {
-                let attribute: CombinationAttributeName = field as CombinationAttributeName;
-                const filterAsString: string | null = this.castAsString(filters[field]);
-                const filterAsFilterMetaData: DataTableFilterMetaData | null = this.castAsFilterMetaData(
-                    filters[field]
+                let filterAsString: string | null = this.castAsString(filters[attribute]);
+                let filterAsFilterMetaData: DataTableFilterMetaData | null = this.castAsFilterMetaData(
+                    filters[attribute]
                 );
-                const filterAsOperatorFilterMetaData: DataTableOperatorFilterMetaData | null =
-                    this.castAsOperatorFilterMetaData(filters[field]);
+                let filterAsOperatorFilterMetaData: DataTableOperatorFilterMetaData | null =
+                    this.castAsOperatorFilterMetaData(filters[attribute]);
                 if (filterAsString && !filterAsFilterMetaData && !filterAsOperatorFilterMetaData) {
                     (query as FilterQuery)[attribute] = {$regex: new RegExp(filterAsString, 'i')};
                 } else if (!filterAsString && filterAsFilterMetaData && !filterAsOperatorFilterMetaData) {
-                    query = this.createFilterQuery(attribute, filterAsFilterMetaData, query as FilterQuery);
+                    query = {...query, ...this.createFilterQuery(attribute, filterAsFilterMetaData)};
                 } else if (!filterAsString && !filterAsFilterMetaData && filterAsOperatorFilterMetaData) {
                     if (filterAsOperatorFilterMetaData?.constraints?.length > 1) {
-                        query = this.mergeFilterQueries(
+                        let mergedFilterQueries = this.mergeFilterQueries(
                             filterAsOperatorFilterMetaData?.constraints.map(
                                 (dataTableFilterMetaData: DataTableFilterMetaData) => {
-                                    return this.createFilterQuery(
-                                        attribute,
-                                        dataTableFilterMetaData,
-                                        query as FilterQuery,
-                                        filterAsOperatorFilterMetaData.operator as FilterOperators
-                                    );
+                                    return this.createFilterQuery(attribute, dataTableFilterMetaData);
                                 }
                             ),
                             filterAsOperatorFilterMetaData.operator as FilterOperators
                         );
+                        if (query?.$and && filterAsOperatorFilterMetaData.operator === FilterOperators.AND) {
+                            if (Array.isArray(query.$and)) {
+                                if (mergedFilterQueries?.$and && Array.isArray(mergedFilterQueries.$and)) {
+                                    query.$and = [...query.$and, ...mergedFilterQueries.$and];
+                                } else {
+                                    query.$and = [...query.$and, mergedFilterQueries];
+                                }
+                            }
+                        }
+                        if (query?.$or && filterAsOperatorFilterMetaData.operator === FilterOperators.OR) {
+                            if (Array.isArray(query.$or)) {
+                                if (mergedFilterQueries?.$or && Array.isArray(mergedFilterQueries.$or)) {
+                                    query.$or = [...query.$or, ...mergedFilterQueries.$or];
+                                } else {
+                                    query.$or = [...query.$or, mergedFilterQueries];
+                                }
+                            }
+                        } else {
+                            if (filterAsOperatorFilterMetaData.operator === FilterOperators.AND) {
+                                if (mergedFilterQueries?.$and && Array.isArray(mergedFilterQueries.$and)) {
+                                    query.$and = mergedFilterQueries.$and as FilterQuery[];
+                                }
+                            }
+                            if (filterAsOperatorFilterMetaData.operator === FilterOperators.OR) {
+                                if (mergedFilterQueries?.$or && Array.isArray(mergedFilterQueries.$or)) {
+                                    query.$or = mergedFilterQueries.$or as FilterQuery[];
+                                }
+                            } else {
+                                query = {...query, ...mergedFilterQueries};
+                            }
+                        }
                     } else if (filterAsOperatorFilterMetaData?.constraints?.length === 1) {
                         let constraint = filterAsOperatorFilterMetaData.constraints[0];
                         if (constraint) {
-                            query = this.createFilterQuery(attribute, constraint, query);
+                            query = {...query, ...this.createFilterQuery(attribute, constraint)};
                         }
                     }
                 }
@@ -356,28 +347,6 @@ class CombinationsService {
 
     castAsOperatorFilterMetaData(value: any): DataTableOperatorFilterMetaData | null {
         return typeof value === 'object' && value.hasOwnProperty('operator') && value.hasOwnProperty('constraints')
-            ? value
-            : null;
-    }
-
-    // castAsOperatorFilterQuery(value: any): OperatorFilterQuery | null {
-    //     return (typeof value === 'object' && value.hasOwnProperty('$and') && value?.$and) ||
-    //         (value.hasOwnProperty('$or') && value?.$or) ||
-    //         (value.hasOwnProperty('$not') && value?.$not)
-    //         ? value
-    //         : null;
-    // }
-
-    castAsFilterQuery(value: any): FilterQuery | null {
-        return (value !== null &&
-            value !== undefined &&
-            typeof value === 'object' &&
-            Object.values(CombinationAttributeNames).some((combinationAttributeName: string) =>
-                value?.hasOwnProperty(combinationAttributeName)
-            )) ||
-            value?.hasOwnProperty('Abilities.ability') ||
-            value?.hasOwnProperty('Mod.name') ||
-            value?.hasOwnProperty('Mod.version')
             ? value
             : null;
     }

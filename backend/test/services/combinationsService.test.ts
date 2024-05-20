@@ -214,7 +214,7 @@ describe('CombinationsService', () => {
                     } as DataTableFilterMetaData,
                 })
             ).toEqual({
-                'Animal 1': {$regex: new RegExp('^test', 'i')},
+                'Animal 1': {$regex: RegExp('^test', 'i')},
             });
         });
         it('should map correctly a string `endsWith` filter', () => {
@@ -226,7 +226,7 @@ describe('CombinationsService', () => {
                     } as DataTableFilterMetaData,
                 })
             ).toEqual({
-                'Animal 1': {$regex: new RegExp('test$', 'i')},
+                'Animal 1': {$regex: RegExp('test$', 'i')},
             });
         });
         it('should map correctly a `between` filter', () => {
@@ -250,7 +250,7 @@ describe('CombinationsService', () => {
                     } as DataTableFilterMetaData,
                 })
             ).toEqual({
-                'Animal 1': {$regex: new RegExp('test', 'i')},
+                'Animal 1': {$regex: RegExp('test', 'i')},
             });
         });
         it('should map correctly an `equals` filter', () => {
@@ -291,7 +291,7 @@ describe('CombinationsService', () => {
                     } as DataTableOperatorFilterMetaData,
                 })
             ).toEqual({
-                'Animal 1': {$regex: new RegExp('^test', 'i')},
+                'Animal 1': {$regex: RegExp('^test', 'i')},
             });
         });
         it('should map correctly a DataTableOperatorFilterMetaData filter with multiple constraints', () => {
@@ -362,7 +362,206 @@ describe('CombinationsService', () => {
                     {
                         'Animal 1': {
                             $not: {
-                                $regex: new RegExp('!', 'i'),
+                                $regex: RegExp('!', 'i'),
+                            },
+                        },
+                    },
+                ],
+            });
+        });
+        it('should handle multiple `OR` filters', async () => {
+            expect(
+                combinationsService.mapFiltersToQuery({
+                    'Animal 1': {
+                        operator: 'OR',
+                        constraints: [
+                            {
+                                matchMode: 'startsWith',
+                                value: 'test',
+                            },
+                            {
+                                matchMode: 'endsWith',
+                                value: 'Animal1',
+                            },
+                            {
+                                matchMode: 'notContains',
+                                value: '!',
+                            },
+                        ],
+                    },
+                })
+            ).toEqual({
+                $or: [
+                    {
+                        'Animal 1': {
+                            $regex: RegExp('^test', 'i'),
+                        },
+                    },
+                    {
+                        'Animal 1': {
+                            $regex: RegExp('Animal1$', 'i'),
+                        },
+                    },
+                    {
+                        'Animal 1': {
+                            $not: {
+                                $regex: RegExp('!', 'i'),
+                            },
+                        },
+                    },
+                ],
+            });
+        });
+        it('should handle mulitple `OR` operators', async () => {
+            expect(
+                combinationsService.mapFiltersToQuery({
+                    'Animal 1': {
+                        operator: 'OR',
+                        constraints: [
+                            {
+                                matchMode: 'startsWith',
+                                value: 'test',
+                            },
+                            {
+                                matchMode: 'endsWith',
+                                value: 'Animal1',
+                            },
+                            {
+                                matchMode: 'notContains',
+                                value: '!',
+                            },
+                        ],
+                    },
+                    'Animal 2': {
+                        operator: 'OR',
+                        constraints: [
+                            {
+                                matchMode: 'startsWith',
+                                value: 'test2',
+                            },
+                            {
+                                matchMode: 'endsWith',
+                                value: 'Animal2',
+                            },
+                            {
+                                matchMode: 'notContains',
+                                value: '!?',
+                            },
+                        ],
+                    },
+                })
+            ).toEqual({
+                $or: [
+                    {
+                        'Animal 1': {
+                            $regex: RegExp('^test', 'i'),
+                        },
+                    },
+                    {
+                        'Animal 1': {
+                            $regex: RegExp('Animal1$', 'i'),
+                        },
+                    },
+                    {
+                        'Animal 1': {
+                            $not: {
+                                $regex: RegExp('!', 'i'),
+                            },
+                        },
+                    },
+                    {
+                        'Animal 2': {
+                            $regex: RegExp('^test2', 'i'),
+                        },
+                    },
+                    {
+                        'Animal 2': {
+                            $regex: RegExp('Animal2$', 'i'),
+                        },
+                    },
+                    {
+                        'Animal 2': {
+                            $not: {
+                                $regex: RegExp('!?', 'i'),
+                            },
+                        },
+                    },
+                ],
+            });
+        });
+        it('should handle AND and OR filters together', () => {
+            expect(
+                combinationsService.mapFiltersToQuery({
+                    'Animal 1': {
+                        operator: 'AND',
+                        constraints: [
+                            {
+                                matchMode: 'startsWith',
+                                value: 'test',
+                            },
+                            {
+                                matchMode: 'endsWith',
+                                value: 'Animal1',
+                            },
+                            {
+                                matchMode: 'notContains',
+                                value: '!',
+                            },
+                        ],
+                    },
+                    'Animal 2': {
+                        operator: 'OR',
+                        constraints: [
+                            {
+                                matchMode: 'startsWith',
+                                value: 'test2',
+                            },
+                            {
+                                matchMode: 'endsWith',
+                                value: 'Animal2',
+                            },
+                            {
+                                matchMode: 'notContains',
+                                value: '!?',
+                            },
+                        ],
+                    },
+                })
+            ).toEqual({
+                $and: [
+                    {
+                        'Animal 1': {
+                            $regex: RegExp('^test', 'i'),
+                        },
+                    },
+                    {
+                        'Animal 1': {
+                            $regex: RegExp('Animal1$', 'i'),
+                        },
+                    },
+                    {
+                        'Animal 1': {
+                            $not: {
+                                $regex: RegExp('!', 'i'),
+                            },
+                        },
+                    },
+                ],
+                $or: [
+                    {
+                        'Animal 2': {
+                            $regex: RegExp('^test2', 'i'),
+                        },
+                    },
+                    {
+                        'Animal 2': {
+                            $regex: RegExp('Animal2$', 'i'),
+                        },
+                    },
+                    {
+                        'Animal 2': {
+                            $not: {
+                                $regex: RegExp('!?', 'i'),
                             },
                         },
                     },

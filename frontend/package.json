@@ -10,7 +10,9 @@
     "frontend:postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@types/lodash": "^4.17.4",
     "axios": "^1.6.8",
+    "lodash": "^4.17.21",
     "pinia": "^2.1.7",
     "plotly.js-dist": "^2.32.0",
     "plotly.js-dist-min": "^2.32.0",

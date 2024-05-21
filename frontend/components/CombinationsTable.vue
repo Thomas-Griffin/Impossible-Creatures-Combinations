@@ -58,6 +58,15 @@
         label="Export"
         @click="exportCSV"
       />
+
+      <Button
+        v-if="filtersAreActive"
+        class="ml-4"
+        icon="pi pi-filter-slash"
+        label="Clear Filters"
+        type="button"
+        @click="clearFilters"
+      ></Button>
     </template>
 
     <template #loading>
@@ -150,8 +159,12 @@
       <template #filter="{ filterModel }">
         <Slider
           v-model="filterModel.value"
-          :max="5"
-          :min="1"
+          :max="
+            getColumnMinMax(CombinationAttributeNames.RESEARCH_LEVEL)[1] ?? 5
+          "
+          :min="
+            getColumnMinMax(CombinationAttributeNames.RESEARCH_LEVEL)[0] ?? 1
+          "
           class="m-3"
           range
         ></Slider>
@@ -159,14 +172,14 @@
           <InputNumber
             v-model="filterModel.value[0]"
             :input-style="{ 'max-width': '3rem' }"
-            :max="filterModel.value[1]"
+            :max="filterModel.value ? filterModel.value[1] : 5"
             :min="1"
           />
           <InputNumber
             v-model="filterModel.value[1]"
             :input-style="{ 'max-width': '3rem' }"
             :max="5"
-            :min="filterModel.value[0]"
+            :min="filterModel.value ? filterModel.value[0] : 1"
             style="margin-left: 4rem"
           />
         </div>
@@ -207,12 +220,12 @@
             v-model="filterModel.value[0]"
             :input-style="{ 'max-width': '3rem' }"
             :max="filterModel.value[1]"
-            :min="getColumnMinMax('Coal')[0]"
+            :min="getColumnMinMax(CombinationAttributeNames.COAL)[0]"
           />
           <InputNumber
             v-model="filterModel.value[1]"
             :input-style="{ 'max-width': '3rem' }"
-            :max="getColumnMinMax('Coal')[1]"
+            :max="getColumnMinMax(CombinationAttributeNames.COAL)[1]"
             :min="filterModel.value[0]"
             style="margin-left: 4rem"
           />
@@ -1086,6 +1099,7 @@
 </template>
 
 <script lang="ts" setup>
+import lodash from "lodash";
 import { useModStore } from "~/store/modStore";
 import type { ModColumn } from "~/types/ModColumn";
 import type Combination from "~/types/Combination";
@@ -1231,7 +1245,10 @@ const defaultFilters: DataTableFilterMeta = {
     operator: FilterOperator.AND,
     constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
   },
-  "Abilities.ability": { value: null, matchMode: FilterMatchMode.IN },
+  "Abilities.ability": {
+    value: null,
+    matchMode: FilterMatchMode.IN,
+  },
   [CombinationAttributeNames.RESEARCH_LEVEL]: {
     value: [1, 5],
     matchMode: FilterMatchMode.BETWEEN,
@@ -1239,6 +1256,14 @@ const defaultFilters: DataTableFilterMeta = {
 };
 
 const filters = ref(defaultFilters);
+
+const clearFilters = () => {
+  filters.value = defaultFilters;
+};
+
+const filtersAreActive = computed(() => {
+  return !lodash.isEqual(filters.value, defaultFilters);
+});
 
 const selectedColumns = ref<CombinationTableColumn[]>(columns.value);
 

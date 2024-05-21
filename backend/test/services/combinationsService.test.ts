@@ -1,10 +1,17 @@
 import CombinationService from '../../src/services/combinationsService';
-import {testMod, testModsCollectionName} from '../constants/globalTestConstants';
+import {
+    testCombination1,
+    testCombination2,
+    testCombination3,
+    testMod,
+    testModsCollectionName,
+} from '../constants/globalTestConstants';
 import SortingType from '../../src/types/SortingType';
 import GetCombinationsRequestBody from '../../src/types/GetCombinationsRequestBody';
 import {MinMaxRequestBody} from '../../src/types/MinMaxRequestBody';
 import {COMBINATIONS_COLLECTION_NAME} from '../../globalConstants';
 import {DataTableFilterMetaData, DataTableOperatorFilterMetaData} from 'primevue/datatable';
+import {FilterMatchMode} from 'primevue/api';
 
 const combinationsService = new CombinationService();
 
@@ -13,77 +20,7 @@ describe('CombinationsService', () => {
         await combinationsService.client
             .db(process.env['MONGO_DB_NAME'])
             .collection(COMBINATIONS_COLLECTION_NAME)
-            .insertMany([
-                {
-                    Mod: testMod,
-                    'Animal 1': 'testAnimal1',
-                    'Animal 2': 'testAnimal2',
-                    'Research Level': 1,
-                    Power: 2,
-                    'Air Speed': 3,
-                    'Land Speed': 4,
-                    'Water Speed': 5,
-                    Health: 6,
-                    Size: 7,
-                    'Population Cost': 8,
-                    EHP: 9,
-                    'Melee Damage': 10,
-                    'Sight Radius': 11,
-                    'Front Legs': 'testAnimal1',
-                    'Rear Legs': 'testAnimal1',
-                    Head: 'testAnimal2',
-                    Tail: 'testAnimal2',
-                    Torso: 'testAnimal2',
-                    Pincers: 'testAnimal1',
-                    Wings: 'testAnimal1',
-                },
-                {
-                    Mod: testMod,
-                    'Animal 1': 'testAnimal3',
-                    'Animal 2': 'testAnimal4',
-                    'Research Level': 2,
-                    Power: 22,
-                    'Air Speed': 32,
-                    'Land Speed': 42,
-                    'Water Speed': 52,
-                    Health: 62,
-                    Size: 72,
-                    'Population Cost': 82,
-                    EHP: 92,
-                    'Melee Damage': 102,
-                    'Sight Radius': 112,
-                    'Front Legs': 'testAnimal3',
-                    'Rear Legs': 'testAnimal4',
-                    Head: 'testAnimal3',
-                    Tail: 'testAnimal3',
-                    Torso: 'testAnimal3',
-                    Pincers: 'testAnimal4',
-                    Wings: 'testAnimal4',
-                },
-                {
-                    Mod: testMod,
-                    'Animal 1': 'testAnimal5',
-                    'Animal 2': 'testAnimal6',
-                    'Research Level': 3,
-                    Power: 23,
-                    'Air Speed': 33,
-                    'Land Speed': 43,
-                    'Water Speed': 53,
-                    Health: 63,
-                    Size: 73,
-                    'Population Cost': 83,
-                    EHP: 93,
-                    'Melee Damage': 103,
-                    'Sight Radius': 113,
-                    'Front Legs': 'testAnimal5',
-                    'Rear Legs': 'testAnimal5',
-                    Head: 'testAnimal6',
-                    Tail: 'testAnimal6',
-                    Torso: 'testAnimal6',
-                    Pincers: 'testAnimal5',
-                    Wings: 'testAnimal5',
-                },
-            ]);
+            .insertMany([testCombination1, testCombination2, testCombination3]);
         await combinationsService.client.db(process.env['MONGO_DB_NAME']).collection(testModsCollectionName).insertOne({
             name: testMod.name,
             version: testMod.version,
@@ -567,6 +504,20 @@ describe('CombinationsService', () => {
                     },
                 ],
             });
+        });
+        it('should handle Ability filter (Ability.ability)', () => {
+            expect(
+                combinationsService.mapFiltersToQuery({
+                    'Abilities.ability': {value: 'Digging', matchMode: FilterMatchMode.EQUALS},
+                })
+            ).toEqual({'Abilities.ability': 'Digging'});
+        });
+        it('should handle Ability filter (Ability.source)', () => {
+            expect(
+                combinationsService.mapFiltersToQuery({
+                    'Abilities.source': {value: 'Innate', matchMode: FilterMatchMode.EQUALS},
+                })
+            ).toEqual({'Abilities.source': 'Innate'});
         });
     });
 });

@@ -1,5 +1,7 @@
 export enum CombinationAttributeNames {
   ABILITIES = "Abilities",
+  ABILITIES_ABILITY = "Abilities.ability",
+  ABILITIES_SOURCE = "Abilities.source",
   AIR_SPEED = "Air Speed",
   ANIMAL_1 = "Animal 1",
   ANIMAL_2 = "Animal 2",

@@ -99,6 +99,42 @@ describe('Combinations routes', () => {
             expect(response.body.length).toEqual(1);
             expect(response.body.map(removeId)).toEqual([testCombination1].map(removeId));
         });
+        it('should return the combinations that match the filter (Abilities.ability)', async () => {
+            const response = await request(app)
+                .post('/combinations')
+                .send({
+                    mod: testMod,
+                    page: 1,
+                    perPage: 10,
+                    filters: {
+                        [CombinationAttributeNames.ABILITIES_ABILITY]: {
+                            value: ['Digging'],
+                            matchMode: FilterMatchMode.IN,
+                        },
+                    } as DataTableFilterMeta,
+                } as GetCombinationsRequestBody);
+            expect(response.status).toEqual(200);
+            expect(response.body.length).toEqual(1);
+            expect(removeId(response.body[0])).toEqual(removeId(testCombination2));
+        });
+        it('should return the combinations that match the filter (Abilities.source)', async () => {
+            const response = await request(app)
+                .post('/combinations')
+                .send({
+                    mod: testMod,
+                    page: 1,
+                    perPage: 10,
+                    filters: {
+                        [CombinationAttributeNames.ABILITIES_SOURCE]: {
+                            value: ['Innate'],
+                            matchMode: FilterMatchMode.IN,
+                        },
+                    } as DataTableFilterMeta,
+                } as GetCombinationsRequestBody);
+            expect(response.status).toEqual(200);
+            expect(response.body.length).toEqual(1);
+            expect(removeId(response.body[0])).toEqual(removeId(testCombination2));
+        });
     });
 
     describe('Post /combinations/total', () => {

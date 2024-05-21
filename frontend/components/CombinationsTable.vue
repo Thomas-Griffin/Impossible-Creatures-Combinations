@@ -1172,16 +1172,41 @@
         </div>
       </template>
       <template #filterheader>
-        <p class="text-center">
-          {{ CombinationAttributeNames.ABILITIES }}
-        </p>
+        <p class="text-center">Ability</p>
       </template>
       <template #filter="{ filterModel }">
         <MultiSelect
           v-model="filterModel.value"
           :options="abilities"
           class="p-column-filter"
-          placeholder="Any"
+          placeholder="Any Ability"
+        />
+      </template>
+    </Column>
+
+    <Column
+      v-if="columnIsSelected(CombinationAttributeNames.ABILITIES)"
+      :showFilterMatchModes="false"
+      body-style="text-align: center"
+      filterField="Abilities.source"
+      header="Ability Source"
+    >
+      <template #body="{ data }">
+        <div class="flex align-items-center gap-2">
+          <span>{{
+            formatAbilitySources(data[CombinationAttributeNames.ABILITIES])
+          }}</span>
+        </div>
+      </template>
+      <template #filterheader>
+        <p class="text-center">Ability Source</p>
+      </template>
+      <template #filter="{ filterModel }">
+        <MultiSelect
+          v-model="filterModel.value"
+          :options="abilitySources"
+          class="p-column-filter"
+          placeholder="Any Source"
         />
       </template>
     </Column>
@@ -1208,8 +1233,10 @@ import type Ability from "~/types/Ability";
 import { Abilities } from "~/types/enums/Abilities";
 import SortingType from "~/types/SortingType";
 import { CombinationAttributeNames } from "~/types/CombinationAttributeNames";
+import { AbilitySources } from "~/types/enums/AbilitySources";
 
 const abilities = ref(Object.values(Abilities));
+const abilitySources = ref(Object.values(AbilitySources));
 
 const { getCombinations, getTotalCombinations } = useCombinations();
 const modStore = useModStore();
@@ -1340,6 +1367,10 @@ let defaultFilters: DataTableFilterMeta = {
     value: null,
     matchMode: FilterMatchMode.IN,
   },
+  "Abilities.source": {
+    value: null,
+    matchMode: FilterMatchMode.IN,
+  },
   [CombinationAttributeNames.RESEARCH_LEVEL]: {
     value: [1, 5],
     matchMode: FilterMatchMode.BETWEEN,
@@ -1419,7 +1450,15 @@ const columnIsSelected = (columnName: CombinationAttributeName) => {
 
 const formatAbilities = (abilities: Ability[]) => {
   return abilities
-    .map((ability: Ability) => `${ability.ability}: ${ability.source}`)
+    .map(
+      (ability: Ability, index: number) => `${index + 1}. ${ability.ability}`,
+    )
+    .join(", ");
+};
+
+const formatAbilitySources = (abilities: Ability[]) => {
+  return abilities
+    .map((ability: Ability, index: number) => `${index + 1}. ${ability.source}`)
     .join(", ");
 };
 

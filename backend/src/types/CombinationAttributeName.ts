@@ -1,5 +1,7 @@
 type CombinationAttributeName =
     | 'Abilities'
+    | 'Abiltities.ability'
+    | 'Abilities.source'
     | 'Air Speed'
     | 'Animal 1'
     | 'Animal 2'

@@ -37,9 +37,10 @@
         filter-placeholder="Search Columns"
         optionLabel="label"
         placeholder="Select Columns"
-        style="max-width: 15%"
+        scroll-height="300px"
         @update:modelValue="onColumnToggle"
       >
+        <template #closeicon></template>
         <template #value>
           <span>Columns</span>
         </template>
@@ -103,6 +104,11 @@
       <template #body="{ data }">
         {{ data[CombinationAttributeNames.ANIMAL_1] }}
       </template>
+      <template #filterheader>
+        <p class="text-center">
+          {{ CombinationAttributeNames.ANIMAL_1 }}
+        </p>
+      </template>
       <template #filter="{ filterModel }">
         <InputText
           v-model="filterModel.value"
@@ -130,6 +136,11 @@
       <template #body="{ data }">
         {{ data[CombinationAttributeNames.ANIMAL_2] }}
       </template>
+      <template #filterheader>
+        <p class="text-center">
+          {{ CombinationAttributeNames.ANIMAL_2 }}
+        </p>
+      </template>
       <template #filter="{ filterModel }">
         <InputText
           v-model="filterModel.value"
@@ -156,6 +167,11 @@
           />
         </div>
       </template>
+      <template #filterheader>
+        <p class="text-center">
+          {{ CombinationAttributeNames.RESEARCH_LEVEL }}
+        </p>
+      </template>
       <template #filter="{ filterModel }">
         <Slider
           v-model="filterModel.value"
@@ -171,13 +187,11 @@
         <div class="flex align-items-center justify-content-between px-2">
           <InputNumber
             v-model="filterModel.value[0]"
-            :input-style="{ 'max-width': '3rem' }"
             :max="filterModel.value ? filterModel.value[1] : 5"
             :min="1"
           />
           <InputNumber
             v-model="filterModel.value[1]"
-            :input-style="{ 'max-width': '3rem' }"
             :max="5"
             :min="filterModel.value ? filterModel.value[0] : 1"
             style="margin-left: 4rem"
@@ -207,6 +221,11 @@
       <template #body="{ data }">
         {{ data[CombinationAttributeNames.COAL] }}
       </template>
+      <template #filterheader>
+        <p class="text-center">
+          {{ CombinationAttributeNames.COAL }}
+        </p>
+      </template>
       <template #filter="{ filterModel }">
         <Slider
           v-model="filterModel.value"
@@ -218,13 +237,11 @@
         <div class="flex align-items-center justify-content-between px-2">
           <InputNumber
             v-model="filterModel.value[0]"
-            :input-style="{ 'max-width': '3rem' }"
             :max="filterModel.value[1]"
             :min="getColumnMinMax(CombinationAttributeNames.COAL)[0]"
           />
           <InputNumber
             v-model="filterModel.value[1]"
-            :input-style="{ 'max-width': '3rem' }"
             :max="getColumnMinMax(CombinationAttributeNames.COAL)[1]"
             :min="filterModel.value[0]"
             style="margin-left: 4rem"
@@ -260,6 +277,11 @@
       <template #body="{ data }">
         {{ data[CombinationAttributeNames.ELECTRICITY] }}
       </template>
+      <template #filterheader>
+        <p class="text-center">
+          {{ CombinationAttributeNames.ELECTRICITY }}
+        </p>
+      </template>
       <template #filter="{ filterModel }">
         <Slider
           v-model="filterModel.value"
@@ -270,13 +292,11 @@
         <div class="flex align-items-center justify-content-between px-2">
           <InputNumber
             v-model="filterModel.value[0]"
-            :input-style="{ 'max-width': '3rem' }"
             :max="filterModel.value[1]"
             :min="getColumnMinMax(CombinationAttributeNames.ELECTRICITY)[0]"
           />
           <InputNumber
             v-model="filterModel.value[1]"
-            :input-style="{ 'max-width': '3rem' }"
             :max="getColumnMinMax(CombinationAttributeNames.ELECTRICITY)[1]"
             :min="filterModel.value[0]"
             style="margin-left: 4rem"
@@ -308,6 +328,11 @@
       <template #body="{ data }">
         {{ data["Head"] }}
       </template>
+      <template #filterheader>
+        <p class="text-center">
+          {{ CombinationAttributeNames.HEAD }}
+        </p>
+      </template>
       <template #filter="{ filterModel }">
         <InputText
           v-model="filterModel.value"
@@ -334,6 +359,11 @@
       </template>
       <template #body="{ data }">
         {{ data[CombinationAttributeNames.FRONT_LEGS] }}
+      </template>
+      <template #filterheader>
+        <p class="text-center">
+          {{ CombinationAttributeNames.FRONT_LEGS }}
+        </p>
       </template>
       <template #filter="{ filterModel }">
         <InputText
@@ -362,6 +392,11 @@
       <template #body="{ data }">
         {{ data[CombinationAttributeNames.REAR_LEGS] }}
       </template>
+      <template #filterheader>
+        <p class="text-center">
+          {{ CombinationAttributeNames.REAR_LEGS }}
+        </p>
+      </template>
       <template #filter="{ filterModel }">
         <InputText
           v-model="filterModel.value"
@@ -385,6 +420,11 @@
       <template #body="{ data }">
         {{ data[CombinationAttributeNames.TAIL] }}
       </template>
+      <template #filterheader>
+        <p class="text-center">
+          {{ CombinationAttributeNames.TAIL }}
+        </p>
+      </template>
       <template #filter="{ filterModel }">
         <InputText
           v-model="filterModel.value"
@@ -407,6 +447,11 @@
       </template>
       <template #body="{ data }">
         {{ data[CombinationAttributeNames.WINGS] }}
+      </template>
+      <template #filterheader>
+        <p class="text-center">
+          {{ CombinationAttributeNames.WINGS }}
+        </p>
       </template>
       <template #filter="{ filterModel }">
         <InputText
@@ -435,6 +480,11 @@
       <template #body="{ data }">
         {{ data[CombinationAttributeNames.PINCERS] }}
       </template>
+      <template #filterheader>
+        <p class="text-center">
+          {{ CombinationAttributeNames.PINCERS }}
+        </p>
+      </template>
       <template #filter="{ filterModel }">
         <InputText
           v-model="filterModel.value"
@@ -459,6 +509,11 @@
       <template #body="{ data }">
         {{ data[CombinationAttributeNames.DEFENCE] }}
       </template>
+      <template #filterheader>
+        <p class="text-center">
+          {{ CombinationAttributeNames.DEFENCE }}
+        </p>
+      </template>
       <template #filter="{ filterModel }">
         <Slider
           v-model="filterModel.value"
@@ -470,13 +525,11 @@
         <div class="flex align-items-center justify-content-between px-2">
           <InputNumber
             v-model="filterModel.value[0]"
-            :input-style="{ 'max-width': '3rem' }"
             :max="filterModel.value[1]"
             :min="getColumnMinMax(CombinationAttributeNames.DEFENCE)[0]"
           />
           <InputNumber
             v-model="filterModel.value[1]"
-            :input-style="{ 'max-width': '3rem' }"
             :max="getColumnMinMax(CombinationAttributeNames.DEFENCE)[1]"
             :min="filterModel.value[0]"
             style="margin-left: 4rem"
@@ -510,6 +563,11 @@
       <template #body="{ data }">
         {{ data["Health"] }}
       </template>
+      <template #filterheader>
+        <p class="text-center">
+          {{ CombinationAttributeNames.HEALTH }}
+        </p>
+      </template>
       <template #filter="{ filterModel }">
         <Slider
           v-model="filterModel.value"
@@ -521,13 +579,11 @@
         <div class="flex align-items-center justify-content-between px-2">
           <InputNumber
             v-model="filterModel.value[0]"
-            :input-style="{ 'max-width': '3rem' }"
             :max="filterModel.value[1]"
             :min="getColumnMinMax(CombinationAttributeNames.HEALTH)[0]"
           />
           <InputNumber
             v-model="filterModel.value[1]"
-            :input-style="{ 'max-width': '3rem' }"
             :max="getColumnMinMax(CombinationAttributeNames.HEALTH)[1]"
             :min="filterModel.value[0]"
             style="margin-left: 4rem"
@@ -561,6 +617,11 @@
       <template #body="{ data }">
         {{ data[CombinationAttributeNames.EHP] }}
       </template>
+      <template #filterheader>
+        <p class="text-center">
+          {{ CombinationAttributeNames.EHP }}
+        </p>
+      </template>
       <template #filter="{ filterModel }">
         <Slider
           v-model="filterModel.value"
@@ -572,13 +633,11 @@
         <div class="flex align-items-center justify-content-between px-2">
           <InputNumber
             v-model="filterModel.value[0]"
-            :input-style="{ 'max-width': '3rem' }"
             :max="filterModel.value[1]"
             :min="getColumnMinMax(CombinationAttributeNames.EHP)[0]"
           />
           <InputNumber
             v-model="filterModel.value[1]"
-            :input-style="{ 'max-width': '3rem' }"
             :max="getColumnMinMax(CombinationAttributeNames.EHP)[1]"
             :min="filterModel.value[0]"
             style="margin-left: 4rem"
@@ -614,6 +673,11 @@
       <template #body="{ data }">
         {{ data[CombinationAttributeNames.MELEE_DAMAGE] }}
       </template>
+      <template #filterheader>
+        <p class="text-center">
+          {{ CombinationAttributeNames.MELEE_DAMAGE }}
+        </p>
+      </template>
       <template #filter="{ filterModel }">
         <Slider
           v-model="filterModel.value"
@@ -625,13 +689,11 @@
         <div class="flex align-items-center justify-content-between px-2">
           <InputNumber
             v-model="filterModel.value[0]"
-            :input-style="{ 'max-width': '3rem' }"
             :max="filterModel.value[1]"
             :min="getColumnMinMax(CombinationAttributeNames.MELEE_DAMAGE)[0]"
           />
           <InputNumber
             v-model="filterModel.value[1]"
-            :input-style="{ 'max-width': '3rem' }"
             :max="getColumnMinMax(CombinationAttributeNames.MELEE_DAMAGE)[1]"
             :min="filterModel.value[0]"
             style="margin-left: 4rem"
@@ -669,6 +731,11 @@
       <template #body="{ data }">
         {{ data[CombinationAttributeNames.POPULATION_SIZE] }}
       </template>
+      <template #filterheader>
+        <p class="text-center">
+          {{ CombinationAttributeNames.POPULATION_SIZE }}
+        </p>
+      </template>
       <template #filter="{ filterModel }">
         <Slider
           v-model="filterModel.value"
@@ -680,13 +747,11 @@
         <div class="flex align-items-center justify-content-between px-2">
           <InputNumber
             v-model="filterModel.value[0]"
-            :input-style="{ 'max-width': '3rem' }"
             :max="filterModel.value[1]"
             :min="getColumnMinMax(CombinationAttributeNames.POPULATION_SIZE)[0]"
           />
           <InputNumber
             v-model="filterModel.value[1]"
-            :input-style="{ 'max-width': '3rem' }"
             :max="getColumnMinMax(CombinationAttributeNames.POPULATION_SIZE)[1]"
             :min="filterModel.value[0]"
             style="margin-left: 4rem"
@@ -721,6 +786,11 @@
       <template #body="{ data }">
         {{ data[CombinationAttributeNames.POWER] }}
       </template>
+      <template #filterheader>
+        <p class="text-center">
+          {{ CombinationAttributeNames.POWER }}
+        </p>
+      </template>
       <template #filter="{ filterModel }">
         <Slider
           v-model="filterModel.value"
@@ -732,13 +802,11 @@
         <div class="flex align-items-center justify-content-between px-2">
           <InputNumber
             v-model="filterModel.value[0]"
-            :input-style="{ 'max-width': '3rem' }"
             :max="filterModel.value[1]"
             :min="getColumnMinMax(CombinationAttributeNames.POWER)[0]"
           />
           <InputNumber
             v-model="filterModel.value[1]"
-            :input-style="{ 'max-width': '3rem' }"
             :max="getColumnMinMax(CombinationAttributeNames.POWER)[1]"
             :min="filterModel.value[0]"
             style="margin-left: 4rem"
@@ -767,6 +835,11 @@
       <template #body="{ data }">
         {{ data[CombinationAttributeNames.SDT] }}
       </template>
+      <template #filterheader>
+        <p class="text-center">
+          {{ CombinationAttributeNames.SDT }}
+        </p>
+      </template>
       <template #filter="{ filterModel }">
         <Slider
           v-model="filterModel.value"
@@ -778,13 +851,11 @@
         <div class="flex align-items-center justify-content-between px-2">
           <InputNumber
             v-model="filterModel.value[0]"
-            :input-style="{ 'max-width': '3rem' }"
             :max="filterModel.value[1]"
             :min="getColumnMinMax(CombinationAttributeNames.SDT)[0]"
           />
           <InputNumber
             v-model="filterModel.value[1]"
-            :input-style="{ 'max-width': '3rem' }"
             :max="getColumnMinMax(CombinationAttributeNames.SDT)[1]"
             :min="filterModel.value[0]"
             style="margin-left: 4rem"
@@ -820,6 +891,11 @@
       <template #body="{ data }">
         {{ data[CombinationAttributeNames.SIGHT_RADIUS] }}
       </template>
+      <template #filterheader>
+        <p class="text-center">
+          {{ CombinationAttributeNames.SIGHT_RADIUS }}
+        </p>
+      </template>
       <template #filter="{ filterModel }">
         <Slider
           v-model="filterModel.value"
@@ -831,13 +907,11 @@
         <div class="flex align-items-center justify-content-between px-2">
           <InputNumber
             v-model="filterModel.value[0]"
-            :input-style="{ 'max-width': '3rem' }"
             :max="filterModel.value[1]"
             :min="getColumnMinMax(CombinationAttributeNames.SIGHT_RADIUS)[0]"
           />
           <InputNumber
             v-model="filterModel.value[1]"
-            :input-style="{ 'max-width': '3rem' }"
             :max="getColumnMinMax(CombinationAttributeNames.SIGHT_RADIUS)[1]"
             :min="filterModel.value[0]"
             style="margin-left: 4rem"
@@ -871,6 +945,11 @@
       <template #body="{ data }">
         {{ data[CombinationAttributeNames.SIZE] }}
       </template>
+      <template #filterheader>
+        <p class="text-center">
+          {{ CombinationAttributeNames.SIZE }}
+        </p>
+      </template>
       <template #filter="{ filterModel }">
         <Slider
           v-model="filterModel.value"
@@ -882,13 +961,11 @@
         <div class="flex align-items-center justify-content-between px-2">
           <InputNumber
             v-model="filterModel.value[0]"
-            :input-style="{ 'max-width': '3rem' }"
             :max="filterModel.value[1]"
             :min="getColumnMinMax(CombinationAttributeNames.SIZE)[0]"
           />
           <InputNumber
             v-model="filterModel.value[1]"
-            :input-style="{ 'max-width': '3rem' }"
             :max="getColumnMinMax(CombinationAttributeNames.SIZE)[1]"
             :min="filterModel.value[0]"
             style="margin-left: 4rem"
@@ -924,6 +1001,11 @@
       <template #body="{ data }">
         {{ data[CombinationAttributeNames.LAND_SPEED] }}
       </template>
+      <template #filterheader>
+        <p class="text-center">
+          {{ CombinationAttributeNames.LAND_SPEED }}
+        </p>
+      </template>
       <template #filter="{ filterModel }">
         <Slider
           v-model="filterModel.value"
@@ -935,13 +1017,11 @@
         <div class="flex align-items-center justify-content-between px-2">
           <InputNumber
             v-model="filterModel.value[0]"
-            :input-style="{ 'max-width': '3rem' }"
             :max="filterModel.value[1]"
             :min="getColumnMinMax(CombinationAttributeNames.LAND_SPEED)[0]"
           />
           <InputNumber
             v-model="filterModel.value[1]"
-            :input-style="{ 'max-width': '3rem' }"
             :max="getColumnMinMax(CombinationAttributeNames.LAND_SPEED)[1]"
             :min="filterModel.value[0]"
             style="margin-left: 4rem"
@@ -979,7 +1059,11 @@
       <template #body="{ data }">
         {{ data[CombinationAttributeNames.WATER_SPEED] }}
       </template>
-
+      <template #filterheader>
+        <p class="text-center">
+          {{ CombinationAttributeNames.WATER_SPEED }}
+        </p>
+      </template>
       <template #filter="{ filterModel }">
         <Slider
           v-model="filterModel.value"
@@ -991,13 +1075,11 @@
         <div class="flex align-items-center justify-content-between px-2">
           <InputNumber
             v-model="filterModel.value[0]"
-            :input-style="{ 'max-width': '3rem' }"
             :max="filterModel.value[1]"
             :min="getColumnMinMax(CombinationAttributeNames.WATER_SPEED)[0]"
           />
           <InputNumber
             v-model="filterModel.value[1]"
-            :input-style="{ 'max-width': '3rem' }"
             :max="getColumnMinMax(CombinationAttributeNames.WATER_SPEED)[1]"
             :min="filterModel.value[0]"
             style="margin-left: 4rem"
@@ -1035,6 +1117,11 @@
       <template #body="{ data }">
         {{ data[CombinationAttributeNames.AIR_SPEED] }}
       </template>
+      <template #filterheader>
+        <p class="text-center">
+          {{ CombinationAttributeNames.AIR_SPEED }}
+        </p>
+      </template>
       <template #filter="{ filterModel }">
         <Slider
           v-model="filterModel.value"
@@ -1046,13 +1133,11 @@
         <div class="flex align-items-center justify-content-between px-2">
           <InputNumber
             v-model="filterModel.value[0]"
-            :input-style="{ 'max-width': '3rem' }"
             :max="filterModel.value[1]"
             :min="getColumnMinMax(CombinationAttributeNames.AIR_SPEED)[0]"
           />
           <InputNumber
             v-model="filterModel.value[1]"
-            :input-style="{ 'max-width': '3rem' }"
             :max="getColumnMinMax(CombinationAttributeNames.AIR_SPEED)[1]"
             :min="filterModel.value[0]"
             style="margin-left: 4rem"
@@ -1086,6 +1171,11 @@
           }}</span>
         </div>
       </template>
+      <template #filterheader>
+        <p class="text-center">
+          {{ CombinationAttributeNames.ABILITIES }}
+        </p>
+      </template>
       <template #filter="{ filterModel }">
         <MultiSelect
           v-model="filterModel.value"
@@ -1109,6 +1199,7 @@ import { FilterMatchMode, FilterOperator } from "primevue/api";
 import type {
   DataTableExportCSVOptions,
   DataTableFilterMeta,
+  DataTableFilterMetaData,
   DataTableSortEvent,
 } from "primevue/datatable";
 import type CombinationTableColumn from "~/types/CombinationTableColumn";
@@ -1152,7 +1243,7 @@ const getColumnMinMax = (columnName: CombinationAttributeNames) => {
   return [column?.min || 0, column?.max || Number.MAX_SAFE_INTEGER];
 };
 
-const defaultFilters: DataTableFilterMeta = {
+let defaultFilters: DataTableFilterMeta = {
   [CombinationAttributeNames.ANIMAL_1]: {
     operator: FilterOperator.AND,
     constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
@@ -1349,10 +1440,26 @@ const exportCSV = () => {
   );
 };
 
+const initialiseFilters = () => {
+  let newFilters = {} as DataTableFilterMeta;
+  for (let attributeName in defaultFilters) {
+    let filter = defaultFilters[attributeName] as DataTableFilterMetaData;
+    if (filter?.value) {
+      filter.value = getColumnMinMax(
+        attributeName as CombinationAttributeNames,
+      );
+      newFilters[attributeName] = filter;
+    }
+  }
+  defaultFilters = newFilters;
+  filters.value = defaultFilters;
+};
+
 watch(
   () => modStore.getMod,
   async () => {
     initialiseColumns();
+    initialiseFilters();
     await tableRequest();
   },
 );

@@ -144,7 +144,7 @@ async function updateChart() {
     bucketSize.value = 1;
   }
   const response = await fetchFunction.value({
-    mod: modStore.getMod,
+    mod: { name: modStore.getMod.name, version: modStore.getMod.version },
     chartOptions: {
       sort: sorted.value,
       chartType: isBarChart.value ? "bar" : "line",

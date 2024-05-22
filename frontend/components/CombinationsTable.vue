@@ -1224,7 +1224,6 @@ import { FilterMatchMode, FilterOperator } from "primevue/api";
 import type {
   DataTableExportCSVOptions,
   DataTableFilterMeta,
-  DataTableFilterMetaData,
   DataTableSortEvent,
 } from "primevue/datatable";
 import type CombinationTableColumn from "~/types/CombinationTableColumn";
@@ -1269,113 +1268,116 @@ const getColumnMinMax = (columnName: CombinationAttributeNames) => {
   ) as ModColumn;
   return [column?.min || 0, column?.max || Number.MAX_SAFE_INTEGER];
 };
-
-let defaultFilters: DataTableFilterMeta = {
-  [CombinationAttributeNames.ANIMAL_1]: {
-    operator: FilterOperator.AND,
-    constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
-  },
-  [CombinationAttributeNames.ANIMAL_2]: {
-    operator: FilterOperator.AND,
-    constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
-  },
-  [CombinationAttributeNames.AIR_SPEED]: {
-    value: getColumnMinMax(CombinationAttributeNames.AIR_SPEED),
-    matchMode: FilterMatchMode.BETWEEN,
-  },
-  [CombinationAttributeNames.COAL]: {
-    value: getColumnMinMax(CombinationAttributeNames.COAL),
-    matchMode: FilterMatchMode.BETWEEN,
-  },
-  [CombinationAttributeNames.DEFENCE]: {
-    value: getColumnMinMax(CombinationAttributeNames.DEFENCE),
-    matchMode: FilterMatchMode.BETWEEN,
-  },
-  [CombinationAttributeNames.EHP]: {
-    value: getColumnMinMax(CombinationAttributeNames.EHP),
-    matchMode: FilterMatchMode.BETWEEN,
-  },
-  [CombinationAttributeNames.ELECTRICITY]: {
-    value: getColumnMinMax(CombinationAttributeNames.ELECTRICITY),
-    matchMode: FilterMatchMode.BETWEEN,
-  },
-  [CombinationAttributeNames.FRONT_LEGS]: {
-    operator: FilterOperator.AND,
-    constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
-  },
-  [CombinationAttributeNames.HEAD]: {
-    operator: FilterOperator.AND,
-    constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
-  },
-  [CombinationAttributeNames.HEALTH]: {
-    value: getColumnMinMax(CombinationAttributeNames.HEALTH),
-    matchMode: FilterMatchMode.BETWEEN,
-  },
-  [CombinationAttributeNames.LAND_SPEED]: {
-    value: getColumnMinMax(CombinationAttributeNames.LAND_SPEED),
-    matchMode: FilterMatchMode.BETWEEN,
-  },
-  [CombinationAttributeNames.MELEE_DAMAGE]: {
-    value: getColumnMinMax(CombinationAttributeNames.MELEE_DAMAGE),
-    matchMode: FilterMatchMode.BETWEEN,
-  },
-  [CombinationAttributeNames.PINCERS]: {
-    operator: FilterOperator.AND,
-    constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
-  },
-  [CombinationAttributeNames.POPULATION_SIZE]: {
-    value: getColumnMinMax(CombinationAttributeNames.POPULATION_SIZE),
-    matchMode: FilterMatchMode.BETWEEN,
-  },
-  [CombinationAttributeNames.POWER]: {
-    value: getColumnMinMax(CombinationAttributeNames.POWER),
-    matchMode: FilterMatchMode.BETWEEN,
-  },
-  [CombinationAttributeNames.REAR_LEGS]: {
-    operator: FilterOperator.AND,
-    constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
-  },
-  [CombinationAttributeNames.SDT]: {
-    value: getColumnMinMax(CombinationAttributeNames.SDT),
-    matchMode: FilterMatchMode.BETWEEN,
-  },
-  [CombinationAttributeNames.SIGHT_RADIUS]: {
-    value: getColumnMinMax(CombinationAttributeNames.SIGHT_RADIUS),
-    matchMode: FilterMatchMode.BETWEEN,
-  },
-  [CombinationAttributeNames.SIZE]: {
-    value: getColumnMinMax(CombinationAttributeNames.SIZE),
-    matchMode: FilterMatchMode.BETWEEN,
-  },
-  [CombinationAttributeNames.TAIL]: {
-    operator: FilterOperator.AND,
-    constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
-  },
-  [CombinationAttributeNames.TORSO]: {
-    operator: FilterOperator.AND,
-    constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
-  },
-  [CombinationAttributeNames.WATER_SPEED]: {
-    value: getColumnMinMax(CombinationAttributeNames.WATER_SPEED),
-    matchMode: FilterMatchMode.BETWEEN,
-  },
-  [CombinationAttributeNames.WINGS]: {
-    operator: FilterOperator.AND,
-    constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
-  },
-  "Abilities.ability": {
-    value: null,
-    matchMode: FilterMatchMode.IN,
-  },
-  "Abilities.source": {
-    value: null,
-    matchMode: FilterMatchMode.IN,
-  },
-  [CombinationAttributeNames.RESEARCH_LEVEL]: {
-    value: [1, 5],
-    matchMode: FilterMatchMode.BETWEEN,
-  },
+const getInitialisedFilters = (): DataTableFilterMeta => {
+  return {
+    [CombinationAttributeNames.ANIMAL_1]: {
+      operator: FilterOperator.AND,
+      constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }],
+    },
+    [CombinationAttributeNames.ANIMAL_2]: {
+      operator: FilterOperator.AND,
+      constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }],
+    },
+    [CombinationAttributeNames.AIR_SPEED]: {
+      value: getColumnMinMax(CombinationAttributeNames.AIR_SPEED),
+      matchMode: FilterMatchMode.BETWEEN,
+    },
+    [CombinationAttributeNames.COAL]: {
+      value: getColumnMinMax(CombinationAttributeNames.COAL),
+      matchMode: FilterMatchMode.BETWEEN,
+    },
+    [CombinationAttributeNames.DEFENCE]: {
+      value: getColumnMinMax(CombinationAttributeNames.DEFENCE),
+      matchMode: FilterMatchMode.BETWEEN,
+    },
+    [CombinationAttributeNames.EHP]: {
+      value: getColumnMinMax(CombinationAttributeNames.EHP),
+      matchMode: FilterMatchMode.BETWEEN,
+    },
+    [CombinationAttributeNames.ELECTRICITY]: {
+      value: getColumnMinMax(CombinationAttributeNames.ELECTRICITY),
+      matchMode: FilterMatchMode.BETWEEN,
+    },
+    [CombinationAttributeNames.FRONT_LEGS]: {
+      operator: FilterOperator.AND,
+      constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }],
+    },
+    [CombinationAttributeNames.HEAD]: {
+      operator: FilterOperator.AND,
+      constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }],
+    },
+    [CombinationAttributeNames.HEALTH]: {
+      value: getColumnMinMax(CombinationAttributeNames.HEALTH),
+      matchMode: FilterMatchMode.BETWEEN,
+    },
+    [CombinationAttributeNames.LAND_SPEED]: {
+      value: getColumnMinMax(CombinationAttributeNames.LAND_SPEED),
+      matchMode: FilterMatchMode.BETWEEN,
+    },
+    [CombinationAttributeNames.MELEE_DAMAGE]: {
+      value: getColumnMinMax(CombinationAttributeNames.MELEE_DAMAGE),
+      matchMode: FilterMatchMode.BETWEEN,
+    },
+    [CombinationAttributeNames.PINCERS]: {
+      operator: FilterOperator.AND,
+      constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }],
+    },
+    [CombinationAttributeNames.POPULATION_SIZE]: {
+      value: getColumnMinMax(CombinationAttributeNames.POPULATION_SIZE),
+      matchMode: FilterMatchMode.BETWEEN,
+    },
+    [CombinationAttributeNames.POWER]: {
+      value: getColumnMinMax(CombinationAttributeNames.POWER),
+      matchMode: FilterMatchMode.BETWEEN,
+    },
+    [CombinationAttributeNames.REAR_LEGS]: {
+      operator: FilterOperator.AND,
+      constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }],
+    },
+    [CombinationAttributeNames.SDT]: {
+      value: getColumnMinMax(CombinationAttributeNames.SDT),
+      matchMode: FilterMatchMode.BETWEEN,
+    },
+    [CombinationAttributeNames.SIGHT_RADIUS]: {
+      value: getColumnMinMax(CombinationAttributeNames.SIGHT_RADIUS),
+      matchMode: FilterMatchMode.BETWEEN,
+    },
+    [CombinationAttributeNames.SIZE]: {
+      value: getColumnMinMax(CombinationAttributeNames.SIZE),
+      matchMode: FilterMatchMode.BETWEEN,
+    },
+    [CombinationAttributeNames.TAIL]: {
+      operator: FilterOperator.AND,
+      constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }],
+    },
+    [CombinationAttributeNames.TORSO]: {
+      operator: FilterOperator.AND,
+      constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }],
+    },
+    [CombinationAttributeNames.WATER_SPEED]: {
+      value: getColumnMinMax(CombinationAttributeNames.WATER_SPEED),
+      matchMode: FilterMatchMode.BETWEEN,
+    },
+    [CombinationAttributeNames.WINGS]: {
+      operator: FilterOperator.AND,
+      constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }],
+    },
+    "Abilities.ability": {
+      value: null,
+      matchMode: FilterMatchMode.IN,
+    },
+    "Abilities.source": {
+      value: null,
+      matchMode: FilterMatchMode.IN,
+    },
+    [CombinationAttributeNames.RESEARCH_LEVEL]: {
+      value: [1, 5],
+      matchMode: FilterMatchMode.BETWEEN,
+    },
+  };
 };
+
+let defaultFilters: DataTableFilterMeta = getInitialisedFilters();
 
 const filters = ref(defaultFilters);
 
@@ -1479,26 +1481,12 @@ const exportCSV = () => {
   );
 };
 
-const initialiseFilters = () => {
-  let newFilters = {} as DataTableFilterMeta;
-  for (let attributeName in defaultFilters) {
-    let filter = defaultFilters[attributeName] as DataTableFilterMetaData;
-    if (filter?.value) {
-      filter.value = getColumnMinMax(
-        attributeName as CombinationAttributeNames,
-      );
-      newFilters[attributeName] = filter;
-    }
-  }
-  defaultFilters = newFilters;
-  filters.value = defaultFilters;
-};
-
 watch(
   () => modStore.getMod,
   async () => {
     initialiseColumns();
-    initialiseFilters();
+    defaultFilters = getInitialisedFilters();
+    filters.value = defaultFilters;
     await tableRequest();
   },
 );

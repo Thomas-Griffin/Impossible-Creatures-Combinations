@@ -3,25 +3,30 @@ services:
     image: mongo
     ports:
       - '27017:27017'
+    restart: always
 
   combinations-server:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: backend.Dockerfile
     ports:
       - '3000:3000'
     depends_on:
       - combinations-database
+    restart: always
 
   combinations-client:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: frontend.Dockerfile
     ports:
-      - '8080:80'
+      - '8080:3000'
     depends_on:
       - combinations-database
       - combinations-server
+    restart: always
+
+
 
 
 

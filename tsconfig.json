@@ -1,0 +1,49 @@
+{
+  "compilerOptions": {
+    "types": [
+      "jest",
+      "supertest"
+    ],
+    "baseUrl": ".",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "verbatimModuleSyntax": false,
+    "noEmit": true,
+    "paths": {
+      "@test/*": [
+        "test/*"
+      ],
+      "@src/*": [
+        "src/*"
+      ],
+      "~types/*": [
+        "src/types/*"
+      ],
+      "@backend/*": [
+        "src/backend/*"
+      ],
+      "@frontend/*": [
+        "src/frontend/*"
+      ]
+    },
+    "moduleResolution": "Bundler",
+    "target": "ESNext",
+    "module": "CommonJS",
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "jsx": "preserve",
+    "jsxImportSource": "vue",
+    "isolatedModules": true,
+    "useDefineForClassFields": true,
+    "strict": true,
+    "noImplicitThis": true,
+    "esModuleInterop": true,
+    "allowJs": true
+  },
+  "ts-node": {
+    "swc": true,
+    "esm": true
+  }
+}

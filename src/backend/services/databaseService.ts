@@ -4,7 +4,6 @@ import logger from '@backend/utility/logger'
 
 import {
     COMBINATIONS_COLLECTION_NAME,
-    COMBINATIONS_DIRECTORY_PATH,
     MOD_COLLECTION_NAME,
     MOD_COMBINATION_TOTALS,
     MOD_DIRECTORY_PATH,
@@ -85,7 +84,7 @@ class DatabaseService {
                 await this.client.connect()
                 await this.client.db(process.env['MONGO_DB_NAME']).dropDatabase()
                 logger.info(
-                    `All collections and indexes in ${process.env['MONGO_DB_NAME']} database have been deleted.`
+                    `All collections and indexes in ${process.env['MONGO_DB_NAME']} database have been deleted.`,
                 )
             } else {
                 logger.info(`Database '${process.env['MONGO_DB_NAME']}' does not exist.`)
@@ -120,15 +119,15 @@ class DatabaseService {
                 err => {
                     if (err) {
                         logger.error(
-                            `no access to mod file: ${MOD_DIRECTORY_PATH}/${mod.name}/${mod.version}/combinations.json`
+                            `no access to mod file: ${MOD_DIRECTORY_PATH}/${mod.name}/${mod.version}/combinations.json`,
                         )
                     } else {
                         writeFileSync(
                             `${MOD_DIRECTORY_PATH}/${mod.name}/${mod.version}/combinations.json`,
-                            combinations
+                            combinations,
                         )
                     }
-                }
+                },
             )
         } else {
             mkdirSync(`${MOD_DIRECTORY_PATH}/${mod.name}/${mod.version}`, {recursive: true})
@@ -139,7 +138,7 @@ class DatabaseService {
     fetchUnprocessedCombinations(mod: Mod) {
         logger.info(`fetching all combinations for mod: ${mod.name} ${mod.version}`)
         try {
-            return JSON.parse(readFileSync(`${COMBINATIONS_DIRECTORY_PATH}/${mod.name} ${mod.version}.json`, 'utf8'))
+            return JSON.parse(readFileSync(`${MOD_DIRECTORY_PATH}/${mod.name} ${mod.version}.json`, 'utf8'))
         } catch (err) {
             logger.error(err)
         }
@@ -148,7 +147,7 @@ class DatabaseService {
     loadCombinations(mod: Mod) {
         try {
             return JSON.parse(
-                readFileSync(`${MOD_DIRECTORY_PATH}/${mod.name}/${mod.version}/combinations.json`, 'utf8')
+                readFileSync(`${MOD_DIRECTORY_PATH}/${mod.name}/${mod.version}/combinations.json`, 'utf8'),
             )
         } catch (err) {
             logger.error(err)
@@ -163,10 +162,10 @@ class DatabaseService {
         return limbIndex === 1
             ? this.snakeCaseToTitleCase(combination['stock_1'])
             : limbIndex === 2
-              ? this.snakeCaseToTitleCase(combination['stock_2'])
-              : limbIndex === -1
-                ? 'Inherent'
-                : 'None'
+                ? this.snakeCaseToTitleCase(combination['stock_2'])
+                : limbIndex === -1
+                    ? 'Inherent'
+                    : 'None'
     }
 
     async processAndSaveCombinations(modSchema: ModSchema, combinations: UnprocessedCombination[] | null = null) {
@@ -217,7 +216,7 @@ class DatabaseService {
             .collection(COMBINATIONS_COLLECTION_NAME)
             .insertMany(processedCombinations)
         logger.info(
-            `Collection '${COMBINATIONS_COLLECTION_NAME}' was populated with ${processedCombinations.length} documents.`
+            `Collection '${COMBINATIONS_COLLECTION_NAME}' was populated with ${processedCombinations.length} documents.`,
         )
     }
 
@@ -303,7 +302,7 @@ class DatabaseService {
     async populateModCollectionsWithCombinations() {
         for (const mod of this.schema) {
             logger.info(
-                `Populating collection ${COMBINATIONS_COLLECTION_NAME} with combinations from mod: ${mod.name} ${mod.version}`
+                `Populating collection ${COMBINATIONS_COLLECTION_NAME} with combinations from mod: ${mod.name} ${mod.version}`,
             )
             await this.processAndSaveCombinations(mod)
         }
@@ -331,7 +330,7 @@ class DatabaseService {
     async acquireMissingJSONCombinationFiles() {
         let jsonFilesExist = true
         for (const mod of this.schema) {
-            if (!existsSync(`${COMBINATIONS_DIRECTORY_PATH}/${mod.name} ${mod.version}.json`)) {
+            if (!existsSync(`${MOD_DIRECTORY_PATH}/${mod.name} ${mod.version}.json`)) {
                 jsonFilesExist = false
             }
         }
@@ -339,7 +338,7 @@ class DatabaseService {
             logger.info(`Combinations files are missing.`)
             try {
                 logger.info('Running cleanup script...')
-                await cleanupResidualDatabaseFiles()
+                cleanupResidualDatabaseFiles()
                 logger.info('Extracting combinations from compressed files...')
                 decompressMods()
             } catch (err) {
@@ -407,7 +406,7 @@ class DatabaseService {
                             max: minMaxes[column.label]?.max || Number.MAX_SAFE_INTEGER,
                         })),
                     },
-                }
+                },
             )
     }
 
@@ -447,7 +446,7 @@ class DatabaseService {
             .find()
             .toArray()
         return this.schema.every(schemaMod =>
-            collectionMods.find(mod => schemaMod.name === mod.name && schemaMod.version === mod.version)
+            collectionMods.find(mod => schemaMod.name === mod.name && schemaMod.version === mod.version),
         )
     }
 
@@ -461,7 +460,7 @@ class DatabaseService {
                 modTotal.name === modTotal.name && modTotal.version === modTotal.version
                     ? total + modTotal.total
                     : total,
-            0
+            0,
         )
         return documentCount === expectedDocumentCount
     }

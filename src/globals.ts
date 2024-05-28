@@ -10,13 +10,11 @@ import ModSchema from '~types/ModSchema'
 import Mod from '~types/Mod'
 
 export const ROOT_DIRECTORY = resolve('./')
-
 export const SRC_DIRECTORY = resolve(ROOT_DIRECTORY, 'src')
 export const MOD_COLLECTION_NAME = 'mods'
 export const MOD_DIRECTORY_NAME = 'mods'
 export const MOD_SOURCE_DIRECTORY_PATH = resolve(SRC_DIRECTORY, `backend/database/${MOD_DIRECTORY_NAME}`)
 export const MOD_DIRECTORY_PATH = resolve(ROOT_DIRECTORY, MOD_DIRECTORY_NAME)
-export const COMBINATIONS_DIRECTORY_PATH = resolve(ROOT_DIRECTORY)
 export const COMBINATIONS_COLLECTION_NAME = 'combinations'
 export const ENV_DIRECTORY = resolve(SRC_DIRECTORY, 'env')
 

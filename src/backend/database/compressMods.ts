@@ -6,6 +6,7 @@ import schemas from '@backend/database/modSchemas'
 import path from 'path'
 
 import {logger} from '@backend/utility/logger'
+import {MOD_DIRECTORY_PATH} from '@src/globals'
 
 export function compressMods() {
     for (let mod of schemas) {
@@ -21,7 +22,7 @@ export function compressMods() {
                 const jsonObject = JSON.parse(line)
                 const compressedObject = messagePack.encode(jsonObject)
 
-                fs.open(`${mod.name} ${mod.version}.msgpack`, 'w', err => {
+                fs.open(`${MOD_DIRECTORY_PATH}/${mod.name} ${mod.version}.msgpack`, 'w', err => {
                     if (err) {
                         if (err.code === 'EEXIST') {
                             logger.error('file already exists')
@@ -42,7 +43,7 @@ export function compressMods() {
             let compressedData = deflateSync(fs.readFileSync(`${mod.name} ${mod.version}.msgpack`))
             fs.writeFileSync(`${mod.name} ${mod.version}.msgpack.gz`, compressedData)
             logger.info(`Data compressed and saved. ${mod.name} ${mod.version}.msgpack.gz created.`)
-            fs.rmSync(`${mod.name} ${mod.version}.msgpack`)
+            fs.rmSync(`${MOD_DIRECTORY_PATH}/${mod.name} ${mod.version}.msgpack`)
         })
     }
 }

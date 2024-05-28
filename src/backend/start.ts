@@ -38,8 +38,6 @@ const startServer = () => {
     app.on('error', err => logger.error(`Server error: ${err}`))
 }
 
-cleanupResidualDatabaseFiles()
-
 checkDatabaseInitialisation().then(() => {
     startServer()
 })

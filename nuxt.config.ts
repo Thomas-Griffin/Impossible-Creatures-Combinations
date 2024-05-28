@@ -6,7 +6,7 @@ dotenv.config({path: path.resolve(__dirname, 'src/frontend/.env'), debug: true, 
 
 const nuxtConfig = defineNuxtConfig({
     rootDir: path.resolve(__dirname),
-    buildDir: path.resolve(__dirname),
+    buildDir: path.resolve(__dirname, 'src/frontend/dist'),
     srcDir: path.resolve(__dirname, 'src/frontend'),
     modulesDir: [path.resolve(__dirname, 'node_modules')],
     devServer: {port: 8080},
@@ -24,7 +24,7 @@ const nuxtConfig = defineNuxtConfig({
         '~types': path.resolve(__dirname, 'src/types'),
     },
     typescript: {
-        tsConfig: './tsconfig.json',
+        tsConfig: path.resolve(__dirname, 'tsconfig.json'),
     },
     modules: ['nuxt-primevue', '@pinia/nuxt', 'nuxt-plotly'],
     vite: {

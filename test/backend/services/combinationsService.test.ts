@@ -12,6 +12,7 @@ import CombinationAttributeNames from '~types/CombinationAttributeNames'
 import {describe} from 'node:test'
 import CombinationAbilities from '~types/CombinationAbilities'
 import AbilitySources from '~types/AbilitySources'
+import {escapeRegExp} from 'lodash'
 
 describe('CombinationsService', () => {
     const combinationsService = new CombinationsService()
@@ -306,7 +307,7 @@ describe('CombinationsService', () => {
                     {
                         'Animal 1': {
                             $not: {
-                                $regex: RegExp('!', 'i'),
+                                $regex: RegExp(escapeRegExp('!'), 'i'),
                             },
                         },
                     },
@@ -349,7 +350,7 @@ describe('CombinationsService', () => {
                     {
                         'Animal 1': {
                             $not: {
-                                $regex: RegExp('!', 'i'),
+                                $regex: RegExp(escapeRegExp('!'), 'i'),
                             },
                         },
                     },
@@ -409,7 +410,7 @@ describe('CombinationsService', () => {
                     {
                         'Animal 1': {
                             $not: {
-                                $regex: RegExp('!', 'i'),
+                                $regex: RegExp(escapeRegExp('!'), 'i'),
                             },
                         },
                     },
@@ -426,7 +427,7 @@ describe('CombinationsService', () => {
                     {
                         'Animal 2': {
                             $not: {
-                                $regex: RegExp('!?', 'i'),
+                                $regex: RegExp(escapeRegExp('!?'), 'i'),
                             },
                         },
                     },
@@ -486,7 +487,7 @@ describe('CombinationsService', () => {
                     {
                         'Animal 1': {
                             $not: {
-                                $regex: RegExp('!', 'i'),
+                                $regex: RegExp(escapeRegExp('!'), 'i'),
                             },
                         },
                     },
@@ -505,7 +506,7 @@ describe('CombinationsService', () => {
                     {
                         'Animal 2': {
                             $not: {
-                                $regex: RegExp('!?', 'i'),
+                                $regex: RegExp(escapeRegExp('!?'), 'i'),
                             },
                         },
                     },

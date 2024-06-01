@@ -32,7 +32,7 @@
     "pino": "^9.1.0",
     "pino-caller": "^3.4.0",
     "plotly.js-dist": "^2.32.0",
-    "plotly.js-dist-min": "^2.32.0",
+    "plotly.js-dist-min": "^2.33.0",
     "primeflex": "^3.3.1",
     "primeicons": "^7.0.0",
     "primevue": "^3.52.0",

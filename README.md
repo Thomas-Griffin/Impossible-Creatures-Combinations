@@ -2,7 +2,6 @@ Combinations App
 ================
 
 [![Backend Tests](https://github.com/Thomas-Griffin/Impossible-Creatures-Combinations-Web-App/actions/workflows/backend-tests.yml/badge.svg)](https://github.com/Thomas-Griffin/Impossible-Creatures-Combinations-Web-App/actions/workflows/backend-tests.yml)
-
 [![CodeQL](https://github.com/Thomas-Griffin/Impossible-Creatures-Combinations-Web-App/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/Thomas-Griffin/Impossible-Creatures-Combinations-Web-App/actions/workflows/github-code-scanning/codeql)
 
 Getting Started

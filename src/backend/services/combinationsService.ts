@@ -15,6 +15,7 @@ import SortingType from '~types/SortingType'
 import CombinationsRequestBody from '~types/CombinationsRequestBody'
 import Mod from '~types/Mod'
 import CombinationAbilities from '~types/CombinationAbilities'
+import {escapeRegExp} from 'lodash'
 
 class CombinationsService {
     combinationRequestSchema: Joi.ObjectSchema
@@ -193,24 +194,24 @@ class CombinationsService {
 
     getFilterQueryFromFilterMetaData(
         dataTableFilterMetaData: DataTableFilterMetaData,
-        attributeName: CombinationAttributeNames
+        attributeName: CombinationAttributeNames,
     ): CombinationFilterQuery {
         switch (dataTableFilterMetaData.matchMode) {
             case 'startsWith':
                 return {
-                    [attributeName]: {$regex: new RegExp('^' + dataTableFilterMetaData.value, 'i')},
+                    [attributeName]: {$regex: new RegExp('^' + escapeRegExp(dataTableFilterMetaData.value), 'i')},
                 } as CombinationFilterQuery
             case 'contains':
                 return {
-                    [attributeName]: {$regex: new RegExp(dataTableFilterMetaData.value, 'i')},
+                    [attributeName]: {$regex: new RegExp(escapeRegExp(dataTableFilterMetaData.value), 'i')},
                 } as CombinationFilterQuery
             case 'notContains':
                 return {
-                    [attributeName]: {$not: {$regex: new RegExp(dataTableFilterMetaData.value, 'i')}},
+                    [attributeName]: {$not: {$regex: new RegExp(escapeRegExp(dataTableFilterMetaData.value), 'i')}},
                 } as CombinationFilterQuery
             case 'endsWith':
                 return {
-                    [attributeName]: {$regex: new RegExp(dataTableFilterMetaData.value + '$', 'i')},
+                    [attributeName]: {$regex: new RegExp(escapeRegExp(dataTableFilterMetaData.value) + '$', 'i')},
                 } as CombinationFilterQuery
             case 'equals':
                 return {[attributeName]: dataTableFilterMetaData.value} as CombinationFilterQuery
@@ -238,7 +239,7 @@ class CombinationsService {
 
     mergeFilterQueries(
         filterQueries: CombinationFilterQuery[],
-        operator?: CombinationQueryFilterOperators
+        operator?: CombinationQueryFilterOperators,
     ): CombinationFilterQuery {
         switch (operator) {
             case 'AND':
@@ -258,7 +259,7 @@ class CombinationsService {
 
     createFilterQuery(
         attributeName: CombinationAttributeNames,
-        dataTableFilterMetaData: DataTableFilterMetaData
+        dataTableFilterMetaData: DataTableFilterMetaData,
     ): CombinationFilterQuery {
         let filterQuery: CombinationFilterQuery = {} as CombinationFilterQuery
         if (
@@ -284,12 +285,12 @@ class CombinationsService {
             ) {
                 let filterAsString: string | null = this.castAsString(filters[attribute])
                 let filterAsFilterMetaData: DataTableFilterMetaData | null = this.castAsFilterMetaData(
-                    filters[attribute]
+                    filters[attribute],
                 )
                 let filterAsOperatorFilterMetaData: DataTableOperatorFilterMetaData | null =
                     this.castAsOperatorFilterMetaData(filters[attribute])
                 if (filterAsString && !filterAsFilterMetaData && !filterAsOperatorFilterMetaData) {
-                    ;(query as CombinationFilterQuery)[attribute] = {$regex: new RegExp(filterAsString, 'i')}
+                    ;(query as CombinationFilterQuery)[attribute] = {$regex: new RegExp(escapeRegExp(filterAsString), 'i')}
                 } else if (!filterAsString && filterAsFilterMetaData && !filterAsOperatorFilterMetaData) {
                     query = {...query, ...this.createFilterQuery(attribute, filterAsFilterMetaData)}
                 } else if (!filterAsString && !filterAsFilterMetaData && filterAsOperatorFilterMetaData) {
@@ -298,9 +299,9 @@ class CombinationsService {
                             filterAsOperatorFilterMetaData?.constraints.map(
                                 (dataTableFilterMetaData: DataTableFilterMetaData) => {
                                     return this.createFilterQuery(attribute, dataTableFilterMetaData)
-                                }
+                                },
                             ),
-                            filterAsOperatorFilterMetaData.operator as CombinationQueryFilterOperators
+                            filterAsOperatorFilterMetaData.operator as CombinationQueryFilterOperators,
                         )
                         if (
                             query?.$and &&

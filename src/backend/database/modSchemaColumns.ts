@@ -1,7 +1,7 @@
-import CombinationAttributeNames from '~types/CombinationAttributeNames'
-import ModColumnType from '~types/ModColumnType'
-import ModSchemaColumn from '~types/ModSchemaColumn'
-import CombinationAttributeDescriptions from '~types/CombinationAttributeDescriptions'
+import CombinationAttributeNames from '../../types/CombinationAttributeNames'
+import ModColumnType from '../../types/ModColumnType'
+import ModSchemaColumn from '../../types/ModSchemaColumn'
+import CombinationAttributeDescriptions from '../../types/CombinationAttributeDescriptions'
 
 export const ANIMAL1: ModSchemaColumn = {
     label: CombinationAttributeNames.ANIMAL_1,

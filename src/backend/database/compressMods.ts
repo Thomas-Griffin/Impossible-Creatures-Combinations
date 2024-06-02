@@ -2,11 +2,11 @@ import fs from 'fs'
 import readline from 'readline'
 import messagePack from 'msgpack-lite'
 import {deflateSync} from 'zlib'
-import schemas from '@backend/database/modSchemas'
+import schemas from '../database/modSchemas'
 import path from 'path'
 
-import {logger} from '@backend/utility/logger'
-import {MOD_DIRECTORY_PATH} from '@src/globals'
+import {logger} from '../utility/logger'
+import {MOD_DIRECTORY_PATH} from '../../globals'
 
 export function compressMods() {
     for (let mod of schemas) {

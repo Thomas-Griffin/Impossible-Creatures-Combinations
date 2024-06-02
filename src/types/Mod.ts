@@ -1,6 +1,6 @@
-import ModNames from '~types/ModNames'
-import ModVersions from '~types/ModVersions'
-import ModColumn from '~types/ModColumn'
+import ModNames from './ModNames'
+import ModVersions from './ModVersions'
+import ModColumn from './ModColumn'
 
 interface Mod {
     name: ModNames

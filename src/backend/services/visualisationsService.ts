@@ -1,8 +1,8 @@
 import {Data} from 'plotly.js'
 import {MongoClient} from 'mongodb'
-import MongoService from '@backend/services/mongoService'
-import VisualisationServiceQuery from '@backend/services/VisualisationServiceQuery'
-import CombinationVisualisationRequestBody from '~types/CombinationVisualisationRequestBody'
+import MongoService from './mongoService'
+import VisualisationServiceQuery from './VisualisationServiceQuery'
+import CombinationVisualisationRequestBody from '../../types/CombinationVisualisationRequestBody'
 
 class VisualisationsService {
     client: MongoClient
@@ -49,7 +49,7 @@ class VisualisationsService {
             },
         ])
             .execute()
-            .then(queryResult => {
+            .then((queryResult: any) => {
                 const queryResultAsRecordArray = queryResult as unknown as Record<string, any>[]
                 return [
                     {
@@ -95,7 +95,7 @@ class VisualisationsService {
             },
         ])
             .execute()
-            .then(queryResult => {
+            .then((queryResult: any) => {
                 const queryResultAsRecordArray = queryResult as unknown as Record<string, any>[]
                 return queryResultAsRecordArray.map(obj => {
                     const xSorted = obj?.['x']?.sort((a: number, b: number) => a - b)
@@ -127,7 +127,7 @@ class VisualisationsService {
             },
         ])
             .execute()
-            .then(result => {
+            .then((result: any) => {
                 const resultAsRecordArray = result as unknown as Record<string, any>[]
                 return resultAsRecordArray[0]?.['max'] || 0
             })

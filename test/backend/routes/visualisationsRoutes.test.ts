@@ -1,8 +1,8 @@
 import request from 'supertest'
 
-import VisualisationsService from '@backend/services/visualisationsService'
-import {COMBINATIONS_COLLECTION_NAME, DEFAULT_MOD} from '@src/globals'
-import app from '@backend/app'
+import VisualisationsService from '../../../src/backend/services/visualisationsService'
+import {COMBINATIONS_COLLECTION_NAME, DEFAULT_MOD} from '../../../src/globals'
+import app from '../../../src/backend/app'
 
 describe('Visualisations routes', () => {
     const testVisualisationsService = new VisualisationsService()

@@ -1,8 +1,8 @@
 import request from 'supertest'
-import ModService from '@backend/services/modService'
-import app from '@backend/app'
-import {DEFAULT_MOD, MOD_COLLECTION_NAME} from '@src/globals'
-import mods from '@backend/database/mods'
+import ModService from '../../../src/backend/services/modService'
+import app from '../../../src/backend/app'
+import {DEFAULT_MOD, MOD_COLLECTION_NAME} from '../../../src/globals'
+import mods from '../../../src/backend/database/mods'
 
 describe('Mods routes', () => {
     const modService = new ModService()

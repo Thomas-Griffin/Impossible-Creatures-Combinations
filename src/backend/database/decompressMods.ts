@@ -2,9 +2,9 @@ import fs from 'fs'
 import path from 'path'
 import messagePack from 'msgpack-lite'
 import {unzipSync} from 'zlib'
-import {COMPRESSED_DATA_FILE_EXTENSION, MOD_DIRECTORY_PATH, MOD_SOURCE_DIRECTORY_PATH} from '@src/globals'
-import schemas from '@backend/database/modSchemas'
-import logger from '@src/backend/utility/logger'
+import {COMPRESSED_DATA_FILE_EXTENSION, MOD_DIRECTORY_PATH, MOD_SOURCE_DIRECTORY_PATH} from '../../globals'
+import schemas from '../database/modSchemas'
+import logger from '..//utility/logger'
 
 export function decompressMods() {
     for (let mod of schemas) {

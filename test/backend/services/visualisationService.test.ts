@@ -1,8 +1,8 @@
-import {COMBINATIONS_COLLECTION_NAME, DEFAULT_MOD} from '@src/globals'
-import VisualisationsService from '@backend/services/visualisationsService'
-import CombinationAttributeNames from '~types/CombinationAttributeNames'
-import CombinationVisualisationRequestBody from '~types/CombinationVisualisationRequestBody'
-import CombinationVisualisationAttributes from '~types/CombinationVisualisationAttributes'
+import {COMBINATIONS_COLLECTION_NAME, DEFAULT_MOD} from '../../../src/globals'
+import VisualisationsService from '../../../src/backend/services/visualisationsService'
+import CombinationAttributeNames from '../../../src/types/CombinationAttributeNames'
+import CombinationVisualisationRequestBody from '../../../src/types/CombinationVisualisationRequestBody'
+import CombinationVisualisationAttributes from '../../../src/types/CombinationVisualisationAttributes'
 
 describe('Visualisation Service', () => {
     const visualisationsService = new VisualisationsService()

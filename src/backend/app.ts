@@ -1,14 +1,14 @@
 import express, {NextFunction, Request, Response} from 'express'
-import modsRouter from '@backend/routes/modsRoutes'
-import combinationsRouter from '@backend//routes/combinationsRoutes'
-import databaseInitializerRouter from '@backend/routes/databaseRoutes'
-import visualisationsRouter from '@backend/routes/visualisationsRoutes'
+import modsRouter from './routes/modsRoutes'
+import combinationsRouter from './routes/combinationsRoutes'
+import databaseInitializerRouter from './routes/databaseRoutes'
+import visualisationsRouter from './routes/visualisationsRoutes'
 import morgan from 'morgan'
 import swaggerUi from 'swagger-ui-express'
 import fs from 'fs'
 import NodeCache from 'node-cache'
 import path from 'path'
-import {ROOT_DIRECTORY} from '@src/globals'
+import {ROOT_DIRECTORY} from '../globals'
 
 export const cache = new NodeCache()
 const swaggerFile = JSON.parse(fs.readFileSync(path.resolve(ROOT_DIRECTORY, 'swagger.json'), 'utf8'))

@@ -1,6 +1,6 @@
-import {MONGO_DOCKER_SERVICE_NAME, MONGO_DOCKER_SERVICE_PORT} from '@src/globals'
-import environment from '@backend/utility/serverEnvironment'
-import ServerEnvironments from '~types/ServerEnvironments'
+import {MONGO_DOCKER_SERVICE_NAME, MONGO_DOCKER_SERVICE_PORT} from '../../../src/globals'
+import environment from '../../../src/backend/utility/serverEnvironment'
+import ServerEnvironments from '../../../src/types/ServerEnvironments'
 
 describe('load()', () => {
     it('should return the correct server configuration for the test environment', () => {

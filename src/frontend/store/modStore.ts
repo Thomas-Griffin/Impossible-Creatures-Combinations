@@ -1,5 +1,5 @@
 import {defineStore} from 'pinia'
-import Mod from '~types/Mod'
+import Mod from '../../../src/types/Mod'
 
 const useModStore = defineStore({
     id: 'mod',

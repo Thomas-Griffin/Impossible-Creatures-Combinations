@@ -1,24 +1,25 @@
 import {access, constants, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync} from 'fs'
 
-import logger from '@backend/utility/logger'
+import logger from '../utility/logger'
 
 import {
     COMBINATIONS_COLLECTION_NAME,
     MOD_COLLECTION_NAME,
     MOD_COMBINATION_TOTALS,
     MOD_DIRECTORY_PATH,
-} from '@src/globals'
-import schemas from '@backend/database/modSchemas'
+} from '../../globals'
+import schemas from '../database/modSchemas'
 import {MongoClient} from 'mongodb'
-import MongoService from '@backend/services/mongoService'
-import {cleanupResidualDatabaseFiles} from '@backend/database/cleanupResidualDatabaseFiles'
-import {decompressMods} from '@backend/database/decompressMods'
-import abilities from '@backend/abilities'
-import ModSchema from '~types/ModSchema'
-import ModSchemaColumn from '~types/ModSchemaColumn'
-import Mod from '~types/Mod'
-import Combination from '~types/Combination'
-import UnprocessedCombination from '~types/UnprocessedCombination'
+import MongoService from '../services/mongoService'
+import {cleanupResidualDatabaseFiles} from '../database/cleanupResidualDatabaseFiles'
+import {decompressMods} from '../database/decompressMods'
+import abilities from '../abilities'
+import ModSchema from '../../types/ModSchema'
+import ModSchemaColumn from '../../types/ModSchemaColumn'
+import Mod from '../../types/Mod'
+import Combination from '../../types/Combination'
+import UnprocessedCombination from '../../types/UnprocessedCombination'
+import ModColumn from '../../types/ModColumn'
 
 class DatabaseService {
     schema: ModSchema[] = []
@@ -291,7 +292,7 @@ class DatabaseService {
             let modData = {
                 name: mod.name,
                 version: mod.version,
-                columns: mod.columns.map(column => {
+                columns: mod.columns.map((column: ModColumn) => {
                     return {label: column.label, type: column.type}
                 }),
             }
@@ -399,7 +400,7 @@ class DatabaseService {
                 {name: mod.name, version: mod.version},
                 {
                     $set: {
-                        columns: mod.columns.map(column => ({
+                        columns: mod.columns.map((column: ModColumn) => ({
                             label: column.label,
                             type: column.type,
                             min: minMaxes[column.label]?.min || 0,
@@ -456,7 +457,7 @@ class DatabaseService {
             .collection(COMBINATIONS_COLLECTION_NAME)
             .countDocuments()
         const expectedDocumentCount = MOD_COMBINATION_TOTALS.reduce(
-            (total, modTotal) =>
+            (total: number, modTotal: {name: string, version: string, total: number}) =>
                 modTotal.name === modTotal.name && modTotal.version === modTotal.version
                     ? total + modTotal.total
                     : total,

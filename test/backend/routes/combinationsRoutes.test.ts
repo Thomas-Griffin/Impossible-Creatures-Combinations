@@ -1,13 +1,13 @@
-import {testCombination1, testCombination2, testCombination3} from '@test/backend/constants/global'
-import {COMBINATIONS_COLLECTION_NAME, DEFAULT_MOD} from '@src/globals'
+import {testCombination1, testCombination2, testCombination3} from '../constants/global'
+import {COMBINATIONS_COLLECTION_NAME, DEFAULT_MOD} from '../../../src/globals'
 
 import type {DataTableFilterMeta} from 'primevue/datatable'
 import {FilterMatchMode, FilterOperator} from 'primevue/api'
-import CombinationsService from '@backend/services/combinationsService'
-import app from '@backend/app'
+import CombinationsService from '../../../src/backend/services/combinationsService'
+import app from '../../../src/backend/app'
 import request from 'supertest'
-import CombinationsRequestBody from '~types/CombinationsRequestBody'
-import CombinationAttributeNames from '~types/CombinationAttributeNames'
+import CombinationsRequestBody from '../../../src/types/CombinationsRequestBody'
+import CombinationAttributeNames from '../../../src/types/CombinationAttributeNames'
 import {removeId} from '../utility/removeId'
 
 describe('Combinations routes', () => {

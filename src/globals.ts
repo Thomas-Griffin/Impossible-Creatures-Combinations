@@ -1,13 +1,13 @@
 import {resolve} from 'path'
 import Joi from 'joi'
 
-import schemas from '@backend/database/modSchemas'
-import mods from '@backend/database/mods'
-import ModNames from '~types/ModNames'
-import {modVersions} from '~types/ModVersions'
-import PlotlyVisualisationTypes from '~types/PlotlyVisualisationTypes'
-import ModSchema from '~types/ModSchema'
-import Mod from '~types/Mod'
+import schemas from './backend/database/modSchemas'
+import mods from './backend/database/mods'
+import ModNames from './types/ModNames'
+import {modVersions} from './types/ModVersions'
+import PlotlyVisualisationTypes from './types/PlotlyVisualisationTypes'
+import ModSchema from './types/ModSchema'
+import Mod from './types/Mod'
 
 export const ROOT_DIRECTORY = resolve('./')
 export const SRC_DIRECTORY = resolve(ROOT_DIRECTORY, 'src')

@@ -1,8 +1,8 @@
 import fs from 'fs'
-import schemas from '@backend/database/modSchemas'
-import logger from '@backend/utility/logger'
-import {MOD_DIRECTORY_PATH} from '@src/globals'
-import ModSchema from '~types/ModSchema'
+import schemas from '../database/modSchemas'
+import logger from '../utility/logger'
+import {MOD_DIRECTORY_PATH} from '../../globals'
+import ModSchema from '../../types/ModSchema'
 
 function removeModuleAndHandleError(mod: ModSchema) {
     const filePath = `${MOD_DIRECTORY_PATH}/${mod.name} ${mod.version}.json`

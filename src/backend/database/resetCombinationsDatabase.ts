@@ -1,8 +1,8 @@
 import axios from 'axios'
-import {ENVIRONMENT_SPECIFIER_FLAG_NAME, SERVER_DOCKER_SERVICE_NAME, SERVER_DOCKER_SERVICE_PORT} from '@src/globals'
-import {logger} from '@backend/utility/logger'
-import environment from '@backend/utility/serverEnvironment'
-import ServerEnvironments from '~types/ServerEnvironments'
+import {ENVIRONMENT_SPECIFIER_FLAG_NAME, SERVER_DOCKER_SERVICE_NAME, SERVER_DOCKER_SERVICE_PORT} from '../../globals'
+import {logger} from '../utility/logger'
+import environment from '../utility/serverEnvironment'
+import ServerEnvironments from '../../types/ServerEnvironments'
 
 export function resetCombinationsDatabase() {
     logger.info('Resetting database...')

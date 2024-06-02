@@ -1,4 +1,4 @@
-import Mod from '~types/Mod'
+import Mod from './Mod'
 
 interface MongoServiceRequestBody {
     mod: Mod

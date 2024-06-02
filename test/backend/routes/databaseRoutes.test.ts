@@ -1,8 +1,8 @@
 import request from 'supertest'
 
 import {MongoClient} from 'mongodb'
-import app from '@backend/app'
-import {MOD_COMBINATION_TOTALS} from '@src/globals'
+import app from '../../../src/backend/app'
+import {MOD_COMBINATION_TOTALS} from '../../../src/globals'
 
 describe('Database routes', () => {
     describe('GET /database/reset', () => {

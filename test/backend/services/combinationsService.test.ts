@@ -1,17 +1,16 @@
-import CombinationsService from '@backend/services/combinationsService'
+import CombinationsService from '../../../src/backend/services/combinationsService'
 
-import {testCombination1, testCombination2, testCombination3} from '@test/backend/constants/global'
+import {testCombination1, testCombination2, testCombination3} from '../constants/global'
 
-import {COMBINATIONS_COLLECTION_NAME, DEFAULT_MOD, MOD_COLLECTION_NAME} from '@src/globals'
+import {COMBINATIONS_COLLECTION_NAME, DEFAULT_MOD, MOD_COLLECTION_NAME} from '../../../src/globals'
 import type {DataTableFilterMetaData, DataTableOperatorFilterMetaData} from 'primevue/datatable'
 import {FilterMatchMode} from 'primevue/api'
-import MinMaxRequestBody from '~types/MinMaxRequestBody'
-import CombinationsRequestBody from '~types/CombinationsRequestBody'
-import SortingType from '~types/SortingType'
-import CombinationAttributeNames from '~types/CombinationAttributeNames'
-import {describe} from 'node:test'
-import CombinationAbilities from '~types/CombinationAbilities'
-import AbilitySources from '~types/AbilitySources'
+import MinMaxRequestBody from '../../../src/types/MinMaxRequestBody'
+import CombinationsRequestBody from '../../../src/types/CombinationsRequestBody'
+import SortingType from '../../../src/types/SortingType'
+import CombinationAttributeNames from '../../../src/types/CombinationAttributeNames'
+import CombinationAbilities from '../../../src/types/CombinationAbilities'
+import AbilitySources from '../../../src/types/AbilitySources'
 import {escapeRegExp} from 'lodash'
 
 describe('CombinationsService', () => {

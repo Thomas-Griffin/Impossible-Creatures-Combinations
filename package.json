@@ -7,7 +7,11 @@
   "version": "1.0.0",
   "type": "module",
   "private": "true",
+  "main": "dist/src/backend/start.js",
   "scripts": {
+    "build": "nuxt build && tsc",
+    "compile": "tsc",
+    "compile:watch": "tsc -w",
     "backend:development": "cross-env ENVIRONMENT=development tsx src/backend/start.ts",
     "backend:production": "cross-env ENVIRONMENT=production tsx src/backend/start.ts",
     "backend:test": "cross-env ENVIRONMENT=test jest --runInBand --detectOpenHandles --forceExit",

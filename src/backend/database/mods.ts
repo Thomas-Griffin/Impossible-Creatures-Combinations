@@ -1,8 +1,8 @@
-import ModColumn from '~types/ModColumn'
-import CombinationAttributeNames from '~types/CombinationAttributeNames'
-import ModColumnType from '~types/ModColumnType'
-import ModNames from '~types/ModNames'
-import Mod from '~types/Mod'
+import ModColumn from '../../types/ModColumn'
+import CombinationAttributeNames from '../../types/CombinationAttributeNames'
+import ModColumnType from '../../types/ModColumnType'
+import ModNames from '../../types/ModNames'
+import Mod from '../../types/Mod'
 
 const modColumns: ModColumn[] = [
     {

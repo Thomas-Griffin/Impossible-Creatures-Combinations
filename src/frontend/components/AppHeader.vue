@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts" setup>
-import useDisplayStore from '~store/displayStore'
+import useDisplayStore from '../store/displayStore'
 
 const menuItems = ref([
     {

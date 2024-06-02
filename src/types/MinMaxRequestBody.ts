@@ -1,5 +1,5 @@
-import CombinationAttributeNames from '~types/CombinationAttributeNames'
-import Mod from '~types/Mod'
+import CombinationAttributeNames from './CombinationAttributeNames'
+import Mod from './Mod'
 
 interface MinMaxRequestBody {
     mod: Mod

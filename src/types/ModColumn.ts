@@ -1,5 +1,5 @@
-import CombinationAttributeNames from '~types/CombinationAttributeNames'
-import ModColumnType from '~types/ModColumnType'
+import CombinationAttributeNames from './CombinationAttributeNames'
+import ModColumnType from './ModColumnType'
 
 interface ModColumn {
     label: CombinationAttributeNames

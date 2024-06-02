@@ -1,9 +1,9 @@
 import {MongoClient} from 'mongodb'
-import {MONGO_CLIENT_TOKEN, MONGO_DOCKER_SERVICE_NAME, MONGO_DOCKER_SERVICE_PORT} from '@src/globals'
+import {MONGO_CLIENT_TOKEN, MONGO_DOCKER_SERVICE_NAME, MONGO_DOCKER_SERVICE_PORT} from '../../globals'
 
 import {container, singleton} from 'tsyringe'
-import logger from '@backend/utility/logger'
-import serverEnvironment from '@backend/utility/serverEnvironment'
+import logger from '../utility/logger'
+import serverEnvironment from '../utility/serverEnvironment'
 
 const createMongoClient = (): MongoClient => {
     logger.info('Starting mongodb server')

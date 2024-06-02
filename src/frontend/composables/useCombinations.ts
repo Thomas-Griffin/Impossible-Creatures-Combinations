@@ -1,11 +1,11 @@
 import {ref} from 'vue'
 
 import axios from 'axios'
-import Mod from '~types/Mod'
-import MinMaxResponse from '~types/MinMaxResponse'
-import CombinationAttributeNames from '~types/CombinationAttributeNames'
-import Combination from '~types/Combination'
-import CombinationsRequestBody from '~types/CombinationsRequestBody'
+import Mod from '../../types/Mod'
+import MinMaxResponse from '../../types/MinMaxResponse'
+import CombinationAttributeNames from '../../types/CombinationAttributeNames'
+import Combination from '../../types/Combination'
+import CombinationsRequestBody from '../../types/CombinationsRequestBody'
 
 const baseURL = 'http://localhost:3000'
 

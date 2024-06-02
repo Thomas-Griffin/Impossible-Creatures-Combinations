@@ -16,15 +16,9 @@ const nuxtConfig = defineNuxtConfig({
             enabled: true,
         },
     },
-    server: {
-        port: 8080,
-    },
     alias: {
         '~store': path.resolve(__dirname, 'src/frontend/store'),
         '~types': path.resolve(__dirname, 'src/types'),
-    },
-    typescript: {
-        tsConfig: path.resolve(__dirname, 'tsconfig.json'),
     },
     modules: ['nuxt-primevue', '@pinia/nuxt', 'nuxt-plotly'],
     vite: {
@@ -37,7 +31,6 @@ const nuxtConfig = defineNuxtConfig({
     imports: {
         autoImport: true,
     },
-    buildModules: ['nuxt-storm', {alias: true}],
 })
 
 export default nuxtConfig

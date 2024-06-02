@@ -1,4 +1,4 @@
-import {testProcessedCombinations, testUnprocessedCombinations, totalNumberOfMods} from '@test/backend/constants/global'
+import {testProcessedCombinations, testUnprocessedCombinations, totalNumberOfMods} from '../constants/global'
 import type {CollectionInfo} from 'mongodb'
 import {
     COMBINATIONS_COLLECTION_NAME,
@@ -6,11 +6,11 @@ import {
     MOD_COLLECTION_NAME,
     MOD_COMBINATION_TOTALS,
     MOD_DIRECTORY_PATH,
-} from '@src/globals'
+} from '../../../src/globals'
 
 import fs from 'fs'
-import DatabaseService from '@backend/services/databaseService'
-import modSchemas from '@backend/database/modSchemas'
+import DatabaseService from '../../../src/backend/services/databaseService'
+import modSchemas from '../../../src/backend/database/modSchemas'
 
 describe('Database service tests', () => {
     const databaseService = new DatabaseService()
@@ -42,7 +42,7 @@ describe('Database service tests', () => {
                 .collection(MOD_COLLECTION_NAME)
                 .insertOne(DEFAULT_MOD)
             const databaseNames = (await databaseService.client.db('admin').admin().listDatabases()).databases.map(
-                database => database.name
+                (database: {name: string, sizeOnDisk?: number, empty?: boolean}) => database.name,
             )
             expect(databaseNames).toContain(process.env['MONGO_DB_NAME'])
         })
@@ -103,7 +103,7 @@ describe('Database service tests', () => {
                     .db(process.env['MONGO_DB_NAME'])
                     .collection(COMBINATIONS_COLLECTION_NAME)
                     .find()
-                    .toArray()
+                    .toArray(),
             ).toHaveLength(testUnprocessedCombinations.length)
         })
         it('should populate with combinations that match the desired output', async () => {

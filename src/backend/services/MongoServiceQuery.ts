@@ -1,9 +1,9 @@
-import MongoService from '@backend/services/mongoService'
+import MongoService from '../services/mongoService'
 import Joi from 'joi'
-import logger from '@backend/utility/logger'
-import {COMBINATIONS_COLLECTION_NAME, JOI_MOD_SCHEMA} from '@src/globals'
-import MongoServiceRequestBody from '~types/MongoServiceRequestBody'
-import MongoQueryAggregationStage from '~types/MongoQueryAggregationStage'
+import logger from '../utility/logger'
+import {COMBINATIONS_COLLECTION_NAME, JOI_MOD_SCHEMA} from '../../globals'
+import MongoServiceRequestBody from '../../../src/types/MongoServiceRequestBody'
+import MongoQueryAggregationStage from '../../../src/types/MongoQueryAggregationStage'
 
 export default class MongoServiceQueryPipeline {
     body: MongoServiceRequestBody

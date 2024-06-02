@@ -1,5 +1,5 @@
 import request from 'supertest'
-import app from '@backend/app'
+import app from '../../../src/backend/app'
 
 describe('Server Caching', () => {
     it('should cache the mods', async () => {

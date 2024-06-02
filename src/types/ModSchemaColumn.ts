@@ -1,6 +1,6 @@
-import CombinationAttributeNames from '~types/CombinationAttributeNames'
-import ModColumnType from '~types/ModColumnType'
-import CombinationAttributeDescriptions from '~types/CombinationAttributeDescriptions'
+import CombinationAttributeNames from './CombinationAttributeNames'
+import ModColumnType from './ModColumnType'
+import CombinationAttributeDescriptions from './CombinationAttributeDescriptions'
 
 type ModSchemaColumn = {
     label: CombinationAttributeNames

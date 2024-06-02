@@ -1,4 +1,4 @@
-import ModSchemaColumn from '~types/ModSchemaColumn'
+import ModSchemaColumn from './ModSchemaColumn'
 
 interface ModSchema {
     name: string

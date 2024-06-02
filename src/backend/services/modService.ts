@@ -1,7 +1,7 @@
 import MongoService from './mongoService'
 import {Document, MongoClient} from 'mongodb'
-import Mod from '~types/Mod'
-import {MOD_COLLECTION_NAME} from '@src/globals'
+import Mod from '../../types/Mod'
+import {MOD_COLLECTION_NAME} from '../../globals'
 
 class ModService {
     client: MongoClient

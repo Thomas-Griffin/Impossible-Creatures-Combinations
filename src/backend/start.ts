@@ -1,11 +1,11 @@
 import 'reflect-metadata'
-import app from '@backend/app'
+import app from './app'
 import {ENVIRONMENT_SPECIFIER_FLAG_NAME} from '../globals'
-import DatabaseService from '@backend/services/databaseService'
-import logger from '@backend/utility/logger'
-import environment from '@backend/utility/serverEnvironment'
-import {resetCombinationsDatabase} from '@backend/database/resetCombinationsDatabase'
-import {cleanupResidualDatabaseFiles} from '@backend/database/cleanupResidualDatabaseFiles'
+import DatabaseService from './services/databaseService'
+import logger from './utility/logger'
+import environment from './utility/serverEnvironment'
+import {resetCombinationsDatabase} from './database/resetCombinationsDatabase'
+import {cleanupResidualDatabaseFiles} from './database/cleanupResidualDatabaseFiles'
 
 environment.load()
 
@@ -22,7 +22,7 @@ const runDatabaseScripts = () => {
 const checkDatabaseInitialisation = async () => {
     const databaseService = new DatabaseService()
     logger.info(
-        `Checking if database for environment '${process.env[ENVIRONMENT_SPECIFIER_FLAG_NAME]}' is initialised...`
+        `Checking if database for environment '${process.env[ENVIRONMENT_SPECIFIER_FLAG_NAME]}' is initialised...`,
     )
     const initialised = await databaseService.databaseIsInitialised()
     if (!initialised) {
@@ -35,7 +35,7 @@ const startServer = () => {
     app.listen(process.env['PORT'], () => {
         logger.info(`Server is running at http://localhost:${process.env['PORT']}`)
     })
-    app.on('error', err => logger.error(`Server error: ${err}`))
+    app.on('error', (err: any) => logger.error(`Server error: ${err}`))
 }
 
 checkDatabaseInitialisation().then(() => {

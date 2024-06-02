@@ -1,15 +1,15 @@
 import fs from 'fs'
 import dotenv from 'dotenv'
 import {container, singleton} from 'tsyringe'
-import logger from '@backend/utility/logger'
+import logger from '../../backend/utility/logger'
 import {
     ENV_DIRECTORY,
     ENVIRONMENT_SPECIFIER_FLAG_NAME,
     MONGO_DOCKER_SERVICE_NAME,
     MONGO_DOCKER_SERVICE_PORT,
     SERVER_ENVIRONMENT_TOKEN,
-} from '@src/globals'
-import ServerEnvironments from '~types/ServerEnvironments'
+} from '../../globals'
+import ServerEnvironments from '../../types/ServerEnvironments'
 
 const createServerEnvironment = (): ServerEnvironment => {
     logger.info('Creating server environment...')

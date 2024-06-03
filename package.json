@@ -1,6 +1,8 @@
 {
   "author": {
-    "name": "Thomas Griffin"
+    "name": "Thomas Griffin",
+    "email": "40271229+Thomas-Griffin@users.noreply.github.com",
+    "url": "https://thomas-griffin.github.io"
   },
   "description": "An application for Impossible Creatures that allows users to view all creature combinations.",
   "name": "combinations-web-app",

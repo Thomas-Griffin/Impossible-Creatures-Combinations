@@ -15,7 +15,7 @@ import SortingType from '../../types/SortingType'
 import CombinationsRequestBody from '../../types/CombinationsRequestBody'
 import Mod from '../../types/Mod'
 import CombinationAbilities from '../../types/CombinationAbilities'
-import {escapeRegExp} from 'lodash'
+import escapeRegExp from 'lodash/escapeRegExp'
 
 class CombinationsService {
     combinationRequestSchema: Joi.ObjectSchema

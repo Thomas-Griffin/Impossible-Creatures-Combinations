@@ -1,6 +1,6 @@
 import {Router} from 'express'
 import CombinationService from '../services/combinationsService'
-import cache from '../app'
+import cache from '../combinationsServer'
 
 const router = Router()
 

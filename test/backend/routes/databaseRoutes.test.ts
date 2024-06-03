@@ -1,14 +1,14 @@
 import request from 'supertest'
 
 import {MongoClient} from 'mongodb'
-import app from '../../../src/backend/app'
+import combinationsServer from '../../../src/backend/combinationsServer'
 import {MOD_COMBINATION_TOTALS} from '../../../src/globals'
 
 describe('Database routes', () => {
     describe('GET /database/reset', () => {
         it.skip('should reset the database', async () => {
             const mongoConnection: MongoClient = await MongoClient.connect(process.env['MONGO_URL'] as string)
-            const response = await request(app).get('/database/reset')
+            const response = await request(combinationsServer).get('/database/reset')
             let totals = []
             for (const modCombinationTotal of MOD_COMBINATION_TOTALS) {
                 let total = await mongoConnection

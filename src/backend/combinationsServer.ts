@@ -30,19 +30,19 @@ const allowCrossDomain = (_request: express.Request, response: express.Response,
     next()
 }
 
-const app = express()
+const combinationsServer = express()
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerFile))
-app.use(morgan('dev'))
-app.use(express.json())
-app.use(express.urlencoded({extended: false}))
-app.use(allowCrossDomain)
-app.disable('etag')
+combinationsServer.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerFile))
+combinationsServer.use(morgan('dev'))
+combinationsServer.use(express.json())
+combinationsServer.use(express.urlencoded({extended: false}))
+combinationsServer.use(allowCrossDomain)
+combinationsServer.disable('etag')
 
-app.use('/mods', modsRouter)
-app.use('/combinations', combinationsRouter)
-app.use('/database', databaseInitializerRouter)
-app.use('/visualisations', visualisationsRouter)
+combinationsServer.use('/mods', modsRouter)
+combinationsServer.use('/combinations', combinationsRouter)
+combinationsServer.use('/database', databaseInitializerRouter)
+combinationsServer.use('/visualisations', visualisationsRouter)
 
-app.use(cacheMiddleware)
-export default app
+combinationsServer.use(cacheMiddleware)
+export default combinationsServer

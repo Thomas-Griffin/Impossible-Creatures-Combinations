@@ -2,7 +2,7 @@ import request from 'supertest'
 
 import VisualisationsService from '../../../src/backend/services/visualisationsService'
 import {COMBINATIONS_COLLECTION_NAME, DEFAULT_MOD} from '../../../src/globals'
-import app from '../../../src/backend/app'
+import combinationsServer from '../../../src/backend/combinationsServer'
 
 describe('Visualisations routes', () => {
     const testVisualisationsService = new VisualisationsService()
@@ -58,7 +58,7 @@ describe('Visualisations routes', () => {
                     },
                 ])
 
-            await request(app)
+            await request(combinationsServer)
                 .post('/visualisations/attribute-chart')
                 .send({
                     mod: DEFAULT_MOD,

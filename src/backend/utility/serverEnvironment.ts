@@ -26,11 +26,10 @@ class ServerEnvironment {
         if (this.isValidEnvironment()) {
             logger.info(`ENVIRONMENT variable is valid. Current value: ${process.env[ENVIRONMENT_SPECIFIER_FLAG_NAME]}`)
         } else {
-            throw new Error(
-                `Environment variable ${ENVIRONMENT_SPECIFIER_FLAG_NAME} is not set. Please set it to any of ${Object.values(ServerEnvironments)}. Current value: ${
-                    process.env[ENVIRONMENT_SPECIFIER_FLAG_NAME]
-                }`
+            logger.info(
+                `Environment variable ${ENVIRONMENT_SPECIFIER_FLAG_NAME} is not set. Defaulting to ${ServerEnvironments.PRODUCTION}.`,
             )
+            process.env[ENVIRONMENT_SPECIFIER_FLAG_NAME] = ServerEnvironments.PRODUCTION
         }
         if (process.env[ENVIRONMENT_SPECIFIER_FLAG_NAME] !== ServerEnvironments.PRODUCTION)
             dotenv.config({
@@ -48,7 +47,7 @@ class ServerEnvironment {
             dotenv.config({path: `${ENV_DIRECTORY}/production.example.env`, override: true, debug: true})
             if (this.isInDockerContainer()) {
                 logger.info(
-                    `Running in docker container, setting MONGO_URL to mongodb://${MONGO_DOCKER_SERVICE_NAME}:${MONGO_DOCKER_SERVICE_PORT}`
+                    `Running in docker container, setting MONGO_URL to mongodb://${MONGO_DOCKER_SERVICE_NAME}:${MONGO_DOCKER_SERVICE_PORT}`,
                 )
                 process.env['MONGO_URL'] = `mongodb://${MONGO_DOCKER_SERVICE_NAME}:${MONGO_DOCKER_SERVICE_PORT}`
             }
@@ -57,20 +56,23 @@ class ServerEnvironment {
 
     isValidEnvironment(): boolean {
         logger.info(`Checking if environment variable 'ENVIRONMENT' is set...`)
-        this.verify(ENVIRONMENT_SPECIFIER_FLAG_NAME, false, Object.values(ServerEnvironments))
-        return true
+        return this.verify(ENVIRONMENT_SPECIFIER_FLAG_NAME, false, Object.values(ServerEnvironments))
     }
 
-    verify(variable: string, allowEmpty?: boolean, allowedValues?: string[]): void {
+    verify(variable: string, allowEmpty?: boolean, allowedValues?: string[]): boolean {
         if (!process.env[variable]) {
-            throw this.generateVariableErrorMessage(variable, 'is not set')
+            logger.error(this.generateVariableErrorMessage(variable, 'is not set'))
+            return false
         }
         if (!allowEmpty && process.env[variable] === '') {
-            throw this.generateVariableErrorMessage(variable, 'is empty')
+            logger.error(this.generateVariableErrorMessage(variable, 'is empty'))
+            return false
         }
         if (allowedValues && !allowedValues.includes(process.env[variable] || '')) {
-            throw this.generateVariableErrorMessage(variable, `is not one of the allowed values: ${allowedValues}`)
+            logger.error(this.generateVariableErrorMessage(variable, `is not one of the allowed values: ${allowedValues}`))
+            return false
         }
+        return true
     }
 
     isInDockerContainer(): boolean {

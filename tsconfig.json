@@ -9,7 +9,7 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "jsxImportSource": "vue",
-    "module": "ESNext",
+    "module": "commonjs",
     "moduleResolution": "Node",
     "noEmit": false,
     "noImplicitThis": true,

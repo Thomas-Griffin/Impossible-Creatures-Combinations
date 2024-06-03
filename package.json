@@ -7,7 +7,6 @@
   "description": "An application for Impossible Creatures that allows users to view all creature combinations.",
   "name": "combinations-web-app",
   "version": "1.0.0",
-  "type": "module",
   "private": "true",
   "main": "dist/src/backend/start.js",
   "scripts": {

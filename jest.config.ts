@@ -9,5 +9,6 @@ const config: JestConfigWithTsJest = {
     testEnvironmentOptions: {
         'jest-mongodb': jestMongodbConfig,
     },
+    testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/dist/'],
 }
 export default config

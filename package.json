@@ -73,7 +73,7 @@
     "swagger-autogen": "^2.23.7",
     "swagger-ui-express": "^5.0.1",
     "ts-jest": "^29.1.4",
-    "tsx": "^4.11.0",
+    "tsx": "^4.15.6",
     "typescript": "^5.4.5",
     "vue": "^3.4.27",
     "vue-router": "^4.3.2"

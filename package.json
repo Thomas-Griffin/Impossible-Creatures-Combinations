@@ -75,7 +75,7 @@
     "@types/lodash": "^4.17.4",
     "@types/morgan": "^1.9.9",
     "@types/msgpack-lite": "^0.1.11",
-    "@types/node": "^20.14.1",
+    "@types/node": "^20.14.9",
     "@types/plotly.js-dist-min": "^2.3.4",
     "@types/supertest": "^6.0.2",
     "@types/swagger-ui-express": "^4.1.6",

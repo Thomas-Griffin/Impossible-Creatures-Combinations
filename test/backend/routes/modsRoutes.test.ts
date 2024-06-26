@@ -1,8 +1,8 @@
 import request from 'supertest'
-import ModService from '@backend/services/modService'
-import app from '@backend/app'
-import {DEFAULT_MOD, MOD_COLLECTION_NAME} from '@src/globals'
-import mods from '@backend/database/mods'
+import ModService from '../../../src/backend/services/modService'
+import combinationsServer from '../../../src/backend/combinationsServer'
+import {DEFAULT_MOD, MOD_COLLECTION_NAME} from '../../../src/globals'
+import mods from '../../../src/backend/database/mods'
 
 describe('Mods routes', () => {
     const modService = new ModService()
@@ -25,7 +25,7 @@ describe('Mods routes', () => {
     describe('GET /mods/name/:name', () => {
         it('should return a mod by name', async () => {
             await modService.client.connect()
-            const response = await request(app).get(`/mods/${DEFAULT_MOD.name}`)
+            const response = await request(combinationsServer).get(`/mods/${DEFAULT_MOD.name}`)
             expect(response.status).toEqual(200)
             expect(response.body).toHaveLength(1)
         })
@@ -34,7 +34,7 @@ describe('Mods routes', () => {
     describe('GET /mods', () => {
         it('should return all mods', async () => {
             await modService.client.connect()
-            const response = await request(app).get('/mods')
+            const response = await request(combinationsServer).get('/mods')
             expect(response.status).toEqual(200)
             expect(response.body).toEqual(mods)
         })

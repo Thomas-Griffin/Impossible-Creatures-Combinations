@@ -1,4 +1,4 @@
-import UnprocessedCombinationAttributeNames from '~types/UnprocessedCombinationAttributeNames'
+import UnprocessedCombinationAttributeNames from './UnprocessedCombinationAttributeNames'
 
 interface UnprocessedCombination {
     attributes: {[key in UnprocessedCombinationAttributeNames | string]: number[]}

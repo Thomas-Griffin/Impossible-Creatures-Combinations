@@ -28,9 +28,9 @@ import {
     WATER_SPEED,
     WINGS,
 } from './modSchemaColumns'
-import ModSchemaColumn from '~types/ModSchemaColumn'
-import ModSchema from '~types/ModSchema'
-import ModNames from '~types/ModNames'
+import ModSchemaColumn from '../../types/ModSchemaColumn'
+import ModSchema from '../../types/ModSchema'
+import ModNames from '../../types/ModNames'
 
 export const vanillaModSchemaColumns: ModSchemaColumn[] = [
     ANIMAL1,

@@ -1,13 +1,13 @@
-import {testCombination1, testCombination2, testCombination3} from '@test/backend/constants/global'
-import {COMBINATIONS_COLLECTION_NAME, DEFAULT_MOD} from '@src/globals'
+import {testCombination1, testCombination2, testCombination3} from '../constants/global'
+import {COMBINATIONS_COLLECTION_NAME, DEFAULT_MOD} from '../../../src/globals'
 
 import type {DataTableFilterMeta} from 'primevue/datatable'
 import {FilterMatchMode, FilterOperator} from 'primevue/api'
-import CombinationsService from '@backend/services/combinationsService'
-import app from '@backend/app'
+import CombinationsService from '../../../src/backend/services/combinationsService'
+import combinationsServer from '../../../src/backend/combinationsServer'
 import request from 'supertest'
-import CombinationsRequestBody from '~types/CombinationsRequestBody'
-import CombinationAttributeNames from '~types/CombinationAttributeNames'
+import CombinationsRequestBody from '../../../src/types/CombinationsRequestBody'
+import CombinationAttributeNames from '../../../src/types/CombinationAttributeNames'
 import {removeId} from '../utility/removeId'
 
 describe('Combinations routes', () => {
@@ -36,7 +36,7 @@ describe('Combinations routes', () => {
 
     describe('Post /combinations', () => {
         it('should return all combinations', async () => {
-            const response = await request(app)
+            const response = await request(combinationsServer)
                 .post('/combinations')
                 .send({
                     mod: DEFAULT_MOD,
@@ -48,7 +48,7 @@ describe('Combinations routes', () => {
         })
 
         it('should return the combinations that match the filter (1 filter, AND operator)', async () => {
-            const response = await request(app)
+            const response = await request(combinationsServer)
                 .post('/combinations')
                 .send({
                     mod: DEFAULT_MOD,
@@ -66,7 +66,7 @@ describe('Combinations routes', () => {
             expect(removeId(response.body[0])).toEqual(removeId(testCombination1))
         })
         it('should return the combinations that match the filter (2 filters, AND operator)', async () => {
-            const response = await request(app)
+            const response = await request(combinationsServer)
                 .post('/combinations')
                 .send({
                     mod: DEFAULT_MOD,
@@ -88,7 +88,7 @@ describe('Combinations routes', () => {
             expect(response.body.map(removeId)).toEqual([testCombination1, testCombination2].map(removeId))
         })
         it('should return the combinations that match the filter (2 filters, OR operator)', async () => {
-            const response = await request(app)
+            const response = await request(combinationsServer)
                 .post('/combinations')
                 .send({
                     mod: DEFAULT_MOD,
@@ -110,7 +110,7 @@ describe('Combinations routes', () => {
             expect(response.body.map(removeId)).toEqual([testCombination1].map(removeId))
         })
         it('should return the combinations that match the filter (Abilities.ability)', async () => {
-            const response = await request(app)
+            const response = await request(combinationsServer)
                 .post('/combinations')
                 .send({
                     mod: DEFAULT_MOD,
@@ -128,7 +128,7 @@ describe('Combinations routes', () => {
             expect(removeId(response.body[0])).toEqual(removeId(testCombination2))
         })
         it('should return the combinations that match the filter (Abilities.source)', async () => {
-            const response = await request(app)
+            const response = await request(combinationsServer)
                 .post('/combinations')
                 .send({
                     mod: DEFAULT_MOD,
@@ -149,7 +149,7 @@ describe('Combinations routes', () => {
 
     describe('Post /combinations/total', () => {
         it('should return total number of combinations', async () => {
-            const response = await request(app)
+            const response = await request(combinationsServer)
                 .post('/combinations/total')
                 .send({
                     mod: DEFAULT_MOD,
@@ -160,7 +160,7 @@ describe('Combinations routes', () => {
             expect(response.body).toEqual(3)
         })
         it('should return the correct total filtered combinations', async () => {
-            const response = await request(app)
+            const response = await request(combinationsServer)
                 .post('/combinations/total')
                 .send({
                     mod: DEFAULT_MOD,

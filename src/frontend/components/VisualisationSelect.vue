@@ -9,7 +9,7 @@
 </template>
 <script lang="ts" setup>
 import {ref} from 'vue'
-import CombinationVisualisation from '~types/CombinationVisualisation'
+import CombinationVisualisation from '../../types/CombinationVisualisation'
 
 const charts = ref<CombinationVisualisation[]>([])
 

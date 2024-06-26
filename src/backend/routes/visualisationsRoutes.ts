@@ -1,6 +1,6 @@
 import {Router} from 'express'
-import VisualisationsService from '@src/backend/services/visualisationsService'
-import cache from '@src/backend/app'
+import VisualisationsService from '../services/visualisationsService'
+import cache from '../combinationsServer'
 
 const router = Router()
 

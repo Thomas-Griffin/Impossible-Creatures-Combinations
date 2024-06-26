@@ -1,21 +1,21 @@
-import MongoService from '@backend/services/mongoService'
+import MongoService from '../services/mongoService'
 import Joi from 'joi'
 
 import type {Filter, MongoClient, SortDirection, WithId} from 'mongodb'
-import logger from '@backend/utility/logger'
+import logger from '../utility/logger'
 
 import type {DataTableFilterMeta, DataTableFilterMetaData, DataTableOperatorFilterMetaData} from 'primevue/datatable'
-import {COMBINATIONS_COLLECTION_NAME, DEFAULT_MOD, JOI_MOD_SCHEMA} from '@src/globals'
-import CombinationFilterQuery from '~types/CombinationFilterQuery'
-import CombinationQueryFilterOperators from '~types/CombinationQueryFilterOperators'
-import CombinationAttributeNames from '~types/CombinationAttributeNames'
-import MinMaxRequestBody from '~types/MinMaxRequestBody'
-import Combination from '~types/Combination'
-import SortingType from '~types/SortingType'
-import CombinationsRequestBody from '~types/CombinationsRequestBody'
-import Mod from '~types/Mod'
-import CombinationAbilities from '~types/CombinationAbilities'
-import {escapeRegExp} from 'lodash'
+import {COMBINATIONS_COLLECTION_NAME, DEFAULT_MOD, JOI_MOD_SCHEMA} from '../../globals'
+import CombinationFilterQuery from '../../types/CombinationFilterQuery'
+import CombinationQueryFilterOperators from '../../types/CombinationQueryFilterOperators'
+import CombinationAttributeNames from '../../types/CombinationAttributeNames'
+import MinMaxRequestBody from '../../types/MinMaxRequestBody'
+import Combination from '../../types/Combination'
+import SortingType from '../../types/SortingType'
+import CombinationsRequestBody from '../../types/CombinationsRequestBody'
+import Mod from '../../types/Mod'
+import CombinationAbilities from '../../types/CombinationAbilities'
+import escapeRegExp from 'lodash/escapeRegExp'
 
 class CombinationsService {
     combinationRequestSchema: Joi.ObjectSchema
@@ -165,13 +165,6 @@ class CombinationsService {
         }
     }
 
-    toCollectionName(mod: Mod | undefined) {
-        if (mod === null || mod === undefined) {
-            return ''
-        }
-        return `${mod.name} ${mod.version}`
-    }
-
     buildFiltersQuery(body: CombinationsRequestBody): CombinationFilterQuery {
         const defaultSorting = {column: CombinationAttributeNames.ANIMAL_1, order: SortingType.DESCENDING}
         if (body === null) {
@@ -241,20 +234,11 @@ class CombinationsService {
         filterQueries: CombinationFilterQuery[],
         operator?: CombinationQueryFilterOperators,
     ): CombinationFilterQuery {
-        switch (operator) {
-            case 'AND':
-                return {
-                    $and: filterQueries,
-                } as CombinationFilterQuery
-            case 'OR':
-                return {
-                    $or: filterQueries,
-                } as CombinationFilterQuery
-            default:
-                return {
-                    $and: filterQueries,
-                } as CombinationFilterQuery
-        }
+        return operator === 'OR' ? {
+            $or: filterQueries,
+        } as CombinationFilterQuery : {
+            $and: filterQueries,
+        } as CombinationFilterQuery
     }
 
     createFilterQuery(
@@ -275,85 +259,82 @@ class CombinationsService {
         return filterQuery
     }
 
-    mapFiltersToQuery(filters: DataTableFilterMeta): CombinationFilterQuery {
-        let query: CombinationFilterQuery = {} as CombinationFilterQuery
-        for (let field in filters) {
-            let attribute: CombinationAttributeNames = field as CombinationAttributeNames
-            if (
-                filters.hasOwnProperty(attribute) &&
-                Object.values(CombinationAttributeNames).includes(attribute as CombinationAttributeNames)
-            ) {
-                let filterAsString: string | null = this.castAsString(filters[attribute])
-                let filterAsFilterMetaData: DataTableFilterMetaData | null = this.castAsFilterMetaData(
-                    filters[attribute],
-                )
-                let filterAsOperatorFilterMetaData: DataTableOperatorFilterMetaData | null =
-                    this.castAsOperatorFilterMetaData(filters[attribute])
-                if (filterAsString && !filterAsFilterMetaData && !filterAsOperatorFilterMetaData) {
-                    ;(query as CombinationFilterQuery)[attribute] = {$regex: new RegExp(escapeRegExp(filterAsString), 'i')}
-                } else if (!filterAsString && filterAsFilterMetaData && !filterAsOperatorFilterMetaData) {
-                    query = {...query, ...this.createFilterQuery(attribute, filterAsFilterMetaData)}
-                } else if (!filterAsString && !filterAsFilterMetaData && filterAsOperatorFilterMetaData) {
-                    if (filterAsOperatorFilterMetaData?.constraints?.length > 1) {
-                        let mergedFilterQueries = this.mergeFilterQueries(
-                            filterAsOperatorFilterMetaData?.constraints.map(
-                                (dataTableFilterMetaData: DataTableFilterMetaData) => {
-                                    return this.createFilterQuery(attribute, dataTableFilterMetaData)
-                                },
-                            ),
-                            filterAsOperatorFilterMetaData.operator as CombinationQueryFilterOperators,
-                        )
-                        if (
-                            query?.$and &&
-                            filterAsOperatorFilterMetaData.operator === CombinationQueryFilterOperators.AND
-                        ) {
-                            if (Array.isArray(query.$and)) {
-                                if (mergedFilterQueries?.$and && Array.isArray(mergedFilterQueries.$and)) {
-                                    query.$and = [...query.$and, ...mergedFilterQueries.$and]
-                                } else {
-                                    query.$and = [...query.$and, mergedFilterQueries]
-                                }
-                            }
-                        }
-                        if (
-                            query?.$or &&
-                            filterAsOperatorFilterMetaData.operator === CombinationQueryFilterOperators.OR
-                        ) {
-                            if (Array.isArray(query.$or)) {
-                                if (mergedFilterQueries?.$or && Array.isArray(mergedFilterQueries.$or)) {
-                                    query.$or = [...query.$or, ...mergedFilterQueries.$or]
-                                } else {
-                                    query.$or = [...query.$or, mergedFilterQueries]
-                                }
-                            }
-                        } else {
-                            if (filterAsOperatorFilterMetaData.operator === CombinationQueryFilterOperators.AND) {
-                                if (mergedFilterQueries?.$and && Array.isArray(mergedFilterQueries.$and)) {
-                                    query.$and = mergedFilterQueries.$and as CombinationFilterQuery[]
-                                }
-                            }
-                            if (filterAsOperatorFilterMetaData.operator === CombinationQueryFilterOperators.OR) {
-                                if (mergedFilterQueries?.$or && Array.isArray(mergedFilterQueries.$or)) {
-                                    query.$or = mergedFilterQueries.$or as CombinationFilterQuery[]
-                                }
-                            } else {
-                                query = {...query, ...mergedFilterQueries}
-                            }
-                        }
-                    } else if (filterAsOperatorFilterMetaData?.constraints?.length === 1) {
-                        let constraint = filterAsOperatorFilterMetaData.constraints[0]
-                        if (constraint) {
-                            query = {...query, ...this.createFilterQuery(attribute, constraint)}
-                        }
-                    }
-                }
+    handleStringFilter(query: CombinationFilterQuery, filters: DataTableFilterMeta, attribute: CombinationAttributeNames) {
+        let filterAsString: string | null = this.castAsString(filters[attribute])
+        if (filterAsString) {
+            (query)[attribute] = {$regex: new RegExp(escapeRegExp(filterAsString), 'i')}
+        }
+        return query
+    }
+
+    handleFilterMetaData(query: CombinationFilterQuery, filters: DataTableFilterMeta, attribute: CombinationAttributeNames) {
+        let filterAsFilterMetaData: DataTableFilterMetaData | null = this.castAsFilterMetaData(filters[attribute])
+        if (filterAsFilterMetaData) {
+            query = {...query, ...this.createFilterQuery(attribute, filterAsFilterMetaData)}
+        }
+        return query
+    }
+
+    handleOperatorFilterMetaData(query: CombinationFilterQuery, filters: DataTableFilterMeta, attribute: CombinationAttributeNames) {
+        let filterAsOperatorFilterMetaData: DataTableOperatorFilterMetaData | null = this.castAsOperatorFilterMetaData(filters[attribute])
+        if (filterAsOperatorFilterMetaData && filterAsOperatorFilterMetaData?.constraints?.length > 1) {
+            let mergedFilterQueries = this.mergeFilterQueries(
+                filterAsOperatorFilterMetaData?.constraints.map(
+                    (dataTableFilterMetaData: DataTableFilterMetaData) => {
+                        return this.createFilterQuery(attribute, dataTableFilterMetaData)
+                    },
+                ),
+                filterAsOperatorFilterMetaData.operator as CombinationQueryFilterOperators,
+            )
+            query = this.mergeCombinationFilters(query, filterAsOperatorFilterMetaData, mergedFilterQueries)
+        } else if (filterAsOperatorFilterMetaData && filterAsOperatorFilterMetaData?.constraints?.length === 1) {
+            let constraint = filterAsOperatorFilterMetaData.constraints[0]
+            if (constraint) {
+                query = {...query, ...this.createFilterQuery(attribute, constraint)}
             }
         }
         return query
     }
 
+
+    mergeCombinationFilters(query: CombinationFilterQuery, filterAsOperatorFilterMetaData: DataTableOperatorFilterMetaData, mergedFilterQueries: CombinationFilterQuery) {
+        if (query?.$and && filterAsOperatorFilterMetaData.operator === CombinationQueryFilterOperators.AND && Array.isArray(query.$and)) {
+            query.$and = mergedFilterQueries?.$and && Array.isArray(mergedFilterQueries.$and) ? [...query.$and, ...mergedFilterQueries.$and] : [...query.$and, mergedFilterQueries]
+        }
+        if (query?.$or && filterAsOperatorFilterMetaData.operator === CombinationQueryFilterOperators.OR) {
+            if (Array.isArray(query.$or)) {
+                query.$or = mergedFilterQueries?.$or && Array.isArray(mergedFilterQueries.$or) ? [...query.$or, ...mergedFilterQueries.$or] : [...query.$or, mergedFilterQueries]
+            }
+        } else {
+            if (filterAsOperatorFilterMetaData.operator === CombinationQueryFilterOperators.AND && mergedFilterQueries?.$and && Array.isArray(mergedFilterQueries.$and)) {
+                query.$and = mergedFilterQueries.$and
+            }
+            if (filterAsOperatorFilterMetaData.operator === CombinationQueryFilterOperators.OR) {
+                if (mergedFilterQueries?.$or && Array.isArray(mergedFilterQueries.$or)) {
+                    query.$or = mergedFilterQueries.$or
+                }
+            } else {
+                return {...query, ...mergedFilterQueries}
+            }
+        }
+        return query
+    }
+
+    mapFiltersToQuery(filters: DataTableFilterMeta): CombinationFilterQuery {
+        let query: CombinationFilterQuery = {} as CombinationFilterQuery
+        Object.keys(filters).map((field: string) => {
+            let attribute: CombinationAttributeNames = field as CombinationAttributeNames
+            if (filters.hasOwnProperty(attribute) && Object.values(CombinationAttributeNames).includes(attribute)) {
+                query = this.handleStringFilter(query, filters, attribute)
+                query = this.handleFilterMetaData(query, filters, attribute)
+                query = this.handleOperatorFilterMetaData(query, filters, attribute)
+            }
+        })
+        return query
+    }
+
     castAsString(value: any): string | null {
-        return typeof value === 'string' && !(typeof value === 'object') ? value : null
+        return typeof value === 'string' && typeof value !== 'object' ? value : null
     }
 
     castAsFilterMetaData(value: any): DataTableFilterMetaData | null {

@@ -1,6 +1,6 @@
-import {DEFAULT_MOD, MOD_COMBINATION_TOTALS} from '@src/globals'
-import Combination from '~types/Combination'
-import UnprocessedCombination from '~types/UnprocessedCombination'
+import {DEFAULT_MOD, MOD_COMBINATION_TOTALS} from '../../../src/globals'
+import Combination from '../../../src/types/Combination'
+import UnprocessedCombination from '../../../src/types/UnprocessedCombination'
 
 export const testUnprocessedCombinations: UnprocessedCombination[] = [
     {

@@ -1,6 +1,6 @@
-import ModService from '@backend/services/modService'
+import ModService from '../services/modService'
 import {Router} from 'express'
-import cache from '@backend/app'
+import cache from '../combinationsServer'
 
 const router = Router()
 const modService = new ModService()

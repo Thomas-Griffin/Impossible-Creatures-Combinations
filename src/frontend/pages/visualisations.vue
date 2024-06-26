@@ -3,6 +3,8 @@
 </template>
 
 <script lang="ts" setup>
+import VisualisationSelect from '../components/VisualisationSelect.vue'
+
 useHead({
     title: 'IC Visualisations',
     meta: [

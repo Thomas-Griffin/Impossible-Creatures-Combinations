@@ -10,8 +10,8 @@
 
 <script lang="ts" setup>
 import Dropdown from 'primevue/dropdown'
-import useModStore from '~store/modStore'
-import Mod from '~types/Mod'
+import useModStore from '../store/modStore'
+import Mod from '../../types/Mod'
 
 const modStore = useModStore()
 

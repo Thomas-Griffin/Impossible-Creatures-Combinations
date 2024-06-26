@@ -1,24 +1,25 @@
 import {access, constants, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync} from 'fs'
 
-import logger from '@backend/utility/logger'
+import logger from '../utility/logger'
 
 import {
     COMBINATIONS_COLLECTION_NAME,
     MOD_COLLECTION_NAME,
     MOD_COMBINATION_TOTALS,
     MOD_DIRECTORY_PATH,
-} from '@src/globals'
-import schemas from '@backend/database/modSchemas'
+} from '../../globals'
+import schemas from '../database/modSchemas'
 import {MongoClient} from 'mongodb'
-import MongoService from '@backend/services/mongoService'
-import {cleanupResidualDatabaseFiles} from '@backend/database/cleanupResidualDatabaseFiles'
-import {decompressMods} from '@backend/database/decompressMods'
-import abilities from '@backend/abilities'
-import ModSchema from '~types/ModSchema'
-import ModSchemaColumn from '~types/ModSchemaColumn'
-import Mod from '~types/Mod'
-import Combination from '~types/Combination'
-import UnprocessedCombination from '~types/UnprocessedCombination'
+import MongoService from '../services/mongoService'
+import {cleanupResidualDatabaseFiles} from '../database/cleanupResidualDatabaseFiles'
+import {decompressMods} from '../database/decompressMods'
+import abilities from '../abilities'
+import ModSchema from '../../types/ModSchema'
+import ModSchemaColumn from '../../types/ModSchemaColumn'
+import Mod from '../../types/Mod'
+import Combination from '../../types/Combination'
+import UnprocessedCombination from '../../types/UnprocessedCombination'
+import ModColumn from '../../types/ModColumn'
 
 class DatabaseService {
     schema: ModSchema[] = []
@@ -155,17 +156,20 @@ class DatabaseService {
     }
 
     getPropertyValue(combination: UnprocessedCombination | undefined, path: any[]): string | number | undefined {
-        return path.reduce((obj, prop) => obj && obj[prop], combination)
+        return path.reduce((obj, prop) => obj?.[prop], combination)
     }
 
     getAnimalNameLimbBelongsTo(combination: UnprocessedCombination, limbIndex: number) {
-        return limbIndex === 1
-            ? this.snakeCaseToTitleCase(combination['stock_1'])
-            : limbIndex === 2
-                ? this.snakeCaseToTitleCase(combination['stock_2'])
-                : limbIndex === -1
-                    ? 'Inherent'
-                    : 'None'
+        switch (limbIndex) {
+            case 1:
+                return this.snakeCaseToTitleCase(combination['stock_1'])
+            case 2:
+                return this.snakeCaseToTitleCase(combination['stock_2'])
+            case -1:
+                return 'Inherent'
+            default:
+                return 'None'
+        }
     }
 
     async processAndSaveCombinations(modSchema: ModSchema, combinations: UnprocessedCombination[] | null = null) {
@@ -176,41 +180,7 @@ class DatabaseService {
             logger.error('No combinations were found for mod: ' + modSchema.name + ' ' + modSchema.version)
             return
         }
-        let processedCombinations: Combination[] = []
-        for (const combination of combinations) {
-            let processedCombination: Combination = {
-                Mod: {name: modSchema.name, version: modSchema.version} as Mod,
-                Abilities: this.getAbilities(combination),
-                'Ability Sources': this.getAbilitySources(combination),
-                'Air Speed': this.roundToDecimal(combination.attributes.airspeed_val?.[1] || 0, 1),
-                'Animal 1': this.snakeCaseToTitleCase(combination.stock_1),
-                'Animal 2': this.snakeCaseToTitleCase(combination.stock_2),
-                Coal: this.roundToDecimal(combination.attributes.cost?.[1] || 0, 1),
-                Defence: this.roundToDecimal((combination.attributes.armour?.[1] || 0) * 100, 1),
-                EHP: 0,
-                Electricity: this.roundToDecimal(combination.attributes.costrenew?.[1] || 0, 1),
-                'Front Legs': this.getAnimalNameLimbBelongsTo(combination, combination.composition?.[0] || 0),
-                Head: this.getAnimalNameLimbBelongsTo(combination, combination.composition?.[2] || 0),
-                Health: this.roundToDecimal(combination.attributes.health_val?.[1] || 0, 1),
-                'Land Speed': this.roundToDecimal(combination.attributes.landspeed_val?.[1] || 0, 1),
-                'Melee Damage': this.roundToDecimal(combination.attributes.damage_val?.[1] || 0, 1),
-                Pincers: this.getAnimalNameLimbBelongsTo(combination, combination.composition?.[5] || 0),
-                'Population Size': combination.attributes.popsize?.[1] || 0,
-                Power: this.roundToDecimal(combination.attributes?.Power?.[1] || 0, 1),
-                'Rear Legs': this.getAnimalNameLimbBelongsTo(combination, combination.composition?.[1] || 0),
-                'Research Level': combination.attributes.creature_rank?.[1] || 0,
-                SDT: 0,
-                'Sight Radius': this.roundToDecimal(combination.attributes.sight_radius1?.[1] || 0, 1),
-                Size: this.roundToDecimal(combination.attributes.size?.[1] || 0, 1),
-                Tail: this.getAnimalNameLimbBelongsTo(combination, combination.composition?.[3] || 0),
-                Torso: this.getAnimalNameLimbBelongsTo(combination, combination.composition?.[4] || 0),
-                'Water Speed': this.roundToDecimal(combination.attributes.waterspeed_val?.[1] || 0, 1),
-                Wings: this.getAnimalNameLimbBelongsTo(combination, combination.composition?.[6] || 0),
-            }
-            processedCombination.EHP = this.calculateEHP(processedCombination)
-            processedCombination.SDT = this.calculateSelfDestructionTime(processedCombination)
-            processedCombinations.push(processedCombination)
-        }
+        let processedCombinations: Combination[] = this.processCombinations(combinations, modSchema)
         await this.client
             .db(process.env['MONGO_DB_NAME'])
             .collection(COMBINATIONS_COLLECTION_NAME)
@@ -218,6 +188,45 @@ class DatabaseService {
         logger.info(
             `Collection '${COMBINATIONS_COLLECTION_NAME}' was populated with ${processedCombinations.length} documents.`,
         )
+    }
+
+    processCombinations(combinations: Array<UnprocessedCombination>, modSchema: ModSchema) {
+        return combinations.map((combination: UnprocessedCombination) => this.processCombination(modSchema, combination))
+    }
+
+    processCombination(modSchema: ModSchema, combination: UnprocessedCombination): Combination {
+        let processedCombination: Combination = {
+            Mod: {name: modSchema.name, version: modSchema.version} as Mod,
+            Abilities: this.getAbilities(combination),
+            'Ability Sources': this.getAbilitySources(combination),
+            'Air Speed': this.processAttribute('airspeed_val', combination),
+            'Animal 1': this.snakeCaseToTitleCase(combination.stock_1),
+            'Animal 2': this.snakeCaseToTitleCase(combination.stock_2),
+            Coal: this.processAttribute('cost', combination),
+            Defence: this.processAttribute('armour', combination) ,
+            EHP: 0,
+            Electricity: this.processAttribute('costrenew', combination),
+            'Front Legs': this.processLimb(combination, 0),
+            Head: this.processLimb(combination, 2),
+            Health: this.processAttribute('health_val', combination),
+            'Land Speed': this.processAttribute('landspeed_val', combination),
+            'Melee Damage': this.processAttribute('damage_val', combination),
+            Pincers: this.processLimb(combination, 5),
+            'Population Size': combination.attributes.popsize?.[1] ?? 0,
+            Power: this.processAttribute('Power', combination),
+            'Rear Legs': this.processLimb(combination, 1),
+            'Research Level': combination.attributes.creature_rank?.[1] ?? 0,
+            SDT: 0,
+            'Sight Radius': this.processAttribute('sight_radius1', combination),
+            Size: this.processAttribute('size', combination),
+            Tail: this.processLimb(combination, 3),
+            Torso: this.processLimb(combination, 4),
+            'Water Speed': this.processAttribute('waterspeed_val', combination),
+            Wings: this.processLimb(combination, 6),
+        }
+        processedCombination.EHP = this.calculateEHP(processedCombination)
+        processedCombination.SDT = this.calculateSelfDestructionTime(processedCombination)
+        return processedCombination
     }
 
     getBodyPart(index: number): string {
@@ -257,18 +266,11 @@ class DatabaseService {
     }
 
     calculateEHP(combination: Combination) {
-        if (combination?.Health && combination?.Defence) {
-            return this.roundToDecimal(combination.Health / (1 - combination.Defence / 100), 1)
-        } else {
-            return -0
-        }
+        return combination?.Health && combination?.Defence ? this.roundToDecimal(combination.Health / (1 - combination.Defence / 100), 1) : 0
     }
 
     calculateSelfDestructionTime(processedCombination: Combination) {
-        if (processedCombination?.['Melee Damage'] === undefined || processedCombination?.EHP === undefined) {
-            return 0
-        }
-        return this.roundToDecimal(processedCombination.EHP / processedCombination['Melee Damage'], 1)
+        return processedCombination?.['Melee Damage'] === undefined || processedCombination?.EHP === undefined ? 0 : this.roundToDecimal(processedCombination.EHP / processedCombination['Melee Damage'], 1)
     }
 
     snakeCaseToTitleCase(property: string) {
@@ -278,11 +280,7 @@ class DatabaseService {
     roundToDecimal(num: number, decimalPlaces: number = 1): number {
         const factor = 10 ** decimalPlaces
         const roundedNum = Math.round(num * factor) / factor
-        if (Math.trunc(roundedNum) === roundedNum) {
-            return roundedNum
-        } else {
-            return parseFloat(roundedNum.toFixed(decimalPlaces))
-        }
+        return Math.trunc(roundedNum) === roundedNum ? roundedNum : parseFloat(roundedNum.toFixed(decimalPlaces))
     }
 
     async populateModCollectionWithModData() {
@@ -291,7 +289,7 @@ class DatabaseService {
             let modData = {
                 name: mod.name,
                 version: mod.version,
-                columns: mod.columns.map(column => {
+                columns: mod.columns.map((column: ModColumn) => {
                     return {label: column.label, type: column.type}
                 }),
             }
@@ -391,6 +389,17 @@ class DatabaseService {
         }
     }
 
+    private processAttribute(attribute: string, combination: UnprocessedCombination): number {
+        if (attribute === 'armour') {
+            return this.roundToDecimal(combination.attributes[attribute]?.[1] * 100, 1) ?? 0
+        }
+        return this.roundToDecimal(combination.attributes[attribute]?.[1] ?? 0)
+    }
+
+    private processLimb(combination: UnprocessedCombination, index: number): string {
+        return this.getAnimalNameLimbBelongsTo(combination, combination.composition[index] ?? 0)
+    }
+
     private async updateModMinMaxes(mod: ModSchema, minMaxes: Record<string, {min: number; max: number}>) {
         await this.client
             .db(process.env['MONGO_DB_NAME'])
@@ -399,7 +408,7 @@ class DatabaseService {
                 {name: mod.name, version: mod.version},
                 {
                     $set: {
-                        columns: mod.columns.map(column => ({
+                        columns: mod.columns.map((column: ModColumn) => ({
                             label: column.label,
                             type: column.type,
                             min: minMaxes[column.label]?.min || 0,
@@ -456,12 +465,7 @@ class DatabaseService {
             .collection(COMBINATIONS_COLLECTION_NAME)
             .countDocuments()
         const expectedDocumentCount = MOD_COMBINATION_TOTALS.reduce(
-            (total, modTotal) =>
-                modTotal.name === modTotal.name && modTotal.version === modTotal.version
-                    ? total + modTotal.total
-                    : total,
-            0,
-        )
+            (total: number, modTotal: {name: string, version: string, total: number}) => total + modTotal.total, 0)
         return documentCount === expectedDocumentCount
     }
 }

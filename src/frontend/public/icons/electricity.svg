@@ -2,49 +2,49 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-        xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-        xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-        xmlns:xlink="http://www.w3.org/1999/xlink"
-        version="1.1"
-        id="svg135"
-        width="16"
-        height="16"
-        viewBox="0 0 16 16"
-        sodipodi:docname="resource_electricity.svg"
-        inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)"
-        xmlns="http://www.w3.org/2000/svg"
+  xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+  xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  version="1.1"
+  id="svg135"
+  width="16"
+  height="16"
+  viewBox="0 0 16 16"
+  sodipodi:docname="resource_electricity.svg"
+  inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)"
+  xmlns="http://www.w3.org/2000/svg"
 >
-    <defs
-            id="defs139"/>
-    <sodipodi:namedview
-            id="namedview137"
-            pagecolor="#ffffff"
-            bordercolor="#666666"
-            borderopacity="1.0"
-            inkscape:showpageshadow="2"
-            inkscape:pageopacity="0.0"
-            inkscape:pagecheckerboard="0"
-            inkscape:deskcolor="#d1d1d1"
-            showgrid="false"
-            inkscape:zoom="25.94198"
-            inkscape:cx="25.672674"
-            inkscape:cy="14.84081"
-            inkscape:window-width="2560"
-            inkscape:window-height="1377"
-            inkscape:window-x="1912"
-            inkscape:window-y="-8"
-            inkscape:window-maximized="1"
-            inkscape:current-layer="g141"/>
-    <g
-            inkscape:groupmode="layer"
-            inkscape:label="Image"
-            id="g141">
-        <image
-                width="16"
-                height="16"
-                preserveAspectRatio="none"
-                style="image-rendering:optimizeQuality"
-                xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAm1JREFU
+  <defs
+    id="defs139"/>
+  <sodipodi:namedview
+    id="namedview137"
+    pagecolor="#ffffff"
+    bordercolor="#666666"
+    borderopacity="1.0"
+    inkscape:showpageshadow="2"
+    inkscape:pageopacity="0.0"
+    inkscape:pagecheckerboard="0"
+    inkscape:deskcolor="#d1d1d1"
+    showgrid="false"
+    inkscape:zoom="25.94198"
+    inkscape:cx="25.672674"
+    inkscape:cy="14.84081"
+    inkscape:window-width="2560"
+    inkscape:window-height="1377"
+    inkscape:window-x="1912"
+    inkscape:window-y="-8"
+    inkscape:window-maximized="1"
+    inkscape:current-layer="g141"/>
+  <g
+    inkscape:groupmode="layer"
+    inkscape:label="Image"
+    id="g141">
+    <image
+      width="16"
+      height="16"
+      preserveAspectRatio="none"
+      style="image-rendering:optimizeQuality"
+      xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAm1JREFU
 OI2Fk89OFEEQxn89M7vDDkJ2EUF2FcOfhJgQiV6MMcYDTyDP4Jso8aKJPoDxZOLFxGjwz82oFwxq
 3Eg0cgENqIuwLi7MTk93tYcZQE2Mdal0paq+qq++VovXLjj+siAqMXDu7N9hnDFsLLxGt7YASFtf
 CZLNNX40mpC3cUpxcmaKsnq/X+l52LjDk0sPWPsWc2S0j7Ar4OW7JoGIIzUCygOgf7iXSm0AUgNe
@@ -58,6 +58,6 @@ EOtItKDyYoUwPVlDtzpcv/OKd+sx1UrIod5iphf2NIcVR2BF0FrAOZSC6YlBXNsxe3eBpWbMSH+J
 GSkX8cn5yUW153MzqRBY2f+Mq+3shOOVkP/Zz9giAkGzrak3On8A/O75R2w3/gvh/EwUy8u2fgAA
 AABJRU5ErkJggg==
 "
-                id="image143"/>
-    </g>
+      id="image143"/>
+  </g>
 </svg>

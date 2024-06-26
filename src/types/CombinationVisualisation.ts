@@ -1,5 +1,5 @@
 import {LayoutAxis} from 'plotly.js'
-import CombinationVisualisationTypes from '~types/CombinationVisualisationTypes'
+import CombinationVisualisationTypes from './CombinationVisualisationTypes'
 
 interface CombinationVisualisation {
     id: string

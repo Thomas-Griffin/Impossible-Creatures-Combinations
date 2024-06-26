@@ -16,3 +16,4 @@ logs
 !.env.example
 globalConfig.json
 .components.gen.js
+/build/

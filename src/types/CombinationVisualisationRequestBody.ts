@@ -1,6 +1,6 @@
-import CombinationVisualisationAttributes from '~types/CombinationVisualisationAttributes'
-import PlotlyVisualisationTypes from '~types/PlotlyVisualisationTypes'
-import Mod from '~types/Mod'
+import CombinationVisualisationAttributes from './CombinationVisualisationAttributes'
+import PlotlyVisualisationTypes from './PlotlyVisualisationTypes'
+import Mod from './Mod'
 
 interface CombinationVisualisationRequestBody {
     mod: Mod

@@ -1,14 +1,14 @@
 import express, {NextFunction, Request, Response} from 'express'
-import modsRouter from '@backend/routes/modsRoutes'
-import combinationsRouter from '@backend//routes/combinationsRoutes'
-import databaseInitializerRouter from '@backend/routes/databaseRoutes'
-import visualisationsRouter from '@backend/routes/visualisationsRoutes'
+import modsRouter from './routes/modsRoutes'
+import combinationsRouter from './routes/combinationsRoutes'
+import databaseInitializerRouter from './routes/databaseRoutes'
+import visualisationsRouter from './routes/visualisationsRoutes'
 import morgan from 'morgan'
 import swaggerUi from 'swagger-ui-express'
 import fs from 'fs'
 import NodeCache from 'node-cache'
 import path from 'path'
-import {ROOT_DIRECTORY} from '@src/globals'
+import {ROOT_DIRECTORY} from '../globals'
 
 export const cache = new NodeCache()
 const swaggerFile = JSON.parse(fs.readFileSync(path.resolve(ROOT_DIRECTORY, 'swagger.json'), 'utf8'))
@@ -30,19 +30,19 @@ const allowCrossDomain = (_request: express.Request, response: express.Response,
     next()
 }
 
-const app = express()
+const combinationsServer = express()
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerFile))
-app.use(morgan('dev'))
-app.use(express.json())
-app.use(express.urlencoded({extended: false}))
-app.use(allowCrossDomain)
-app.disable('etag')
+combinationsServer.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerFile))
+combinationsServer.use(morgan('dev'))
+combinationsServer.use(express.json())
+combinationsServer.use(express.urlencoded({extended: false}))
+combinationsServer.use(allowCrossDomain)
+combinationsServer.disable('etag')
 
-app.use('/mods', modsRouter)
-app.use('/combinations', combinationsRouter)
-app.use('/database', databaseInitializerRouter)
-app.use('/visualisations', visualisationsRouter)
+combinationsServer.use('/mods', modsRouter)
+combinationsServer.use('/combinations', combinationsRouter)
+combinationsServer.use('/database', databaseInitializerRouter)
+combinationsServer.use('/visualisations', visualisationsRouter)
 
-app.use(cacheMiddleware)
-export default app
+combinationsServer.use(cacheMiddleware)
+export default combinationsServer

@@ -1,8 +1,8 @@
 import {Data} from 'plotly.js'
 import {MongoClient} from 'mongodb'
-import MongoService from '@backend/services/mongoService'
-import VisualisationServiceQuery from '@backend/services/VisualisationServiceQuery'
-import CombinationVisualisationRequestBody from '~types/CombinationVisualisationRequestBody'
+import MongoService from './mongoService'
+import VisualisationServiceQuery from './VisualisationServiceQuery'
+import CombinationVisualisationRequestBody from '../../types/CombinationVisualisationRequestBody'
 
 class VisualisationsService {
     client: MongoClient
@@ -17,10 +17,10 @@ class VisualisationsService {
             0,
             ...Array.from(
                 {
-                    length: Math.ceil(attributeMax / (body?.bucketSize || 1)),
+                    length: Math.ceil(attributeMax / (body?.bucketSize ?? 1)),
                 },
                 (_, i) => {
-                    return (i + 1) * (body?.bucketSize || 1)
+                    return (i + 1) * (body?.bucketSize ?? 1)
                 }
             ),
         ]
@@ -49,7 +49,7 @@ class VisualisationsService {
             },
         ])
             .execute()
-            .then(queryResult => {
+            .then((queryResult: any) => {
                 const queryResultAsRecordArray = queryResult as unknown as Record<string, any>[]
                 return [
                     {
@@ -60,7 +60,7 @@ class VisualisationsService {
                         }),
                         y: queryResultAsRecordArray.map(obj => obj['count']),
                         text: queryResultAsRecordArray.map(obj => obj['count'].toString()),
-                        type: body?.chartOptions?.chartType || 'bar',
+                        type: body?.chartOptions?.chartType ?? 'bar',
                     } as Partial<Data>,
                 ] as Partial<Data>[]
             })
@@ -70,8 +70,8 @@ class VisualisationsService {
         const xAttributeMax = await this.getMaximumXAttributeValue(body)
         const boundaries = [
             0,
-            [...Array(Math.ceil(xAttributeMax / (body?.bucketSize || 1))).keys()].map(
-                i => (i + 1) * (body?.bucketSize || 1)
+            [...Array(Math.ceil(xAttributeMax / (body?.bucketSize ?? 1))).keys()].map(
+                i => (i + 1) * (body?.bucketSize ?? 1)
             ),
         ].flat()
         return new VisualisationServiceQuery(body, [
@@ -95,7 +95,7 @@ class VisualisationsService {
             },
         ])
             .execute()
-            .then(queryResult => {
+            .then((queryResult: any) => {
                 const queryResultAsRecordArray = queryResult as unknown as Record<string, any>[]
                 return queryResultAsRecordArray.map(obj => {
                     const xSorted = obj?.['x']?.sort((a: number, b: number) => a - b)
@@ -110,9 +110,9 @@ class VisualisationsService {
                                       body?.attributes?.y
                                   }: ${obj?.['_id']}`,
                         name: `${body?.attributes?.y}: ${obj?.['_id']}`,
-                        type: body?.chartOptions?.chartType || 'bar',
-                    } as Partial<Data>
-                }) as Partial<Data>[]
+                        type: body?.chartOptions?.chartType ?? 'bar',
+                    }
+                })
             })
     }
 
@@ -127,7 +127,7 @@ class VisualisationsService {
             },
         ])
             .execute()
-            .then(result => {
+            .then((result: any) => {
                 const resultAsRecordArray = result as unknown as Record<string, any>[]
                 return resultAsRecordArray[0]?.['max'] || 0
             })

@@ -21,7 +21,9 @@
 </template>
 
 <script lang="ts" setup>
-import useDisplayStore from '~store/displayStore'
+import useDisplayStore from '../store/displayStore'
+import DarkModeToggle from './DarkModeToggle.vue'
+import ModSelect from './ModSelect.client.vue'
 
 const menuItems = ref([
     {

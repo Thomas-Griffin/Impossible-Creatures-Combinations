@@ -1,7 +1,7 @@
-import ModService from '@backend/services/modService'
-import {MOD_COLLECTION_NAME} from '@src/globals'
-import mods from '@backend/database/mods'
-import Mod from '~types/Mod'
+import ModService from '../../../src/backend/services/modService'
+import {MOD_COLLECTION_NAME} from '../../../src/globals'
+import mods from '../../../src/backend/database/mods'
+import Mod from '../../../src/types/Mod'
 
 describe('ModService', () => {
     const modService = new ModService()

@@ -2,7 +2,7 @@ import 'reflect-metadata'
 import swagger_autogen from 'swagger-autogen'
 import path from 'path'
 import {logger} from './logger'
-import {ROOT_DIRECTORY} from '@src/globals'
+import {ROOT_DIRECTORY} from '../../globals'
 
 const doc = {
     info: {

@@ -27,12 +27,12 @@
 </template>
 
 <script lang="ts" setup>
-import useModStore from '~store/modStore'
-import useDisplayStore from '~store/displayStore'
+import useModStore from '../store/modStore'
+import useDisplayStore from '../store/displayStore'
 import type {NuxtPlotlyConfig, NuxtPlotlyData, NuxtPlotlyLayout} from 'nuxt-plotly'
 
-import CombinationVisualisationAttributes from '~types/CombinationVisualisationAttributes'
-import CombinationVisualisationTypes from '~types/CombinationVisualisationTypes'
+import CombinationVisualisationAttributes from '../../types/CombinationVisualisationAttributes'
+import CombinationVisualisationTypes from '../../types/CombinationVisualisationTypes'
 
 const displayStore = useDisplayStore()
 

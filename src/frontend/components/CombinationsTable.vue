@@ -1129,7 +1129,7 @@
 
 <script lang="ts" setup>
 import lodash from 'lodash'
-import useModStore from '~store/modStore'
+import useModStore from '../store/modStore'
 
 import {FilterMatchMode, FilterOperator} from 'primevue/api'
 import type {
@@ -1140,13 +1140,13 @@ import type {
 } from 'primevue/datatable'
 
 import CombinationAttributeNames from '../../types/CombinationAttributeNames'
-import SortingType from '~types/SortingType'
-import Combination from '~types/Combination'
-import AbilitySources from '~types/AbilitySources'
-import CombinationAbilities from '~types/CombinationAbilities'
-import CombinationTableColumn from '~types/CombinationTableColumn'
-import ModColumn from '~types/ModColumn'
-import CombinationsRequestBody from '~types/CombinationsRequestBody'
+import SortingType from '../../types/SortingType'
+import Combination from '../../types/Combination'
+import AbilitySources from '../../types/AbilitySources'
+import CombinationAbilities from '../../types/CombinationAbilities'
+import CombinationTableColumn from '../../types/CombinationTableColumn'
+import ModColumn from '../../types/ModColumn'
+import CombinationsRequestBody from '../../types/CombinationsRequestBody'
 
 const abilities = ref(Object.values(CombinationAbilities))
 const abilitySources = ref(Object.values(AbilitySources))

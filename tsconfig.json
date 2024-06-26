@@ -1,49 +1,45 @@
 {
   "compilerOptions": {
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "emitDecoratorMetadata": true,
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "jsxImportSource": "vue",
+    "module": "commonjs",
+    "moduleResolution": "Node",
+    "noEmit": false,
+    "noImplicitThis": true,
+    "outDir": "dist",
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "es5",
+    "downlevelIteration": true,
     "types": [
+      "@nuxt/types",
+      "@types/node",
+      "electron",
       "jest",
       "supertest"
     ],
-    "baseUrl": ".",
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "verbatimModuleSyntax": false,
-    "noEmit": true,
-    "paths": {
-      "@test/*": [
-        "test/*"
-      ],
-      "@src/*": [
-        "src/*"
-      ],
-      "~types/*": [
-        "src/types/*"
-      ],
-      "@backend/*": [
-        "src/backend/*"
-      ],
-      "@frontend/*": [
-        "src/frontend/*"
-      ]
-    },
-    "moduleResolution": "Bundler",
-    "target": "ESNext",
-    "module": "CommonJS",
-    "resolveJsonModule": true,
-    "skipLibCheck": true,
-    "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true,
-    "jsx": "preserve",
-    "jsxImportSource": "vue",
-    "isolatedModules": true,
     "useDefineForClassFields": true,
-    "strict": true,
-    "noImplicitThis": true,
-    "esModuleInterop": true,
-    "allowJs": true
+    "verbatimModuleSyntax": false,
+    "lib": [
+      "esnext",
+      "dom"
+    ]
   },
   "ts-node": {
     "swc": true,
     "esm": true
-  }
+  },
+  "exclude": [
+    "node_modules",
+    ".nuxt",
+    "dist"
+  ]
 }

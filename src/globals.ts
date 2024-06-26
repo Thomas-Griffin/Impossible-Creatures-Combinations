@@ -1,13 +1,13 @@
 import {resolve} from 'path'
 import Joi from 'joi'
 
-import schemas from '@backend/database/modSchemas'
-import mods from '@backend/database/mods'
-import ModNames from '~types/ModNames'
-import {modVersions} from '~types/ModVersions'
-import PlotlyVisualisationTypes from '~types/PlotlyVisualisationTypes'
-import ModSchema from '~types/ModSchema'
-import Mod from '~types/Mod'
+import schemas from './backend/database/modSchemas'
+import mods from './backend/database/mods'
+import ModNames from './types/ModNames'
+import {modVersions} from './types/ModVersions'
+import PlotlyVisualisationTypes from './types/PlotlyVisualisationTypes'
+import ModSchema from './types/ModSchema'
+import Mod from './types/Mod'
 
 export const ROOT_DIRECTORY = resolve('./')
 export const SRC_DIRECTORY = resolve(ROOT_DIRECTORY, 'src')
@@ -17,6 +17,7 @@ export const MOD_SOURCE_DIRECTORY_PATH = resolve(SRC_DIRECTORY, `backend/databas
 export const MOD_DIRECTORY_PATH = resolve(ROOT_DIRECTORY, MOD_DIRECTORY_NAME)
 export const COMBINATIONS_COLLECTION_NAME = 'combinations'
 export const ENV_DIRECTORY = resolve(SRC_DIRECTORY, 'env')
+export const PUBLIC_DIRECTORY = resolve(SRC_DIRECTORY, 'frontend/public/')
 
 export const LOGGER_TOKEN = 'Logger'
 export const MONGO_CLIENT_TOKEN = 'MongoClient'
@@ -31,6 +32,7 @@ export const MONGO_DOCKER_SERVICE_PORT = 27017
 
 export const SERVER_DOCKER_SERVICE_NAME = 'combinations-server'
 export const SERVER_DOCKER_SERVICE_PORT = 3000
+export const FRONTEND_CLIENT_PORT = 8080
 
 export const MOD_SCHEMAS: ModSchema[] = schemas
 

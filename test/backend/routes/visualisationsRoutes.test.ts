@@ -1,8 +1,8 @@
 import request from 'supertest'
 
-import VisualisationsService from '@backend/services/visualisationsService'
-import {COMBINATIONS_COLLECTION_NAME, DEFAULT_MOD} from '@src/globals'
-import app from '@backend/app'
+import VisualisationsService from '../../../src/backend/services/visualisationsService'
+import {COMBINATIONS_COLLECTION_NAME, DEFAULT_MOD} from '../../../src/globals'
+import combinationsServer from '../../../src/backend/combinationsServer'
 
 describe('Visualisations routes', () => {
     const testVisualisationsService = new VisualisationsService()
@@ -57,28 +57,27 @@ describe('Visualisations routes', () => {
                         'Animal 2': 'testAnimal10',
                     },
                 ])
-
-            await request(app)
+            let response = await request(combinationsServer)
                 .post('/visualisations/attribute-chart')
                 .send({
                     mod: DEFAULT_MOD,
                     attributes: {x: 'Research Level', y: 'None'},
                 })
-                .expect(200)
-                .expect([
-                    {
-                        text: ['1', '1', '1', '1', '1'],
-                        type: 'bar',
-                        x: [
-                            'Research Level 1',
-                            'Research Level 2',
-                            'Research Level 3',
-                            'Research Level 4',
-                            'Research Level 5',
-                        ],
-                        y: [1, 1, 1, 1, 1],
-                    },
-                ])
+            expect(response.status).toEqual(200)
+            expect(response.body).toEqual([
+                {
+                    text: ['1', '1', '1', '1', '1'],
+                    type: 'bar',
+                    x: [
+                        'Research Level 1',
+                        'Research Level 2',
+                        'Research Level 3',
+                        'Research Level 4',
+                        'Research Level 5',
+                    ],
+                    y: [1, 1, 1, 1, 1],
+                },
+            ])
         })
     })
 })

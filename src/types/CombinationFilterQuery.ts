@@ -1,4 +1,4 @@
-import CombinationAttributeNames from '~types/CombinationAttributeNames'
+import CombinationAttributeNames from './CombinationAttributeNames'
 
 type CombinationFilterQuery = {
     [key in CombinationAttributeNames | 'Abilities.ability' | 'Mod.name' | 'Mod.version' | '$and' | '$or' | '$not']:

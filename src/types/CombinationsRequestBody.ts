@@ -1,7 +1,7 @@
-import CombinationAttributeNames from '~types/CombinationAttributeNames'
+import CombinationAttributeNames from './CombinationAttributeNames'
 import {DataTableFilterMeta} from 'primevue/datatable'
-import SortingType from '~types/SortingType'
-import Mod from '~types/Mod'
+import SortingType from './SortingType'
+import Mod from './Mod'
 
 interface CombinationsRequestBody {
     mod: Mod

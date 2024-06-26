@@ -11,7 +11,7 @@
 </template>
 
 <script lang="ts" setup>
-import useDisplayStore from '~store/displayStore'
+import useDisplayStore from '../store/displayStore'
 
 import {usePrimeVue} from 'primevue/config'
 
@@ -31,5 +31,3 @@ const toggleDarkMode = () => {
     darkMode.value = displayStore.getDarkMode
 }
 </script>
-
-<style scoped></style>

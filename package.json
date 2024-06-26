@@ -92,7 +92,7 @@
     "swagger-autogen": "^2.23.7",
     "swagger-ui-express": "^5.0.1",
     "ts-jest": "^29.1.4",
-    "tsx": "^4.11.2",
+    "tsx": "^4.15.7",
     "typescript": "^5.4.5",
     "vite-plugin-electron": "^0.28.7",
     "vite-plugin-electron-renderer": "^0.14.5"

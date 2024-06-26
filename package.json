@@ -31,7 +31,7 @@
     "@babel/register": "^7.24.6",
     "@nuxt/bridge": "^3.2.1",
     "@nuxt/builder": "^2.17.3",
-    "@nuxt/core": "^2.17.3",
+    "@nuxt/core": "^2.17.4",
     "@nuxt/kit": "^3.11.2",
     "axios": "^1.7.2",
     "cross-env": "^7.0.3",

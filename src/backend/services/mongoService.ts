@@ -10,7 +10,7 @@ const createMongoClient = (): MongoClient => {
     if (serverEnvironment.isInDockerContainer()) {
         process.env['MONGO_URL'] = `mongodb://${MONGO_DOCKER_SERVICE_NAME}:${MONGO_DOCKER_SERVICE_PORT}`
     }
-    return new MongoClient(process.env['MONGO_URL'] || `mongodb://localhost:${MONGO_DOCKER_SERVICE_PORT}`)
+    return new MongoClient(process.env['MONGO_URL'] ?? `mongodb://localhost:${MONGO_DOCKER_SERVICE_PORT}`)
 }
 
 container.register(MONGO_CLIENT_TOKEN, {useFactory: createMongoClient})

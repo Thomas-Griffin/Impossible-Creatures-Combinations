@@ -28,6 +28,7 @@
     }
   },
   "dependencies": {
+    "@babel/register": "^7.24.6",
     "@nuxt/bridge": "^3.2.1",
     "@nuxt/builder": "^2.11.0",
     "@nuxt/core": "^2.17.3",
@@ -59,6 +60,8 @@
   },
   "description": "An application for Impossible Creatures that allows users to view all creature combinations.",
   "devDependencies": {
+    "@babel/cli": "^7.24.7",
+    "@babel/core": "^7.24.7",
     "@babel/plugin-proposal-decorators": "^7.24.6",
     "@babel/preset-env": "^7.24.6",
     "@babel/preset-typescript": "^7.24.6",
@@ -72,7 +75,7 @@
     "@types/lodash": "^4.17.4",
     "@types/morgan": "^1.9.9",
     "@types/msgpack-lite": "^0.1.11",
-    "@types/node": "^20.14.0",
+    "@types/node": "^20.14.1",
     "@types/plotly.js-dist-min": "^2.3.4",
     "@types/supertest": "^6.0.2",
     "@types/swagger-ui-express": "^4.1.6",
@@ -90,7 +93,9 @@
     "swagger-ui-express": "^5.0.1",
     "ts-jest": "^29.1.4",
     "tsx": "^4.11.2",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "vite-plugin-electron": "^0.28.7",
+    "vite-plugin-electron-renderer": "^0.14.5"
   },
   "main": "dist/src/backend/start.js",
   "name": "combinations-web-app",

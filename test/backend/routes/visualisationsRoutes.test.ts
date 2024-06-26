@@ -57,28 +57,27 @@ describe('Visualisations routes', () => {
                         'Animal 2': 'testAnimal10',
                     },
                 ])
-
-            await request(combinationsServer)
+            let response = await request(combinationsServer)
                 .post('/visualisations/attribute-chart')
                 .send({
                     mod: DEFAULT_MOD,
                     attributes: {x: 'Research Level', y: 'None'},
                 })
-                .expect(200)
-                .expect([
-                    {
-                        text: ['1', '1', '1', '1', '1'],
-                        type: 'bar',
-                        x: [
-                            'Research Level 1',
-                            'Research Level 2',
-                            'Research Level 3',
-                            'Research Level 4',
-                            'Research Level 5',
-                        ],
-                        y: [1, 1, 1, 1, 1],
-                    },
-                ])
+            expect(response.status).toEqual(200)
+            expect(response.body).toEqual([
+                {
+                    text: ['1', '1', '1', '1', '1'],
+                    type: 'bar',
+                    x: [
+                        'Research Level 1',
+                        'Research Level 2',
+                        'Research Level 3',
+                        'Research Level 4',
+                        'Research Level 5',
+                    ],
+                    y: [1, 1, 1, 1, 1],
+                },
+            ])
         })
     })
 })

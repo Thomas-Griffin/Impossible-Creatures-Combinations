@@ -8,7 +8,6 @@ enum CombinationAttributeDescriptions {
     ELECTRICITY = 'The electricity required to build the creature.',
     HEALTH = "The creature's health.",
     EHP = "The creature's effective hit points.",
-    GENERATED_EHP = "The creature's effective hit points.",
     SDT = "The creature's self-destruction time.",
     POPULATION_SIZE = "The creature's population size.",
     MELEE_DAMAGE = "The creature's total melee damage.",

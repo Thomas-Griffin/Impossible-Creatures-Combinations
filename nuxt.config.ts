@@ -1,6 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import dotenv from 'dotenv'
 import path from 'path'
+import {defineNuxtConfig} from 'nuxt/config'
 
 dotenv.config({path: path.resolve(__dirname, 'src/frontend/.env'), debug: true, override: true})
 
@@ -15,10 +16,6 @@ const nuxtConfig = defineNuxtConfig({
         timeline: {
             enabled: true,
         },
-    },
-    alias: {
-        '~store': path.resolve(__dirname, 'src/frontend/store'),
-        '~types': path.resolve(__dirname, 'src/types'),
     },
     modules: ['nuxt-primevue', '@pinia/nuxt', 'nuxt-plotly'],
     vite: {

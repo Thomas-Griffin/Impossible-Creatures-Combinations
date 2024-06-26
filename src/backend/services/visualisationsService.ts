@@ -17,10 +17,10 @@ class VisualisationsService {
             0,
             ...Array.from(
                 {
-                    length: Math.ceil(attributeMax / (body?.bucketSize || 1)),
+                    length: Math.ceil(attributeMax / (body?.bucketSize ?? 1)),
                 },
                 (_, i) => {
-                    return (i + 1) * (body?.bucketSize || 1)
+                    return (i + 1) * (body?.bucketSize ?? 1)
                 }
             ),
         ]
@@ -60,7 +60,7 @@ class VisualisationsService {
                         }),
                         y: queryResultAsRecordArray.map(obj => obj['count']),
                         text: queryResultAsRecordArray.map(obj => obj['count'].toString()),
-                        type: body?.chartOptions?.chartType || 'bar',
+                        type: body?.chartOptions?.chartType ?? 'bar',
                     } as Partial<Data>,
                 ] as Partial<Data>[]
             })
@@ -70,8 +70,8 @@ class VisualisationsService {
         const xAttributeMax = await this.getMaximumXAttributeValue(body)
         const boundaries = [
             0,
-            [...Array(Math.ceil(xAttributeMax / (body?.bucketSize || 1))).keys()].map(
-                i => (i + 1) * (body?.bucketSize || 1)
+            [...Array(Math.ceil(xAttributeMax / (body?.bucketSize ?? 1))).keys()].map(
+                i => (i + 1) * (body?.bucketSize ?? 1)
             ),
         ].flat()
         return new VisualisationServiceQuery(body, [
@@ -110,9 +110,9 @@ class VisualisationsService {
                                       body?.attributes?.y
                                   }: ${obj?.['_id']}`,
                         name: `${body?.attributes?.y}: ${obj?.['_id']}`,
-                        type: body?.chartOptions?.chartType || 'bar',
-                    } as Partial<Data>
-                }) as Partial<Data>[]
+                        type: body?.chartOptions?.chartType ?? 'bar',
+                    }
+                })
             })
     }
 

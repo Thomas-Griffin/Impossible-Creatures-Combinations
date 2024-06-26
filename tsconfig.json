@@ -17,16 +17,29 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,
-    "target": "ESNext",
+    "target": "es5",
+    "downlevelIteration": true,
     "types": [
+      "@nuxt/types",
+      "@types/node",
+      "electron",
       "jest",
       "supertest"
     ],
     "useDefineForClassFields": true,
-    "verbatimModuleSyntax": false
+    "verbatimModuleSyntax": false,
+    "lib": [
+      "esnext",
+      "dom"
+    ]
   },
   "ts-node": {
     "swc": true,
     "esm": true
-  }
+  },
+  "exclude": [
+    "node_modules",
+    ".nuxt",
+    "dist"
+  ]
 }

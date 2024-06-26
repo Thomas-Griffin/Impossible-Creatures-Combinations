@@ -33,7 +33,7 @@ class ServerEnvironment {
         }
         if (process.env[ENVIRONMENT_SPECIFIER_FLAG_NAME] !== ServerEnvironments.PRODUCTION)
             dotenv.config({
-                path: `${ENV_DIRECTORY}/${process.env[`${ENVIRONMENT_SPECIFIER_FLAG_NAME}`]}.env`,
+                path: `${ENV_DIRECTORY}/${process.env[ENVIRONMENT_SPECIFIER_FLAG_NAME]}.env`,
                 override: true,
                 debug: true,
             })

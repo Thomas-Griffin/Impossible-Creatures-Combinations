@@ -9,7 +9,6 @@ import {cleanupResidualDatabaseFiles} from './database/cleanupResidualDatabaseFi
 import {app, BrowserWindow, BrowserWindowConstructorOptions} from 'electron'
 import path from 'path'
 import * as os from 'os'
-import {loadNuxt, LoadNuxtOptions} from '@nuxt/kit'
 import nuxtConfig from '../../nuxt.config'
 import ServerEnvironments from '../types/ServerEnvironments'
 
@@ -82,20 +81,17 @@ const createWindow = (): void => {
 }
 
 const isRunningInElectron = (): boolean => {
-    if (typeof window !== 'undefined' && window.process && window.process.type) {
-        return true
-    }
-    if (process && process.versions && !!process.versions.electron) {
-        return true
-    }
-    return typeof window !== 'undefined' && window.navigator && window.navigator.userAgent.includes('Electron')
+    return !!(window?.process?.type ||
+        !!process?.versions?.electron ||
+        window?.navigator?.userAgent?.includes('Electron'))
 }
 
 
 const startNuxtApp = async () => {
+    let nuxtKit = await import('@nuxt/kit')
     nuxtConfig.dev = process.env[ENVIRONMENT_SPECIFIER_FLAG_NAME] !== ServerEnvironments.PRODUCTION
-    const loadOptions:LoadNuxtOptions = {overrides: nuxtConfig, dev: nuxtConfig.dev, ready:true}
-    await loadNuxt(loadOptions)
+    const loadOptions = {dev: nuxtConfig.dev, ready: true, configFile: 'nuxt.config.ts'}
+    await nuxtKit.loadNuxt(loadOptions)
 }
 
 checkDatabaseInitialisation().then(() => {
@@ -104,6 +100,8 @@ checkDatabaseInitialisation().then(() => {
     logger.info('Determining if running in electron...')
     if (isRunningInElectron()) {
         logger.info('Running in electron...')
+        logger.info('Starting Nuxt App...')
+        startNuxtApp().catch(error => logger.error(error))
 
         app.whenReady().then(createWindow)
 
@@ -120,11 +118,8 @@ checkDatabaseInitialisation().then(() => {
                 createWindow()
             }
         })
-        logger.info('Using Electron, starting server...')
+        logger.info('Starting server...')
         startServer()
-        logger.info('Server started')
-        logger.info('Starting Nuxt Client...')
-        startNuxtApp().catch(error => logger.error(error))
     } else {
         logger.info('Not running in electron, starting server...')
         startServer()

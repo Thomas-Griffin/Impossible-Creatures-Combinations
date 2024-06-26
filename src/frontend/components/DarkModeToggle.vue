@@ -31,5 +31,3 @@ const toggleDarkMode = () => {
     darkMode.value = displayStore.getDarkMode
 }
 </script>
-
-<style scoped></style>

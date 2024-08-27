@@ -43,7 +43,7 @@
     "morgan": "^1.10.0",
     "msgpack-lite": "^0.1.26",
     "node-cache": "^5.1.2",
-    "nuxt": "^3.12.2",
+    "nuxt": "^3.12.4",
     "pinia": "^2.1.7",
     "pino": "^9.1.0",
     "pino-caller": "^3.4.0",

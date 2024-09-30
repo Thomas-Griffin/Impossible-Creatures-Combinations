@@ -44,7 +44,7 @@
     "msgpack-lite": "^0.1.26",
     "node-cache": "^5.1.2",
     "nuxt": "^3.12.2",
-    "pinia": "^2.1.7",
+    "pinia": "^2.2.3",
     "pino": "^9.1.0",
     "pino-caller": "^3.4.0",
     "plotly.js-dist": "^2.33.0",
